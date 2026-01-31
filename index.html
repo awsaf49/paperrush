@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catch Me If You Can — Conference Deadline Tracker</title>
+    <meta name="description" content="Race against conference deadlines. Track submission deadlines for top-tier AI, ML, and Computer Vision conferences.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏃</text></svg>">
+</head>
+<body>
+    <!-- Gradient Background -->
+    <div class="bg-gradient"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🏃‍♂️💨</span>
+                <h1 class="logo-text">Catch Me <span class="logo-accent">If You Can</span></h1>
+            </div>
+            <p class="tagline">race against conference deadlines</p>
+            <p class="last-updated">Last updated: <span id="update-date">—</span></p>
+        </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <nav class="filter-bar">
+        <div class="filter-container">
+            <div class="filter-group">
+                <button class="filter-pill active" data-category="all">
+                    <span class="filter-dot"></span>
+                    All
+                </button>
+                <button class="filter-pill" data-category="ml">
+                    <span class="filter-dot" style="--dot-color: #AF52DE"></span>
+                    ML
+                </button>
+                <button class="filter-pill" data-category="cv">
+                    <span class="filter-dot" style="--dot-color: #007AFF"></span>
+                    Vision
+                </button>
+                <button class="filter-pill" data-category="nlp">
+                    <span class="filter-dot" style="--dot-color: #34C759"></span>
+                    NLP
+                </button>
+                <button class="filter-pill" data-category="speech">
+                    <span class="filter-dot" style="--dot-color: #FF9500"></span>
+                    Speech
+                </button>
+                <button class="filter-pill" data-category="other">
+                    <span class="filter-dot" style="--dot-color: #8E8E93"></span>
+                    Other
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Timeline Container -->
+    <main class="timeline-container">
+        <!-- Timeline SVG (drawn dynamically) -->
+        <svg class="timeline-svg" id="timeline-svg"></svg>
+        
+        <!-- Conference Grid -->
+        <div class="conference-grid" id="conference-grid">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Loading State -->
+    <div class="loading-state" id="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading conferences...</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a></p>
+            <p class="footer-sub">Auto-updated weekly via GitHub Actions + Gemini</p>
+        </div>
+    </footer>
+
+    <!-- Card Template -->
+    <template id="card-template">
+        <article class="conference-card" data-conference-id="">
+            <div class="card-inner">
+                <div class="card-gradient-zone">
+                    <div class="card-header">
+                        <div class="card-logo">
+                            <img src="" alt="" class="logo-img">
+                        </div>
+                        <div class="card-title">
+                            <h2 class="conf-name"></h2>
+                            <p class="conf-location"></p>
+                        </div>
+                    </div>
+                    <div class="card-deadline">
+                        <span class="deadline-label"></span>
+                        <div class="countdown">
+                            <span class="countdown-value"></span>
+                            <span class="countdown-unit"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content-zone">
+                    <div class="card-deadlines-list">
+                        <ul class="deadlines-list"></ul>
+                    </div>
+                    <div class="card-tap-hint">
+                        <span>Tap for details</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </template>
+    
+    <!-- Modal Template -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-container" id="modal-container">
+            <div class="modal-gradient-header">
+                <button class="modal-close-btn" id="modal-close">✕</button>
+                <div class="modal-header-content">
+                    <div class="modal-logo">
+                        <img src="" alt="" class="modal-logo-img" id="modal-logo-img">
+                        <span class="modal-logo-text" id="modal-logo-text"></span>
+                    </div>
+                    <h2 class="modal-title" id="modal-title"></h2>
+                    <p class="modal-location" id="modal-location"></p>
+                    <div class="modal-countdown">
+                        <span class="modal-countdown-label" id="modal-countdown-label"></span>
+                        <div class="modal-countdown-value" id="modal-countdown-value"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section modal-links-section">
+                    <h3>📎 Quick Links</h3>
+                    <div class="modal-links-grid">
+                        <a href="#" class="modal-link" id="modal-link-official" target="_blank">
+                            <span class="link-icon">🌐</span>
+                            <span class="link-text">Official Website</span>
+                        </a>
+                        <a href="#" class="modal-link" id="modal-link-cfp" target="_blank">
+                            <span class="link-icon">📄</span>
+                            <span class="link-text">Call for Papers</span>
+                        </a>
+                        <a href="#" class="modal-link" id="modal-link-template" target="_blank">
+                            <span class="link-icon">📝</span>
+                            <span class="link-text">LaTeX Template</span>
+                        </a>
+                        <a href="#" class="modal-link" id="modal-link-author" target="_blank">
+                            <span class="link-icon">📖</span>
+                            <span class="link-text">Author Guidelines</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="modal-section modal-info-section">
+                    <h3>📊 Key Information</h3>
+                    <div class="modal-info-grid">
+                        <div class="info-card">
+                            <span class="info-card-label">Page Limit</span>
+                            <span class="info-card-value" id="modal-page-limit">—</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-card-label">Review Type</span>
+                            <span class="info-card-value" id="modal-review-type">—</span>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-card-label">Acceptance Rate</span>
+                            <span class="info-card-value" id="modal-acceptance-rate">—</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-section modal-deadlines-section">
+                    <h3>📅 All Deadlines</h3>
+                    <ul class="modal-deadlines-list" id="modal-deadlines-list"></ul>
+                </div>
+                
+                <div class="modal-section modal-notes-section">
+                    <h3>⚠️ Important Notes & Desk Reject Reasons</h3>
+                    <ul class="modal-notes-list" id="modal-notes-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/countdown.js"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
