@@ -237,19 +237,22 @@ const CountdownTimer = {
      */
     formatDate(dateString, endDateString = null) {
         const date = new Date(dateString);
-        const options = { month: 'short', day: 'numeric' };
-        
+        const month = date.toLocaleDateString('en-US', { month: 'short' });
+        const day = String(date.getDate()).padStart(2, '0');
+
         if (endDateString) {
             const endDate = new Date(endDateString);
+            const endDay = String(endDate.getDate()).padStart(2, '0');
             // Same month
             if (date.getMonth() === endDate.getMonth()) {
-                return `${date.toLocaleDateString('en-US', { month: 'short' })} ${date.getDate()}-${endDate.getDate()}`;
+                return `${month} ${day}-${endDay}`;
             }
             // Different months
-            return `${date.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
+            const endMonth = endDate.toLocaleDateString('en-US', { month: 'short' });
+            return `${month} ${day} - ${endMonth} ${endDay}`;
         }
-        
-        return date.toLocaleDateString('en-US', options);
+
+        return `${month} ${day}`;
     }
 };
 

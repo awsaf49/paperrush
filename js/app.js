@@ -276,23 +276,6 @@ const App = {
         const gradient = this.getCardGradient(conf.brandColor, conf.category);
         gradientZone.style.background = gradient;
         
-        // Logo
-        const logoImg = card.querySelector('.logo-img');
-        const logoContainer = card.querySelector('.card-logo');
-        
-        // Try to load logo (SVG first, then PNG), fall back to text
-        const logoName = conf.name.toLowerCase();
-        logoImg.src = `assets/logos/${logoName}.svg`;
-        logoImg.alt = conf.name;
-        logoImg.onerror = () => {
-            // Try PNG
-            logoImg.onerror = () => {
-                // Fall back to text placeholder
-                logoContainer.innerHTML = `<span class="logo-placeholder">${conf.name.substring(0, 2)}</span>`;
-            };
-            logoImg.src = `assets/logos/${logoName}.png`;
-        };
-        
         // Title (with estimated badge if needed)
         const confNameEl = card.querySelector('.conf-name');
         if (conf.isEstimated) {
@@ -330,25 +313,48 @@ const App = {
         // Deadlines list - always render 5 slots for consistency
         const deadlinesList = card.querySelector('.deadlines-list');
         const MAX_SLOTS = 5;
-        
-        // Determine which deadline is currently active (first non-passed one)
+
+        // Sort deadlines by date before rendering
+        const sortedDeadlines = [...conf.deadlines].sort((a, b) =>
+            new Date(a.date) - new Date(b.date)
+        );
+
+        // Smart deadline selection: show last passed + current + future
         const now = new Date();
         let activeIndex = -1;
-        for (let i = 0; i < conf.deadlines.length; i++) {
-            const deadline = conf.deadlines[i];
-            const deadlineDate = new Date(deadline.date);
-            if (deadlineDate > now) {
+
+        // Find the first upcoming deadline
+        for (let i = 0; i < sortedDeadlines.length; i++) {
+            if (new Date(sortedDeadlines[i].date) > now) {
                 activeIndex = i;
                 break;
             }
         }
-        
+
+        // Build display list: [last passed (if any)] + [current] + [future...]
+        let displayDeadlines = [];
+
+        if (activeIndex === -1) {
+            // All passed - show last 5
+            displayDeadlines = sortedDeadlines.slice(-MAX_SLOTS);
+            activeIndex = -1; // No active
+        } else if (activeIndex === 0) {
+            // No passed deadlines - show first 5 upcoming
+            displayDeadlines = sortedDeadlines.slice(0, MAX_SLOTS);
+        } else {
+            // Show: 1 last passed + current + remaining future (up to 5 total)
+            const lastPassed = sortedDeadlines[activeIndex - 1];
+            const upcoming = sortedDeadlines.slice(activeIndex, activeIndex + MAX_SLOTS - 1);
+            displayDeadlines = [lastPassed, ...upcoming];
+            activeIndex = 1; // Active is now at index 1 in display list
+        }
+
         // Render deadlines
         for (let i = 0; i < MAX_SLOTS; i++) {
             const li = document.createElement('li');
-            
-            if (i < conf.deadlines.length) {
-                const deadline = conf.deadlines[i];
+
+            if (i < displayDeadlines.length) {
+                const deadline = displayDeadlines[i];
                 const deadlineDate = new Date(deadline.date);
                 const isPassed = deadlineDate <= now;
                 const isActive = i === activeIndex;
@@ -381,9 +387,9 @@ const App = {
             deadlinesList.appendChild(li);
         }
         
-        // Click to open modal
-        card.addEventListener('click', () => {
-            this.openModal(conf);
+        // Click to open modal with fly animation
+        card.addEventListener('click', (e) => {
+            this.openModal(conf, card);
         });
         
         return card;
@@ -392,11 +398,46 @@ const App = {
     /**
      * Open modal with conference details
      * @param {Object} conf - Conference data
+     * @param {HTMLElement} cardElement - The clicked card element
      */
-    openModal(conf) {
+    openModal(conf, cardElement) {
         const overlay = document.getElementById('modal-overlay');
+        const modal = overlay.querySelector('.modal-container');
         const gradient = this.getCardGradient(conf.brandColor, conf.category);
-        
+
+        // Disable transition temporarily to set initial position
+        modal.style.transition = 'none';
+
+        // Calculate fly animation from card position
+        if (cardElement) {
+            const cardRect = cardElement.getBoundingClientRect();
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // Calculate center of screen
+            const centerX = windowWidth / 2;
+            const centerY = windowHeight / 2;
+
+            // Calculate card center
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+
+            // Calculate offset from center
+            const offsetX = cardCenterX - centerX;
+            const offsetY = cardCenterY - centerY;
+
+            // Calculate scale (card size vs modal size)
+            const modalWidth = Math.min(560, windowWidth - 48);
+            const scale = cardRect.width / modalWidth;
+
+            // Set initial position (at card location, scaled down)
+            modal.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+            modal.style.borderRadius = '16px';
+
+            // Store card reference for close animation
+            this.lastOpenedCard = cardElement;
+        }
+
         // Set header gradient
         const header = overlay.querySelector('.modal-gradient-header');
         header.style.background = gradient;
@@ -531,18 +572,63 @@ const App = {
             notesList.appendChild(li);
         });
         
-        // Show modal
-        overlay.classList.add('active');
+        // Show modal with fly animation
+        overlay.style.visibility = 'visible';
+        overlay.style.opacity = '1';
         document.body.style.overflow = 'hidden';
+
+        // Force browser to render initial position, then re-enable transition and animate
+        modal.offsetHeight; // Force reflow
+
+        setTimeout(() => {
+            // Re-enable transition
+            modal.style.transition = '';
+            // Trigger animation
+            overlay.classList.add('active');
+        }, 30);
     },
     
+    // Store last opened card for close animation
+    lastOpenedCard: null,
+
     /**
      * Close modal
      */
     closeModal() {
         const overlay = document.getElementById('modal-overlay');
+        const modal = overlay.querySelector('.modal-container');
+
+        // Animate back toward card if we have a reference
+        if (this.lastOpenedCard) {
+            const cardRect = this.lastOpenedCard.getBoundingClientRect();
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            const centerX = windowWidth / 2;
+            const centerY = windowHeight / 2;
+            const cardCenterX = cardRect.left + cardRect.width / 2;
+            const cardCenterY = cardRect.top + cardRect.height / 2;
+            const offsetX = cardCenterX - centerX;
+            const offsetY = cardCenterY - centerY;
+
+            const modalWidth = Math.min(560, windowWidth - 48);
+            const scaleX = cardRect.width / modalWidth;
+            const scaleY = cardRect.height / (windowHeight * 0.7);
+            const scale = Math.min(scaleX, scaleY, 0.5);
+
+            modal.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        }
+
         overlay.classList.remove('active');
-        document.body.style.overflow = '';
+
+        // Reset after animation completes
+        setTimeout(() => {
+            modal.style.transform = '';
+            overlay.style.visibility = '';
+            overlay.style.opacity = '';
+            document.body.style.overflow = '';
+            this.lastOpenedCard = null;
+        }, 600);
     },
     
     /**
@@ -601,12 +687,12 @@ const App = {
                 radial-gradient(ellipse 100% 60% at 50% -20%, rgba(80, 180, 255, 0.35), transparent 50%),
                 linear-gradient(90deg, #d1fae5 0%, #ccfbf1 50%, #dbeafe 100%)
             `,
-            // Speech - Radial burst from bottom, warm energy feel
+            // Speech - Deep coral/red wave, audio waveform feel
             'speech': `
-                radial-gradient(ellipse 120% 100% at 50% 130%, rgba(251, 146, 60, 0.65), transparent 55%),
-                radial-gradient(ellipse 100% 100% at -20% -20%, rgba(253, 224, 71, 0.5), transparent 50%),
-                radial-gradient(ellipse 80% 80% at 120% 0%, rgba(251, 113, 133, 0.45), transparent 50%),
-                linear-gradient(0deg, #ffedd5 0%, #fef3c7 50%, #fee2e2 100%)
+                radial-gradient(ellipse 130% 80% at 50% -30%, rgba(220, 38, 38, 0.5), transparent 50%),
+                radial-gradient(ellipse 100% 120% at -20% 80%, rgba(239, 68, 68, 0.45), transparent 50%),
+                radial-gradient(ellipse 80% 100% at 120% 50%, rgba(252, 165, 165, 0.5), transparent 50%),
+                linear-gradient(135deg, #fee2e2 0%, #fecaca 40%, #fef2f2 100%)
             `,
             // Other - Corner accents, creative/artistic feel
             'other': `
