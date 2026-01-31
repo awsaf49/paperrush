@@ -445,6 +445,441 @@ const CONFERENCES_DATA = {
                         "official": "https://eccv.ecva.net/Conferences/2026"
                 },
                 "info": {}
+        },
+        {
+                "id": "neurips-2026",
+                "name": "NeurIPS",
+                "fullName": "Neural Information Processing Systems",
+                "year": 2026,
+                "category": "ml",
+                "website": "https://neurips.cc/",
+                "brandColor": "#8B0000",
+                "location": {
+                        "city": "Vancouver",
+                        "country": "Canada",
+                        "flag": "🇨🇦",
+                        "venue": "Vancouver Convention Center"
+                },
+                "deadlines": [
+                        {
+                                "type": "abstract",
+                                "label": "Abstract Deadline",
+                                "date": "2026-05-15T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2026-05-22T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-12-06",
+                                "endDate": "2026-12-12",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://neurips.cc/"
+                },
+                "info": {
+                        "pageLimit": "9 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "iclr-2026",
+                "name": "ICLR",
+                "fullName": "International Conference on Learning Representations",
+                "year": 2026,
+                "category": "ml",
+                "website": "https://iclr.cc/",
+                "brandColor": "#4B0082",
+                "location": {
+                        "city": "Vienna",
+                        "country": "Austria",
+                        "flag": "🇦🇹",
+                        "venue": "Austria Center Vienna"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2025-10-01T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-04-24",
+                                "endDate": "2026-04-28",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://iclr.cc/"
+                },
+                "info": {
+                        "reviewType": "Open review"
+                }
+        },
+        {
+                "id": "acl-2026",
+                "name": "ACL",
+                "fullName": "Annual Meeting of the Association for Computational Linguistics",
+                "year": 2026,
+                "category": "nlp",
+                "website": "https://www.aclweb.org/",
+                "brandColor": "#228B22",
+                "location": {
+                        "city": "Toronto",
+                        "country": "Canada",
+                        "flag": "🇨🇦",
+                        "venue": "Metro Toronto Convention Centre"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2026-02-15T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-07-12",
+                                "endDate": "2026-07-17",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://www.aclweb.org/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "emnlp-2026",
+                "name": "EMNLP",
+                "fullName": "Empirical Methods in Natural Language Processing",
+                "year": 2026,
+                "category": "nlp",
+                "website": "https://www.aclweb.org/",
+                "brandColor": "#006400",
+                "location": {
+                        "city": "Miami",
+                        "country": "USA",
+                        "flag": "🇺🇸",
+                        "venue": "Miami Beach Convention Center"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2026-06-01T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-11-08",
+                                "endDate": "2026-11-12",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://www.aclweb.org/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "aaai-2026",
+                "name": "AAAI",
+                "fullName": "AAAI Conference on Artificial Intelligence",
+                "year": 2026,
+                "category": "ml",
+                "website": "https://aaai.org/",
+                "brandColor": "#00008B",
+                "location": {
+                        "city": "Washington DC",
+                        "country": "USA",
+                        "flag": "🇺🇸",
+                        "venue": "Walter E. Washington Convention Center"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2025-08-15T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-02-20",
+                                "endDate": "2026-02-27",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://aaai.org/"
+                },
+                "info": {
+                        "pageLimit": "7 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "interspeech-2026",
+                "name": "INTERSPEECH",
+                "fullName": "Annual Conference of the International Speech Communication Association",
+                "year": 2026,
+                "category": "speech",
+                "website": "https://www.interspeech2026.org/",
+                "brandColor": "#FF6347",
+                "location": {
+                        "city": "Rotterdam",
+                        "country": "Netherlands",
+                        "flag": "🇳🇱",
+                        "venue": "Rotterdam Ahoy"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2026-03-21T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-09-06",
+                                "endDate": "2026-09-10",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://www.interspeech2026.org/"
+                },
+                "info": {
+                        "pageLimit": "4 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "naacl-2026",
+                "name": "NAACL",
+                "fullName": "North American Chapter of the Association for Computational Linguistics",
+                "year": 2026,
+                "category": "nlp",
+                "website": "https://naacl.org/",
+                "brandColor": "#2E8B57",
+                "location": {
+                        "city": "Seattle",
+                        "country": "USA",
+                        "flag": "🇺🇸",
+                        "venue": "Seattle Convention Center"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2025-12-10T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-05-03",
+                                "endDate": "2026-05-08",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://naacl.org/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "wacv-2026",
+                "name": "WACV",
+                "fullName": "Winter Conference on Applications of Computer Vision",
+                "year": 2026,
+                "category": "cv",
+                "website": "https://wacv2026.thecvf.com/",
+                "brandColor": "#4169E1",
+                "location": {
+                        "city": "Tucson",
+                        "country": "USA",
+                        "flag": "🇺🇸",
+                        "venue": "JW Marriott Tucson Starr Pass"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2025-07-15T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-01-05",
+                                "endDate": "2026-01-09",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://wacv2026.thecvf.com/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "icassp-2026",
+                "name": "ICASSP",
+                "fullName": "IEEE International Conference on Acoustics, Speech and Signal Processing",
+                "year": 2026,
+                "category": "speech",
+                "website": "https://2026.ieeeicassp.org/",
+                "brandColor": "#DC143C",
+                "location": {
+                        "city": "Hyderabad",
+                        "country": "India",
+                        "flag": "🇮🇳",
+                        "venue": "HICC Hyderabad"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2025-09-25T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-04-06",
+                                "endDate": "2026-04-11",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://2026.ieeeicassp.org/"
+                },
+                "info": {
+                        "pageLimit": "5 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "coling-2026",
+                "name": "COLING",
+                "fullName": "International Conference on Computational Linguistics",
+                "year": 2026,
+                "category": "nlp",
+                "website": "https://coling2026.org/",
+                "brandColor": "#32CD32",
+                "location": {
+                        "city": "Bangkok",
+                        "country": "Thailand",
+                        "flag": "🇹🇭",
+                        "venue": "Queen Sirikit National Convention Center"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2026-04-01T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2026-08-16",
+                                "endDate": "2026-08-21",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://coling2026.org/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
+        },
+        {
+                "id": "iccv-2027",
+                "name": "ICCV",
+                "fullName": "International Conference on Computer Vision",
+                "year": 2027,
+                "category": "cv",
+                "website": "https://iccv2027.thecvf.com/",
+                "brandColor": "#FF4500",
+                "location": {
+                        "city": "TBD",
+                        "country": "TBD",
+                        "flag": "🌍",
+                        "venue": "TBD"
+                },
+                "deadlines": [
+                        {
+                                "type": "paper",
+                                "label": "Paper Submission Deadline",
+                                "date": "2027-03-10T23:59:00-12:00",
+                                "status": "upcoming",
+                                "estimated": true
+                        },
+                        {
+                                "type": "event",
+                                "label": "Main Conference",
+                                "date": "2027-10-10",
+                                "endDate": "2027-10-16",
+                                "status": "upcoming",
+                                "estimated": true
+                        }
+                ],
+                "links": {
+                        "official": "https://iccv2027.thecvf.com/"
+                },
+                "info": {
+                        "pageLimit": "8 pages",
+                        "reviewType": "Double-blind"
+                }
         }
 ]
 };

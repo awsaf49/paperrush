@@ -7,35 +7,52 @@ const App = {
     conferences: [],
     filteredConferences: [],
     activeFilter: 'all',
-    
+    searchQuery: '',
+
     /**
      * Initialize the application
      */
     async init() {
-        console.log('🎯 Deadline Drop initializing...');
-        
-        // Load data
-        this.loadData();
-        
-        // Set up event listeners
-        this.setupFilters();
-        
-        // Initialize modal
-        this.initModal();
-        
-        // Render conferences
-        this.render();
-        
-        // Initialize timeline
-        TimelineDrawer.init();
-        
-        // Update last updated date
-        this.updateLastUpdated();
-        
-        // Hide loading state
-        document.getElementById('loading-state').classList.add('hidden');
-        
-        console.log('✅ Deadline Drop ready!');
+        try {
+            console.log('🎯 Deadline Drop initializing...');
+
+            // Load data
+            this.loadData();
+
+            // Set up event listeners
+            this.setupFilters();
+            this.setupSearch();
+
+            // Initialize modal
+            this.initModal();
+
+            // Update category counts
+            this.updateCategoryCounts();
+
+            // Render conferences
+            this.render();
+
+            // Initialize timeline
+            TimelineDrawer.init();
+
+            // Update last updated date
+            this.updateLastUpdated();
+
+            // Update filter indicator position
+            this.updateFilterIndicator();
+
+            // Hide loading state
+            document.getElementById('loading-state').classList.add('hidden');
+
+            console.log('✅ Deadline Drop ready!');
+        } catch (error) {
+            console.error('❌ Error initializing app:', error);
+            // Still hide loading and show error
+            const loadingState = document.getElementById('loading-state');
+            if (loadingState) {
+                loadingState.innerHTML = `<p style="color: red;">Error loading: ${error.message}</p>`;
+            }
+        }
     },
     
     /**
@@ -175,34 +192,156 @@ const App = {
      */
     setupFilters() {
         const filterButtons = document.querySelectorAll('.filter-pill');
-        
+
         filterButtons.forEach(button => {
             button.addEventListener('click', () => {
                 // Update active state
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                
+
                 // Apply filter
                 this.activeFilter = button.dataset.category;
                 this.applyFilter();
+
+                // Update indicator position
+                this.updateFilterIndicator();
             });
         });
     },
-    
+
     /**
-     * Apply the current filter
+     * Update the sliding filter indicator position
+     */
+    updateFilterIndicator() {
+        const indicator = document.getElementById('filter-indicator');
+        const activeButton = document.querySelector('.filter-pill.active');
+        const filterGroup = document.getElementById('filter-group');
+
+        if (!indicator || !activeButton || !filterGroup) return;
+
+        // Only show on desktop
+        if (window.innerWidth <= 768) {
+            indicator.style.opacity = '0';
+            return;
+        }
+
+        indicator.style.opacity = '1';
+
+        // Calculate position relative to filter group
+        const groupRect = filterGroup.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+
+        // Account for filter-group padding (4px)
+        const padding = 4;
+        const left = buttonRect.left - groupRect.left;
+        const width = buttonRect.width;
+
+        indicator.style.width = `${width}px`;
+        indicator.style.left = `${left}px`;
+        indicator.style.height = `${buttonRect.height}px`;
+    },
+
+    /**
+     * Set up search functionality
+     */
+    setupSearch() {
+        const searchInput = document.getElementById('search-input');
+        const searchClear = document.getElementById('search-clear');
+
+        if (!searchInput) return;
+
+        // Real-time search
+        searchInput.addEventListener('input', (e) => {
+            this.searchQuery = e.target.value.toLowerCase().trim();
+            this.applyFilter();
+        });
+
+        // Clear button
+        if (searchClear) {
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                this.searchQuery = '';
+                this.applyFilter();
+                searchInput.focus();
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Cmd+K or Ctrl+K to focus search
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+
+            // / to focus search (when not already in an input)
+            if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+
+            // Escape to clear and blur search
+            if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.value = '';
+                this.searchQuery = '';
+                this.applyFilter();
+                searchInput.blur();
+            }
+        });
+    },
+
+    /**
+     * Apply the current filter and search
      */
     applyFilter() {
+        // Start with all conferences or filtered by category
         if (this.activeFilter === 'all') {
             this.filteredConferences = [...this.conferences];
         } else {
-            this.filteredConferences = this.conferences.filter(conf => 
+            this.filteredConferences = this.conferences.filter(conf =>
                 conf.category === this.activeFilter
             );
         }
-        
+
+        // Apply search filter
+        if (this.searchQuery) {
+            this.filteredConferences = this.filteredConferences.filter(conf => {
+                const name = conf.name.toLowerCase();
+                const fullName = `${conf.name} ${conf.year}`.toLowerCase();
+                const location = `${conf.location.city} ${conf.location.country}`.toLowerCase();
+                const category = conf.category.toLowerCase();
+
+                return (
+                    name.includes(this.searchQuery) ||
+                    fullName.includes(this.searchQuery) ||
+                    location.includes(this.searchQuery) ||
+                    category.includes(this.searchQuery)
+                );
+            });
+        }
+
         this.render();
         TimelineDrawer.redraw();
+    },
+
+    /**
+     * Update category count badges
+     */
+    updateCategoryCounts() {
+        const categories = ['all', 'ml', 'cv', 'nlp', 'speech', 'other'];
+
+        categories.forEach(cat => {
+            const countEl = document.getElementById(`count-${cat}`);
+            if (!countEl) return;
+
+            if (cat === 'all') {
+                countEl.textContent = this.conferences.length;
+            } else {
+                const count = this.conferences.filter(c => c.category === cat).length;
+                countEl.textContent = count;
+            }
+        });
     },
     
     /**
@@ -211,47 +350,93 @@ const App = {
     render() {
         const grid = document.getElementById('conference-grid');
         const template = document.getElementById('card-template');
-        
+
         // Stop existing timers
         CountdownTimer.stopAllTimers();
-        
+
         // Clear grid
         grid.innerHTML = '';
-        
-        // Get column count for snake ordering
-        const columns = this.getColumnCount();
-        
-        // Render each conference with snake order
+
+        // Remove any existing no results message
+        const existingNoResults = document.querySelector('.no-results');
+        if (existingNoResults) {
+            existingNoResults.remove();
+        }
+
+        // Show no results message if needed
+        if (this.filteredConferences.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.innerHTML = `
+                <div class="no-results-icon">🔍</div>
+                <h3>No conferences found</h3>
+                <p>${this.searchQuery
+                    ? `No results for "${this.searchQuery}". Try a different search term.`
+                    : 'No conferences in this category yet.'
+                }</p>
+            `;
+            grid.parentNode.insertBefore(noResults, grid.nextSibling);
+            return;
+        }
+
+        // Render each conference
         this.filteredConferences.forEach((conf, index) => {
             const card = this.createCard(conf, template, index);
-            
-            // Apply snake ordering via CSS order
-            const row = Math.floor(index / columns);
-            const posInRow = index % columns;
-            
-            // Even rows: normal order, Odd rows: reversed
-            let visualIndex;
-            if (row % 2 === 0) {
-                visualIndex = row * columns + posInRow;
-            } else {
-                visualIndex = row * columns + (columns - 1 - posInRow);
-            }
-            
-            card.style.order = visualIndex;
-            
+
             grid.appendChild(card);
         });
+
+        // Apply snake ordering via CSS order after layout
+        this.applySnakeOrder(grid);
     },
     
     /**
-     * Get current column count based on viewport
+     * Apply snake ordering and animation delays based on actual layout
+     * @param {HTMLElement} grid - Grid container
      */
-    getColumnCount() {
-        const width = window.innerWidth;
-        if (width <= 600) return 1;
-        if (width <= 900) return 2;
-        if (width <= 1200) return 3;
-        return 4;
+    applySnakeOrder(grid) {
+        const columns = this.getColumnCount(grid);
+        const cards = Array.from(grid.querySelectorAll('.conference-card:not(.hidden)'));
+        const delayPerCard = 0.35; // seconds between each card
+        const initialDelay = 0.4; // wait for line to start
+
+        cards.forEach((card, index) => {
+            const row = Math.floor(index / columns);
+            const posInRow = index % columns;
+
+            // Even rows: normal order, Odd rows: reversed
+            const visualIndex = row % 2 === 0
+                ? row * columns + posInRow
+                : row * columns + (columns - 1 - posInRow);
+
+            card.style.order = visualIndex;
+
+            // Animation delay based on chronological index (follows snake path)
+            const delay = initialDelay + (index * delayPerCard);
+            card.style.animationDelay = `${delay}s`;
+            card.style.animationPlayState = 'running';
+        });
+    },
+
+    /**
+     * Get current column count based on actual rendered layout
+     * @param {HTMLElement} grid - Grid container
+     */
+    getColumnCount(grid) {
+        const container = grid || document.getElementById('conference-grid');
+        if (!container) return 1;
+
+        const card = container.querySelector('.conference-card:not(.hidden)')
+            || container.querySelector('.conference-card');
+        if (!card) return 1;
+
+        const containerWidth = container.clientWidth;
+        const cardWidth = card.getBoundingClientRect().width;
+        const styles = window.getComputedStyle(container);
+        const columnGap = parseFloat(styles.columnGap) || 0;
+
+        const maxColumns = Math.floor((containerWidth + columnGap) / (cardWidth + columnGap));
+        return Math.max(1, Math.min(maxColumns, 4));
     },
     
     /**
@@ -310,20 +495,19 @@ const App = {
             countdownContainer.innerHTML = '<span class="countdown-value">—</span>';
         }
         
-        // Deadlines list - always render 5 slots for consistency
+        // Deadlines list - render ALL deadlines (scrollable)
         const deadlinesList = card.querySelector('.deadlines-list');
-        const MAX_SLOTS = 5;
+        const deadlinesContainer = card.querySelector('.card-deadlines-list');
 
         // Sort deadlines by date before rendering
         const sortedDeadlines = [...conf.deadlines].sort((a, b) =>
             new Date(a.date) - new Date(b.date)
         );
 
-        // Smart deadline selection: show last passed + current + future
         const now = new Date();
-        let activeIndex = -1;
 
-        // Find the first upcoming deadline
+        // Find the first upcoming deadline index
+        let activeIndex = -1;
         for (let i = 0; i < sortedDeadlines.length; i++) {
             if (new Date(sortedDeadlines[i].date) > now) {
                 activeIndex = i;
@@ -331,60 +515,50 @@ const App = {
             }
         }
 
-        // Build display list: [last passed (if any)] + [current] + [future...]
-        let displayDeadlines = [];
+        // Render ALL deadlines
+        sortedDeadlines.forEach((deadline, i) => {
+            const li = document.createElement('li');
+            const deadlineDate = new Date(deadline.date);
+            const isPassed = deadlineDate <= now;
+            const isActive = i === activeIndex;
+
+            li.className = 'deadline-item ' + (isPassed ? 'passed' : (isActive ? 'active' : 'upcoming'));
+
+            const statusIcon = isPassed ? '✓' : (isActive ? '●' : '○');
+
+            const dateStr = deadline.endDate
+                ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
+                : CountdownTimer.formatDate(deadline.date);
+
+            const estimatedMark = deadline.estimated ? '~' : '';
+
+            li.innerHTML = `
+                <span class="status-icon">${statusIcon}</span>
+                <span class="deadline-type">${deadline.label}</span>
+                <span class="deadline-date ${deadline.estimated ? 'estimated' : ''}">${estimatedMark}${dateStr}</span>
+            `;
+
+            deadlinesList.appendChild(li);
+        });
+
+        // Auto-scroll to show: 1 last passed + current deadline at top
+        // Each item is ~28px (24px height + 4px gap)
+        const itemHeight = 28;
+        let scrollToIndex = 0;
 
         if (activeIndex === -1) {
-            // All passed - show last 5
-            displayDeadlines = sortedDeadlines.slice(-MAX_SLOTS);
-            activeIndex = -1; // No active
-        } else if (activeIndex === 0) {
-            // No passed deadlines - show first 5 upcoming
-            displayDeadlines = sortedDeadlines.slice(0, MAX_SLOTS);
-        } else {
-            // Show: 1 last passed + current + remaining future (up to 5 total)
-            const lastPassed = sortedDeadlines[activeIndex - 1];
-            const upcoming = sortedDeadlines.slice(activeIndex, activeIndex + MAX_SLOTS - 1);
-            displayDeadlines = [lastPassed, ...upcoming];
-            activeIndex = 1; // Active is now at index 1 in display list
+            // All passed - scroll to show last 5
+            scrollToIndex = Math.max(0, sortedDeadlines.length - 5);
+        } else if (activeIndex > 0) {
+            // Has passed deadlines - show 1 passed before current
+            scrollToIndex = activeIndex - 1;
         }
 
-        // Render deadlines
-        for (let i = 0; i < MAX_SLOTS; i++) {
-            const li = document.createElement('li');
-
-            if (i < displayDeadlines.length) {
-                const deadline = displayDeadlines[i];
-                const deadlineDate = new Date(deadline.date);
-                const isPassed = deadlineDate <= now;
-                const isActive = i === activeIndex;
-                
-                li.className = 'deadline-item ' + (isPassed ? 'passed' : (isActive ? 'active' : 'upcoming'));
-                
-                const statusIcon = isPassed ? '✓' : (isActive ? '●' : '○');
-                
-                const dateStr = deadline.endDate 
-                    ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
-                    : CountdownTimer.formatDate(deadline.date);
-                
-                const estimatedMark = deadline.estimated ? '~' : '';
-                
-                li.innerHTML = `
-                    <span class="status-icon">${statusIcon}</span>
-                    <span class="deadline-type">${deadline.label}</span>
-                    <span class="deadline-date ${deadline.estimated ? 'estimated' : ''}">${estimatedMark}${dateStr}</span>
-                `;
-            } else {
-                // Empty slot for alignment
-                li.className = 'deadline-item empty';
-                li.innerHTML = `
-                    <span class="status-icon">○</span>
-                    <span class="deadline-type">—</span>
-                    <span class="deadline-date">—</span>
-                `;
-            }
-            
-            deadlinesList.appendChild(li);
+        // Set initial scroll position after DOM renders
+        if (deadlinesContainer && scrollToIndex > 0) {
+            setTimeout(() => {
+                deadlinesContainer.scrollTop = scrollToIndex * itemHeight;
+            }, 50);
         }
         
         // Click to open modal with fly animation
@@ -441,26 +615,10 @@ const App = {
         // Set header gradient
         const header = overlay.querySelector('.modal-gradient-header');
         header.style.background = gradient;
-        
-        // Set logo
-        const logoImg = document.getElementById('modal-logo-img');
-        const logoText = document.getElementById('modal-logo-text');
-        const logoName = conf.name.toLowerCase();
-        
-        logoImg.src = `assets/logos/${logoName}.svg`;
-        logoImg.onerror = () => {
-            logoImg.onerror = () => {
-                logoImg.style.display = 'none';
-                logoText.textContent = conf.name.substring(0, 2);
-                logoText.style.display = 'block';
-            };
-            logoImg.src = `assets/logos/${logoName}.png`;
-        };
-        logoImg.style.display = 'block';
-        logoText.style.display = 'none';
-        
-        // Set title and location
+
+        // Set title, full name, and location
         document.getElementById('modal-title').textContent = `${conf.name} ${conf.year}`;
+        document.getElementById('modal-fullname').textContent = conf.fullName || '';
         document.getElementById('modal-location').textContent = `${conf.location.city}, ${conf.location.country} ${conf.location.flag}`;
         
         // Set countdown
@@ -749,13 +907,14 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// Handle resize to update snake ordering
+// Handle resize to update snake ordering and filter indicator
 let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
         App.render();
         TimelineDrawer.redraw();
+        App.updateFilterIndicator();
     }, 150);
 });
 

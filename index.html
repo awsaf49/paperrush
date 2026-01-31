@@ -24,43 +24,55 @@
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">🏃‍♂️💨</span>
-                <h1 class="logo-text">Catch Me <span class="logo-accent">If You Can</span></h1>
-            </div>
-            <p class="tagline">race against conference deadlines</p>
-            <p class="last-updated">Last updated: <span id="update-date">—</span></p>
+            <h1 class="site-title">
+                <span>C</span><span class="letter-stopwatch"></span><span>nference</span>
+                <span class="letter-racing">D</span><span>eadlines</span>
+            </h1>
+            <p class="site-subtitle">Catch Them If You Can</p>
         </div>
     </header>
 
     <!-- Filter Bar -->
     <nav class="filter-bar">
         <div class="filter-container">
-            <div class="filter-group">
+            <div class="filter-group" id="filter-group">
+                <div class="filter-indicator" id="filter-indicator"></div>
                 <button class="filter-pill active" data-category="all">
                     <span class="filter-dot"></span>
-                    All
+                    <span>All</span>
+                    <span class="filter-count" id="count-all">—</span>
                 </button>
                 <button class="filter-pill" data-category="ml">
                     <span class="filter-dot" style="--dot-color: #AF52DE"></span>
-                    ML
+                    <span>ML</span>
+                    <span class="filter-count" id="count-ml">—</span>
                 </button>
                 <button class="filter-pill" data-category="cv">
                     <span class="filter-dot" style="--dot-color: #007AFF"></span>
-                    Vision
+                    <span>Vision</span>
+                    <span class="filter-count" id="count-cv">—</span>
                 </button>
                 <button class="filter-pill" data-category="nlp">
                     <span class="filter-dot" style="--dot-color: #34C759"></span>
-                    NLP
+                    <span>NLP</span>
+                    <span class="filter-count" id="count-nlp">—</span>
                 </button>
                 <button class="filter-pill" data-category="speech">
                     <span class="filter-dot" style="--dot-color: #FF9500"></span>
-                    Speech
+                    <span>Speech</span>
+                    <span class="filter-count" id="count-speech">—</span>
                 </button>
                 <button class="filter-pill" data-category="other">
                     <span class="filter-dot" style="--dot-color: #8E8E93"></span>
-                    Other
+                    <span>Other</span>
+                    <span class="filter-count" id="count-other">—</span>
                 </button>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-input" placeholder="Search conferences..." autocomplete="off">
+                <span class="search-icon">🔍</span>
+                <span class="search-shortcut">⌘K</span>
+                <button class="search-clear" id="search-clear" type="button">✕</button>
             </div>
         </div>
     </nav>
@@ -85,8 +97,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a></p>
-            <p class="footer-sub">Auto-updated weekly</p>
+            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a> · Updated <span id="update-date">—</span></p>
         </div>
     </footer>
 
@@ -127,11 +138,8 @@
             <div class="modal-gradient-header">
                 <button class="modal-close-btn" id="modal-close">✕</button>
                 <div class="modal-header-content">
-                    <div class="modal-logo">
-                        <img src="" alt="" class="modal-logo-img" id="modal-logo-img">
-                        <span class="modal-logo-text" id="modal-logo-text"></span>
-                    </div>
                     <h2 class="modal-title" id="modal-title"></h2>
+                    <p class="modal-fullname" id="modal-fullname"></p>
                     <p class="modal-location" id="modal-location"></p>
                     <div class="modal-countdown">
                         <span class="modal-countdown-label" id="modal-countdown-label"></span>
@@ -194,6 +202,13 @@
     </div>
 
     <!-- Scripts -->
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            document.getElementById('loading-state').innerHTML =
+                '<p style="color:red;padding:20px;">Error: ' + msg + '<br>at ' + url + ':' + line + '</p>';
+            return false;
+        };
+    </script>
     <script src="js/data.js"></script>
     <script src="js/countdown.js"></script>
     <script src="js/timeline.js"></script>

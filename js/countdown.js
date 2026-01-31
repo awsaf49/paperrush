@@ -77,31 +77,31 @@ const CountdownTimer = {
             const days = remaining.days % 30;
             const monthText = months === 1 ? 'month' : 'months';
             const dayText = days === 1 ? 'day' : 'days';
-            
+
             if (days === 0) {
                 return {
                     type: 'simple',
-                    value: months,
+                    value: String(months).padStart(2, '0'),
                     unit: months === 1 ? 'month' : 'months',
                     isDetailed: false
                 };
             }
-            
+
             return {
                 type: 'monthday',
-                months: months,
-                days: days,
+                months: String(months).padStart(2, '0'),
+                days: String(days).padStart(2, '0'),
                 monthUnit: monthText,
                 dayUnit: dayText,
                 isDetailed: false
             };
         }
-        
-        // 1-30 days - show days only
+
+        // 1-30 days - show days only (zero-padded)
         const dayText = remaining.days === 1 ? 'day' : 'days';
         return {
             type: 'simple',
-            value: remaining.days,
+            value: String(remaining.days).padStart(2, '0'),
             unit: dayText,
             isDetailed: false
         };
