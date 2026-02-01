@@ -9,6 +9,7 @@ const App = {
     activeFilter: 'all',
     searchQuery: '',
     hasAnimated: false,
+    viewMode: 'card', // 'card' or 'calendar'
 
     /**
      * Initialize the application
@@ -23,6 +24,7 @@ const App = {
             // Set up event listeners
             this.setupFilters();
             this.setupSearch();
+            this.setupViewToggle();
 
             // Initialize modal
             this.initModal();
@@ -298,6 +300,75 @@ const App = {
     },
 
     /**
+     * Set up view toggle between card and calendar views
+     */
+    setupViewToggle() {
+        const toggleBtns = document.querySelectorAll('.view-toggle-btn');
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.setViewMode(btn.dataset.view);
+            });
+        });
+
+        // Initialize indicator position
+        this.updateViewToggleIndicator();
+    },
+
+    /**
+     * Update the liquid glass indicator position for view toggle
+     */
+    updateViewToggleIndicator() {
+        const indicator = document.getElementById('view-toggle-indicator');
+        const activeBtn = document.querySelector('.view-toggle-btn.active');
+        const container = document.getElementById('view-toggle');
+
+        if (!indicator || !activeBtn || !container) return;
+
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+
+        const left = btnRect.left - containerRect.left;
+        indicator.style.left = `${left}px`;
+        indicator.style.width = `${btnRect.width}px`;
+    },
+
+    /**
+     * Switch between card and calendar view modes
+     * @param {string} mode - 'card' or 'calendar'
+     */
+    setViewMode(mode) {
+        this.viewMode = mode;
+
+        // Update toggle button states
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === mode);
+        });
+
+        // Update indicator position
+        this.updateViewToggleIndicator();
+
+        // Show/hide containers
+        const cardContainer = document.querySelector('.timeline-container');
+        const calendarContainer = document.getElementById('calendar-container');
+
+        if (mode === 'card') {
+            cardContainer.classList.remove('hidden');
+            calendarContainer.classList.add('hidden');
+            // Re-apply snake order after container is visible
+            requestAnimationFrame(() => {
+                const grid = document.getElementById('conference-grid');
+                this.applySnakeOrder(grid);
+                TimelineDrawer.redraw();
+            });
+        } else {
+            cardContainer.classList.add('hidden');
+            calendarContainer.classList.remove('hidden');
+            Calendar.setConferences(this.filteredConferences);
+            Calendar.init(this.filteredConferences);
+        }
+    },
+
+    /**
      * Apply the current filter and search
      */
     applyFilter() {
@@ -329,6 +400,12 @@ const App = {
 
         this.render();
         TimelineDrawer.redraw();
+
+        // Sync with calendar if in calendar view
+        if (this.viewMode === 'calendar') {
+            Calendar.setConferences(this.filteredConferences);
+            Calendar.render();
+        }
     },
 
     /**
