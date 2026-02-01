@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-02-01T04:30:33Z
+ * Last updated: 2026-02-01T12:29:26Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-02-01T04:30:33Z",
+	"lastUpdated": "2026-02-01T12:29:26Z",
 	"conferences": [
 			{
 				"id": "iccv-2027",
@@ -384,24 +384,24 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Open Review Profile Deadline",
-						"date": "2025-11-16T23:59:00-12:00",
+						"label": "Open Review Profile",
+						"date": "2025-11-16T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "supplementary",
-						"label": "Supplementary Materials Deadline",
-						"date": "2025-11-20T23:59:00-12:00",
+						"label": "Supplementary Materials",
+						"date": "2025-11-20T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Tutorial Submission Deadline",
-						"date": "2025-12-15T23:59:00-12:00",
+						"label": "Tutorial Submission",
+						"date": "2025-12-15T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -409,7 +409,7 @@ const CONFERENCES_DATA = {
 					{
 						"type": "rebuttal",
 						"label": "Rebuttal Period Starts",
-						"date": "2026-01-22T23:59:00-12:00",
+						"date": "2026-01-22T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -417,15 +417,15 @@ const CONFERENCES_DATA = {
 					{
 						"type": "rebuttal",
 						"label": "Reviews Released",
-						"date": "2026-01-22T23:59:00-12:00",
+						"date": "2026-01-22T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Creative AI Art Submission Deadline",
-						"date": "2026-03-08T23:59:00-12:00",
+						"label": "Creative AI Art Submission",
+						"date": "2026-03-08T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -433,7 +433,7 @@ const CONFERENCES_DATA = {
 					{
 						"type": "notification",
 						"label": "Art Acceptance Notification",
-						"date": "2026-03-27T23:59:00-12:00",
+						"date": "2026-03-27T18:59:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -465,7 +465,7 @@ const CONFERENCES_DATA = {
 				],
 				"links": {
 					"official": "https://cvpr.thecvf.com/Conferences/2026",
-					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Workshop_Proposals",
+					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Conference",
 					"template": "https://github.com/cvpr-org/author-kit",
 					"authorGuide": "https://cvpr.thecvf.com/Conferences/2026/AuthorGuidelines",
 					"reviewerGuide": "https://cvpr.thecvf.com/Conferences/2026/ReviewerGuidelines",
@@ -478,24 +478,26 @@ const CONFERENCES_DATA = {
 					"pageLimit": "8 pages + unlimited references",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF",
-					"computeReportingInitiative": "Awards recognizing exceptional efficiency and transparency.",
-					"findingsTrack": "Venue for technically sound papers with solid experimental validation."
+					"computeReportingInitiative": "awards recognizing exceptional efficiency and transparency",
+					"findingsTrack": "venue for technically sound papers with solid experimental validation"
 				},
 				"deskRejectReasons": [
-					"Not properly anonymized",
-					"Do not use the template",
-					"More than eight pages (excluding references)",
+					"Papers not properly anonymized",
+					"Papers do not use the template",
+					"Papers with more than eight pages (excluding references)",
 					"Authors who have not completed their OpenReview profiles",
 					"Submissions containing prompt injection attempts",
+					"Incomplete or inaccurate conflict information",
 					"Incomplete OpenReview profiles",
 					"Incomplete author enrollment",
 					"Papers with incomplete author registrations after the deadline",
-					"More than 25 paper submissions per author",
 					"Incomplete submission",
 					"Submission does not meet required criteria",
 					"Papers containing citations of non-existent material",
 					"Papers containing obvious factual inaccuracies",
-					"Submission contains prompt injection"
+					"Submission contains prompt injection",
+					"Prompt injection",
+					"Violation of the ethics policy"
 				],
 				"notes": []
 			},
