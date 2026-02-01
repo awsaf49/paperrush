@@ -1,0 +1,143 @@
+name: Update Conference Deadlines
+
+on:
+  # Run weekly on Mondays at 6 AM UTC
+  schedule:
+    - cron: '0 6 * * 1'
+
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      conferences:
+        description: 'Conferences to scrape (comma-separated, or "all")'
+        required: false
+        default: 'all'
+      year:
+        description: 'Conference year'
+        required: false
+        default: '2026'
+
+env:
+  # All conferences supported by the scraper
+  ALL_CONFERENCES: 'cvpr,iccv,eccv,icml,neurips,iclr,aaai,acl,emnlp,naacl,interspeech,icassp'
+
+jobs:
+  update-deadlines:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install requests openai
+
+      - name: Determine conferences to scrape
+        id: config
+        run: |
+          if [ "${{ github.event.inputs.conferences }}" = "all" ] || [ -z "${{ github.event.inputs.conferences }}" ]; then
+            echo "conferences=${{ env.ALL_CONFERENCES }}" >> $GITHUB_OUTPUT
+          else
+            echo "conferences=${{ github.event.inputs.conferences }}" >> $GITHUB_OUTPUT
+          fi
+
+          if [ -z "${{ github.event.inputs.year }}" ]; then
+            echo "year=2026" >> $GITHUB_OUTPUT
+          else
+            echo "year=${{ github.event.inputs.year }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run scraper for each conference
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          mkdir -p /tmp/scraped
+
+          # Split conferences by comma
+          IFS=',' read -ra CONFS <<< "${{ steps.config.outputs.conferences }}"
+
+          for conf in "${CONFS[@]}"; do
+            conf=$(echo "$conf" | xargs)  # Trim whitespace
+            echo "=================================================="
+            echo "Scraping: $conf (year: ${{ steps.config.outputs.year }})"
+            echo "=================================================="
+
+            python scripts/scraper.py "$conf" \
+              --year ${{ steps.config.outputs.year }} \
+              --output "/tmp/scraped/${conf}.json" \
+              --quiet || echo "Warning: Failed to scrape $conf"
+
+            # Small delay between conferences to avoid rate limiting
+            sleep 2
+          done
+
+          echo ""
+          echo "Scraped files:"
+          ls -la /tmp/scraped/
+
+      - name: Convert and update data.js
+        run: |
+          # Find all scraped JSON files
+          SCRAPED_FILES=$(find /tmp/scraped -name "*.json" -type f | tr '\n' ' ')
+
+          if [ -z "$SCRAPED_FILES" ]; then
+            echo "No conferences were scraped successfully. Exiting."
+            exit 1
+          fi
+
+          echo "Converting: $SCRAPED_FILES"
+
+          python scripts/update_from_scraper.py \
+            --input $SCRAPED_FILES \
+            --output js/data.js
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet js/data.js; then
+            echo "No changes to data.js"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in data.js"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            git diff --stat js/data.js
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add js/data.js
+          git commit -m "chore: update conference deadlines [automated]
+
+          Updated conferences: ${{ steps.config.outputs.conferences }}
+          Year: ${{ steps.config.outputs.year }}
+
+          Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+          git push
+
+      - name: Summary
+        run: |
+          echo "## Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Conferences scraped:** ${{ steps.config.outputs.conferences }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Year:** ${{ steps.config.outputs.year }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes detected:** ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.changes.outputs.has_changes }}" = "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ data.js was updated and pushed to main branch." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "GitHub Pages will automatically deploy the changes." >> $GITHUB_STEP_SUMMARY
+          fi

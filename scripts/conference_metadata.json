@@ -1,0 +1,156 @@
+{
+  "cvpr": {
+    "fullName": "Computer Vision and Pattern Recognition",
+    "category": "cv",
+    "brandColor": "#CC0000",
+    "location": {
+      "city": "Denver",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "Denver Convention Center"
+    }
+  },
+  "iccv": {
+    "fullName": "International Conference on Computer Vision",
+    "category": "cv",
+    "brandColor": "#FF4500",
+    "location": {
+      "city": "TBD",
+      "country": "TBD",
+      "flag": "\ud83c\udf0d",
+      "venue": "TBD"
+    }
+  },
+  "eccv": {
+    "fullName": "European Conference on Computer Vision",
+    "category": "cv",
+    "brandColor": "#2E8B57",
+    "location": {
+      "city": "Malm\u00f6",
+      "country": "Sweden",
+      "flag": "\ud83c\uddf8\ud83c\uddea",
+      "venue": null
+    }
+  },
+  "icml": {
+    "fullName": "International Conference on Machine Learning",
+    "category": "ml",
+    "brandColor": "#1E3A5F",
+    "location": {
+      "city": "Seoul",
+      "country": "South Korea",
+      "flag": "\ud83c\uddf0\ud83c\uddf7",
+      "venue": "COEX Convention & Exhibition Center"
+    }
+  },
+  "neurips": {
+    "fullName": "Neural Information Processing Systems",
+    "category": "ml",
+    "brandColor": "#8B0000",
+    "location": {
+      "city": "Vancouver",
+      "country": "Canada",
+      "flag": "\ud83c\udde8\ud83c\udde6",
+      "venue": "Vancouver Convention Center"
+    }
+  },
+  "iclr": {
+    "fullName": "International Conference on Learning Representations",
+    "category": "ml",
+    "brandColor": "#4B0082",
+    "location": {
+      "city": "Vienna",
+      "country": "Austria",
+      "flag": "\ud83c\udde6\ud83c\uddf9",
+      "venue": "Austria Center Vienna"
+    }
+  },
+  "aaai": {
+    "fullName": "AAAI Conference on Artificial Intelligence",
+    "category": "ml",
+    "brandColor": "#00008B",
+    "location": {
+      "city": "Washington DC",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "Walter E. Washington Convention Center"
+    }
+  },
+  "acl": {
+    "fullName": "Annual Meeting of the Association for Computational Linguistics",
+    "category": "nlp",
+    "brandColor": "#228B22",
+    "location": {
+      "city": "Toronto",
+      "country": "Canada",
+      "flag": "\ud83c\udde8\ud83c\udde6",
+      "venue": "Metro Toronto Convention Centre"
+    }
+  },
+  "emnlp": {
+    "fullName": "Empirical Methods in Natural Language Processing",
+    "category": "nlp",
+    "brandColor": "#006400",
+    "location": {
+      "city": "Miami",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "Miami Beach Convention Center"
+    }
+  },
+  "naacl": {
+    "fullName": "North American Chapter of the Association for Computational Linguistics",
+    "category": "nlp",
+    "brandColor": "#2E8B57",
+    "location": {
+      "city": "Seattle",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "Seattle Convention Center"
+    }
+  },
+  "coling": {
+    "fullName": "International Conference on Computational Linguistics",
+    "category": "nlp",
+    "brandColor": "#32CD32",
+    "location": {
+      "city": "Bangkok",
+      "country": "Thailand",
+      "flag": "\ud83c\uddf9\ud83c\udded",
+      "venue": "Queen Sirikit National Convention Center"
+    }
+  },
+  "interspeech": {
+    "fullName": "Annual Conference of the International Speech Communication Association",
+    "category": "speech",
+    "brandColor": "#FF6347",
+    "location": {
+      "city": "Rotterdam",
+      "country": "Netherlands",
+      "flag": "\ud83c\uddf3\ud83c\uddf1",
+      "venue": "Rotterdam Ahoy"
+    }
+  },
+  "icassp": {
+    "fullName": "IEEE International Conference on Acoustics, Speech and Signal Processing",
+    "category": "speech",
+    "brandColor": "#DC143C",
+    "location": {
+      "city": "Hyderabad",
+      "country": "India",
+      "flag": "\ud83c\uddee\ud83c\uddf3",
+      "venue": "HICC Hyderabad"
+    }
+  },
+  "wacv": {
+    "fullName": "Winter Conference on Applications of Computer Vision",
+    "category": "cv",
+    "brandColor": "#4169E1",
+    "location": {
+      "city": "Tucson",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "JW Marriott Tucson Starr Pass"
+    }
+  }
+}

@@ -683,8 +683,13 @@ const App = {
         const deadlinesList = document.getElementById('modal-deadlines-list');
         deadlinesList.innerHTML = '';
         const now = new Date();
-        
-        conf.deadlines.forEach((deadline, i) => {
+
+        // Sort deadlines by date before rendering
+        const sortedDeadlines = [...conf.deadlines].sort((a, b) =>
+            new Date(a.date) - new Date(b.date)
+        );
+
+        sortedDeadlines.forEach((deadline, i) => {
             const li = document.createElement('li');
             const deadlineDate = new Date(deadline.date);
             const isPassed = deadlineDate <= now;
