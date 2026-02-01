@@ -26,6 +26,10 @@ env:
   # All conferences supported by the scraper
   ALL_CONFERENCES: 'cvpr,iccv,eccv,icml,neurips,iclr,aaai,acl,emnlp,naacl,interspeech,icassp'
 
+# Grant write permissions to push commits
+permissions:
+  contents: write
+
 jobs:
   update-deadlines:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
-# 🏃‍♂️💨 Catch Me If You Can (PaperRush)
+# ⏱️ Conference Deadline Tracker
 
-> **Race against conference deadlines** — A beautiful, modern conference deadline tracker for AI/ML researchers.
+> **Gotta Catch 'Em All** — A beautiful, modern conference deadline tracker for AI/ML researchers.
 
 **Live Demo:** [https://awsaf49.github.io/paperrush/](https://awsaf49.github.io/paperrush/)
 
@@ -14,6 +14,12 @@
 - **Clean typography** — Outfit font for headings, JetBrains Mono for countdowns
 - **Responsive design** — Works perfectly on desktop, tablet, and mobile (4→3→2→1 column layout)
 - **Snake grid ordering** — Cards flow naturally: Row 1 (1→2→3→4), Row 2 (8←7←6←5), etc.
+
+### 🎯 Title Effects
+- **Stopwatch "o"** — The "o" in "C**o**nference" is a ticking stopwatch
+- **Racing "D"** — The "D" in "**D**eadline" has a checkered racing flag pattern
+- **Location Pin** — A map pin marks the "a" in "Tr**a**cker"
+- **Pokémon Theme** — "Gotta Catch 'Em All" subtitle with gradient and icons
 
 ### ⏱️ Smart Countdown System
 - Shows **"X days"** for deadlines > 24 hours away
@@ -34,7 +40,7 @@ Click any card to see:
 - **All Deadlines**: Complete timeline with status indicators
 - **Important Notes & Desk Reject Reasons**: Critical submission guidelines
 
-### 🔍 Category Filtering
+### 🔍 Category Filtering & Search
 Filter conferences by type:
 - **ML** — Machine Learning (ICML, NeurIPS, ICLR)
 - **Vision** — Computer Vision (CVPR, ICCV, ECCV)
@@ -42,10 +48,14 @@ Filter conferences by type:
 - **Speech** — Speech/Audio (ICASSP, Interspeech)
 - **Other** — Miscellaneous (AAAI, IJCAI)
 
-### 🤖 Auto-Updates via GitHub Actions + Gemini
-- Weekly automated updates every Monday at 9 AM UTC
-- Gemini AI searches for latest deadline information
-- Commits changes automatically to keep data fresh
+Use `⌘K` (or `Ctrl+K`) to quickly search conferences.
+
+### 🤖 Auto-Updates via GitHub Actions + LLM Scraper
+- **Weekly automated updates** every Monday at 6 AM UTC
+- **On-demand scraping** by including `[scrape]` in commit message
+- **Manual trigger** from GitHub Actions UI
+- LLM-powered scraper extracts deadlines from conference websites
+- Smart merging preserves existing data when scrapes fail
 
 ---
 
@@ -56,7 +66,8 @@ Filter conferences by type:
 | Frontend | Vanilla HTML, CSS, JavaScript |
 | Fonts | Google Fonts (Outfit, JetBrains Mono) |
 | Hosting | GitHub Pages (free) |
-| Auto-updates | GitHub Actions + Google Gemini API |
+| Scraper | Python + OpenRouter API (LLM extraction) |
+| Auto-updates | GitHub Actions |
 | Design | CSS Custom Properties, Flexbox, Grid |
 
 **No build tools required!** Just static files that work anywhere.
@@ -67,105 +78,24 @@ Filter conferences by type:
 
 ```
 paperrush/
-├── index.html              # Main HTML file with card & modal templates
+├── index.html                  # Main HTML file with card & modal templates
 ├── css/
-│   └── styles.css          # All styles (~1100 lines)
+│   └── styles.css              # All styles (~1200 lines)
 ├── js/
-│   ├── data.js             # Conference data (auto-updated by Gemini)
-│   ├── app.js              # Main application logic
-│   ├── countdown.js        # Countdown timer module
-│   └── timeline.js         # Timeline connector SVG drawing
-├── assets/
-│   └── logos/              # Conference logo SVGs/PNGs
+│   ├── data.js                 # Conference data (auto-updated by scraper)
+│   ├── app.js                  # Main application logic
+│   ├── countdown.js            # Countdown timer module
+│   └── timeline.js             # Timeline connector SVG drawing
 ├── scripts/
-│   └── update_deadlines.py # Gemini-powered update script
+│   ├── scraper.py              # LLM-powered conference scraper
+│   ├── scraper_to_datajs.py    # Converts scraper output to data.js format
+│   ├── update_from_scraper.py  # Orchestrates scraping and updating
+│   └── conference_metadata.json # Static metadata for conferences
 ├── .github/
 │   └── workflows/
-│       └── update-deadlines.yml  # GitHub Actions workflow
+│       └── update-deadlines.yml # GitHub Actions workflow
+├── CLAUDE.md                   # AI assistant instructions
 └── README.md
-```
-
----
-
-## 🎨 Design Details
-
-### Gradient Patterns by Category
-
-Each category has a **unique gradient pattern**, not just different colors:
-
-| Category | Pattern | Colors |
-|----------|---------|--------|
-| **ML** | Diagonal sweep from top-left | Pink → Orange → Yellow |
-| **Vision** | Horizontal wave | Blue → Cyan → Purple |
-| **NLP** | Vertical bands | Green → Teal → Cyan |
-| **Speech** | Radial burst from bottom | Orange → Yellow → Pink |
-| **Other** | Corner accents | Violet → Magenta → Blue |
-
-### Card Layout
-
-```
-┌─────────────────────────────┐
-│  [Logo]  Conference Name    │  ← Gradient Zone
-│          Location 🏳️        │
-│                             │
-│      PAPER SUBMISSION       │
-│          12 days            │
-├─────────────────────────────┤  ← Divider
-│  ✓ Abstract      Jan 23     │  ← White Zone
-│  ● Paper         Jan 30     │    (Fixed 5 slots
-│  ○ Notification  May 01     │     for alignment)
-│  ○ Camera Ready  Jun 15     │
-│  ○ Conference    Jul 06-11  │
-│                             │
-│      Tap for details        │
-└─────────────────────────────┘
-```
-
-### Status Icons
-- ✓ **Passed** — Deadline has passed (gray, strikethrough)
-- ● **Active** — Current deadline (green dot)
-- ○ **Upcoming** — Future deadline (gray circle)
-
-### Modal Structure
-```
-┌───────────────────────────────────────┐
-│ [X]                                   │
-│         [Logo]                        │  ← Gradient Header
-│    Conference Name 2026               │
-│    City, Country 🏳️                   │
-│  ┌─────────────────────────┐          │
-│  │ PAPER SUBMISSION        │          │
-│  │ 2 months 15 days        │          │
-│  └─────────────────────────┘          │
-├───────────────────────────────────────┤
-│ 📎 Quick Links                        │
-│ ┌─────────────┐ ┌─────────────┐       │
-│ │🌐 Website   │ │📄 CFP       │       │
-│ └─────────────┘ └─────────────┘       │
-│ ┌─────────────┐ ┌─────────────┐       │
-│ │📝 Template  │ │📖 Guidelines│       │
-│ └─────────────┘ └─────────────┘       │
-├───────────────────────────────────────┤
-│ 📊 Key Information                    │
-│ ┌──────────┬──────────┬──────────┐    │
-│ │Page Limit│Review    │Acceptance│    │
-│ │ 9 pages  │Double-bl │  ~25%   │    │
-│ └──────────┴──────────┴──────────┘    │
-├───────────────────────────────────────┤
-│ 📅 All Deadlines                      │
-│  ✓ Abstract       Jan 23, 2026        │
-│  ● Paper          Jan 30, 2026        │
-│  ○ Notification   May 01, 2026        │
-│  ○ Camera Ready   Jun 15, 2026        │
-│  ○ Conference     Jul 06-11, 2026     │
-├───────────────────────────────────────┤
-│ ⚠️ Important Notes & Desk Reject      │
-│ ┌─────────────────────────────────┐   │
-│ │ • Exceeds 9-page limit          │   │
-│ │ • Author names visible in PDF   │   │
-│ │ • Wrong template format         │   │
-│ └─────────────────────────────────┘   │
-└───────────────────────────────────────┘
 ```
 
 ---
@@ -189,6 +119,70 @@ Just upload all files to:
 - Vercel
 - Cloudflare Pages
 - Any web server
+
+---
+
+## 🤖 Setting Up Auto-Updates
+
+### 1. Get OpenRouter API Key
+
+1. Go to [OpenRouter](https://openrouter.ai/)
+2. Create an account and get API key
+
+### 2. Add GitHub Secret
+
+1. Go to your repo → Settings → Secrets → Actions
+2. Click "New repository secret"
+3. Name: `OPENROUTER_API_KEY`
+4. Value: Your API key
+
+### 3. Trigger Methods
+
+| Method | How to Trigger |
+|--------|----------------|
+| **Weekly Schedule** | Automatic every Monday 6 AM UTC |
+| **On Push** | Include `[scrape]` in commit message |
+| **Manual** | Go to Actions → "Update Conference Deadlines" → "Run workflow" |
+
+### Example: Push with Scraping
+
+```bash
+git add .
+git commit -m "feat: add new feature [scrape]"
+git push
+```
+
+This will deploy your changes AND run the scraper to update all conference deadlines.
+
+### Example: Push without Scraping
+
+```bash
+git add .
+git commit -m "fix: some bug fix"
+git push
+```
+
+This only deploys your changes without triggering the scraper.
+
+---
+
+## 🔧 Manual Scraping
+
+### Scrape Specific Conferences
+
+```bash
+python scripts/update_from_scraper.py --conferences cvpr,icml --year 2026
+```
+
+### Dry Run (Preview Without Writing)
+
+```bash
+python scripts/update_from_scraper.py --conferences cvpr --year 2026 --dry-run
+```
+
+### Supported Conferences
+
+`cvpr`, `iccv`, `eccv`, `icml`, `neurips`, `iclr`, `aaai`, `acl`, `emnlp`, `naacl`, `interspeech`, `icassp`
 
 ---
 
@@ -216,13 +210,13 @@ Edit `js/data.js`:
     deadlines: [
         { type: "abstract", label: "Abstract", date: "2026-01-15T23:59:00-12:00", status: "upcoming" },
         { type: "paper", label: "Paper Submission", date: "2026-01-22T23:59:00-12:00", status: "upcoming" },
-        { type: "notification", label: "Notification", date: "2026-04-01T23:59:00-12:00", status: "upcoming", estimated: true },
-        { type: "camera", label: "Camera Ready", date: "2026-05-15T23:59:00-12:00", status: "upcoming", estimated: true },
+        { type: "notification", label: "Notification", date: "2026-04-01T23:59:00-12:00", status: "upcoming" },
+        { type: "camera", label: "Camera Ready", date: "2026-05-15T23:59:00-12:00", status: "upcoming" },
         { type: "event", label: "Conference", date: "2026-06-15", endDate: "2026-06-20", status: "upcoming" }
     ],
     links: {
         official: "https://conf.cc/2026",
-        author: "https://conf.cc/2026/cfp",
+        cfp: "https://conf.cc/2026/cfp",
         template: "https://conf.cc/2026/template",
         authorGuide: "https://conf.cc/2026/guidelines"
     },
@@ -234,42 +228,28 @@ Edit `js/data.js`:
     notes: [
         "Important note 1",
         "Important note 2"
-    ],
-    deskRejectReasons: [
-        "Exceeds page limit",
-        "Wrong template"
     ]
 }
 ```
 
-### Adding Conference Logos
+### Adding Conference Metadata
 
-1. Add SVG or PNG to `assets/logos/`
-2. Name it `confname.svg` (lowercase, matching conference name)
-3. Fallback: Shows first 2 letters if logo not found
+Edit `scripts/conference_metadata.json` to add static info (used by scraper):
 
----
-
-## 🤖 Setting Up Auto-Updates
-
-### 1. Get Gemini API Key
-
-1. Go to [Google AI Studio](https://aistudio.google.com/)
-2. Create API key (free tier available)
-
-### 2. Add GitHub Secret
-
-1. Go to your repo → Settings → Secrets → Actions
-2. Click "New repository secret"
-3. Name: `GEMINI_API_KEY`
-4. Value: Your API key
-
-### 3. Enable Actions
-
-1. Go to repo → Actions tab
-2. Enable workflows if prompted
-
-The workflow runs automatically every Monday at 9 AM UTC, or manually via "Run workflow" button.
+```json
+{
+    "conf": {
+        "fullName": "Conference on Something",
+        "category": "ml",
+        "brandColor": "#1E3A5F",
+        "location": {
+            "city": "City",
+            "country": "Country",
+            "flag": "🏳️"
+        }
+    }
+}
+```
 
 ---
 
@@ -286,15 +266,13 @@ The workflow runs automatically every Monday at 9 AM UTC, or manually via "Run w
 | `brandColor` | ❌ | Hex color for theming |
 | `location` | ✅ | Object with city, country, flag, venue |
 | `deadlines` | ✅ | Array of deadline objects |
-| `links` | ✅ | Object with official, author, template URLs |
+| `links` | ✅ | Object with official, cfp, template URLs |
 | `info` | ❌ | Object with pageLimit, reviewType, acceptanceRate |
 | `notes` | ❌ | Array of important notes |
-| `deskRejectReasons` | ❌ | Array of common desk reject reasons |
-| `isEstimated` | Auto | Set automatically when year rolls over |
 
 ### Deadline Types
 - `abstract` — Abstract submission
-- `paper` — Full paper submission  
+- `paper` — Full paper submission
 - `notification` — Author notification
 - `camera` — Camera-ready deadline
 - `event` — Conference dates (use `endDate` for range)
@@ -312,19 +290,16 @@ The workflow runs automatically every Monday at 9 AM UTC, or manually via "Run w
 ## 🎯 Conferences Included
 
 ### Machine Learning (ML)
-- ICML, ICLR, NeurIPS, AAAI, AISTATS, UAI, COLT
+- ICML, ICLR, NeurIPS, AAAI
 
 ### Computer Vision (CV)
-- CVPR, ICCV, ECCV, WACV, BMVC
+- CVPR, ICCV, ECCV
 
 ### Natural Language Processing (NLP)
-- ACL, EMNLP, NAACL, EACL, COLING
+- ACL, EMNLP, NAACL
 
 ### Speech & Audio
-- INTERSPEECH, ICASSP, ASRU, SLT
-
-### Other
-- IJCAI, KDD, WWW, SIGIR, RecSys
+- INTERSPEECH, ICASSP
 
 ---
 
@@ -334,7 +309,6 @@ The workflow runs automatically every Monday at 9 AM UTC, or manually via "Run w
 - [ ] Calendar export (ICS)
 - [ ] Email/push notifications
 - [ ] Timezone selector
-- [ ] Search functionality
 - [ ] Favorite/bookmark conferences
 - [ ] PWA support for offline access
 - [ ] More conferences (robotics, HCI, security, etc.)
@@ -357,5 +331,5 @@ MIT License — Feel free to use, modify, and distribute!
 ---
 
 <p align="center">
-  <b>Never miss a paper deadline again! 🎯</b>
+  <b>Never miss a paper deadline again! ⏱️📍</b>
 </p>
