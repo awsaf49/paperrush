@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: '0 6 * * 1'
 
+  # Trigger on push if commit message contains [scrape]
+  push:
+    branches:
+      - main
+
   # Allow manual trigger from GitHub UI
   workflow_dispatch:
     inputs:
@@ -24,6 +29,10 @@ env:
 jobs:
   update-deadlines:
     runs-on: ubuntu-latest
+    # Skip if push event and commit message doesn't contain [scrape]
+    if: |
+      github.event_name != 'push' ||
+      contains(github.event.head_commit.message, '[scrape]')
 
     steps:
       - name: Checkout repository

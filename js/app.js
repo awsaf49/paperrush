@@ -400,6 +400,14 @@ const App = {
         const delayPerCard = 0.35; // seconds between each card
         const initialDelay = 0.4; // wait for line to start
 
+        // Remove existing placeholders
+        grid.querySelectorAll('.grid-placeholder').forEach(p => p.remove());
+
+        const totalCards = cards.length;
+        const lastRowIndex = Math.floor((totalCards - 1) / columns);
+        const cardsInLastRow = totalCards % columns || columns;
+        const placeholdersNeeded = cardsInLastRow < columns ? columns - cardsInLastRow : 0;
+
         cards.forEach((card, index) => {
             const row = Math.floor(index / columns);
             const posInRow = index % columns;
@@ -416,6 +424,22 @@ const App = {
             card.style.animationDelay = `${delay}s`;
             card.style.animationPlayState = 'running';
         });
+
+        // Add placeholders for incomplete last row (snake alignment)
+        if (placeholdersNeeded > 0) {
+            const isOddRow = lastRowIndex % 2 === 1;
+            for (let i = 0; i < placeholdersNeeded; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'grid-placeholder';
+                // Odd rows: placeholders at start (low order), Even rows: at end (high order)
+                if (isOddRow) {
+                    placeholder.style.order = lastRowIndex * columns + i;
+                } else {
+                    placeholder.style.order = lastRowIndex * columns + cardsInLastRow + i;
+                }
+                grid.appendChild(placeholder);
+            }
+        }
     },
 
     /**
