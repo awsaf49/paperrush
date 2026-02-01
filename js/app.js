@@ -8,6 +8,7 @@ const App = {
     filteredConferences: [],
     activeFilter: 'all',
     searchQuery: '',
+    hasAnimated: false,
 
     /**
      * Initialize the application
@@ -151,31 +152,36 @@ const App = {
      */
     findActiveDeadline(deadlines) {
         const now = new Date();
-        
-        // Filter out event type, find first upcoming deadline
-        const submissionDeadlines = deadlines.filter(d => 
-            d.type !== 'event' && 
-            d.type !== 'notification' && 
+
+        // Sort all deadlines by date first
+        const sortedDeadlines = [...deadlines].sort((a, b) =>
+            new Date(a.date) - new Date(b.date)
+        );
+
+        // Filter out only notification and camera-ready (keep events for bidding, etc.)
+        const relevantDeadlines = sortedDeadlines.filter(d =>
+            d.type !== 'notification' &&
             d.type !== 'camera'
         );
-        
+
         // Find first non-passed deadline
-        for (const deadline of submissionDeadlines) {
+        for (const deadline of relevantDeadlines) {
             const deadlineDate = new Date(deadline.date);
             if (deadlineDate > now) {
                 return deadline;
             }
         }
-        
-        // If all submission deadlines passed, return event date
-        const eventDeadline = deadlines.find(d => d.type === 'event');
-        if (eventDeadline) {
-            const eventDate = new Date(eventDeadline.date);
-            if (eventDate > now) {
-                return eventDeadline;
-            }
+
+        // If all relevant deadlines passed, check for conference event
+        const conferenceEvent = sortedDeadlines.find(d =>
+            d.type === 'event' &&
+            d.label.toLowerCase().includes('conference') &&
+            new Date(d.date) > now
+        );
+        if (conferenceEvent) {
+            return conferenceEvent;
         }
-        
+
         // All deadlines passed
         return null;
     },
@@ -420,10 +426,20 @@ const App = {
             card.style.order = visualIndex;
 
             // Animation delay based on chronological index (follows snake path)
-            const delay = initialDelay + (index * delayPerCard);
-            card.style.animationDelay = `${delay}s`;
-            card.style.animationPlayState = 'running';
+            // Only animate on first load, not on tab switch
+            if (!this.hasAnimated) {
+                const delay = initialDelay + (index * delayPerCard);
+                card.style.animationDelay = `${delay}s`;
+                card.style.animationPlayState = 'running';
+            } else {
+                // Skip animation on subsequent renders (tab switch, filter change)
+                card.style.animation = 'none';
+                card.style.opacity = '1';
+            }
         });
+
+        // Mark animation as complete after first render
+        this.hasAnimated = true;
 
         // Add placeholders for incomplete last row (snake alignment)
         if (placeholdersNeeded > 0) {
@@ -488,7 +504,7 @@ const App = {
         // Title (with estimated badge if needed)
         const confNameEl = card.querySelector('.conf-name');
         if (conf.isEstimated) {
-            confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge">Est</span>`;
+            confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge" title="Dates are approximate based on previous year">Approx</span>`;
         } else {
             confNameEl.textContent = `${conf.name} ${conf.year}`;
         }
@@ -554,7 +570,9 @@ const App = {
                 ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
                 : CountdownTimer.formatDate(deadline.date);
 
-            const estimatedMark = deadline.estimated ? '~' : '';
+            const estimatedMark = deadline.estimated
+                ? '<span class="approx-mark" title="Approximate date">~</span>'
+                : '';
 
             li.innerHTML = `
                 <span class="status-icon">${statusIcon}</span>
@@ -653,9 +671,11 @@ const App = {
             countdownLabel.textContent = conf.activeDeadline.label;
             const remaining = CountdownTimer.calculateRemaining(conf.activeDeadline.date);
             const format = CountdownTimer.formatDisplay(remaining);
-            
+
             if (format.type === 'monthday') {
                 countdownValue.textContent = `${format.months} ${format.monthUnit} ${format.days} ${format.dayUnit}`;
+            } else if (format.type === 'detailed') {
+                countdownValue.textContent = `${format.hours} hrs : ${format.minutes} min : ${format.seconds} sec`;
             } else {
                 countdownValue.textContent = `${format.value} ${format.unit}`;
             }
@@ -726,10 +746,14 @@ const App = {
                 ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
                 : CountdownTimer.formatDate(deadline.date);
             
+            const modalEstimatedMark = deadline.estimated
+                ? '<span class="approx-mark" title="Approximate date">~</span>'
+                : '';
+
             li.innerHTML = `
                 <span class="status-icon">${statusIcon}</span>
                 <span class="deadline-type">${deadline.label}</span>
-                <span class="deadline-date">${deadline.estimated ? '~' : ''}${dateStr}</span>
+                <span class="deadline-date">${modalEstimatedMark}${dateStr}</span>
             `;
             deadlinesList.appendChild(li);
         });
@@ -853,12 +877,12 @@ const App = {
     getCardGradient(brandColor, category) {
         // Unique patterns per category - different positions, sizes, angles
         const gradients = {
-            // ML - Diagonal sweep from top-left, warm sunset feel
+            // ML - Diagonal sweep from top-left, warm red/coral feel
             'ml': `
-                radial-gradient(ellipse 150% 80% at -30% -20%, rgba(255, 80, 180, 0.7), transparent 50%),
-                radial-gradient(ellipse 100% 100% at 120% 20%, rgba(255, 180, 50, 0.6), transparent 45%),
-                radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255, 120, 100, 0.35), transparent 50%),
-                linear-gradient(160deg, #fff0f5 0%, #fffaf0 60%, #fff5f5 100%)
+                radial-gradient(ellipse 150% 80% at -30% -20%, rgba(239, 68, 68, 0.7), transparent 50%),
+                radial-gradient(ellipse 100% 100% at 120% 20%, rgba(248, 113, 113, 0.6), transparent 45%),
+                radial-gradient(ellipse 80% 60% at 50% 120%, rgba(252, 165, 165, 0.45), transparent 50%),
+                linear-gradient(160deg, #fef2f2 0%, #fee2e2 60%, #fecaca 100%)
             `,
             // CV - Horizontal wave, ocean blues
             'cv': `
@@ -874,12 +898,12 @@ const App = {
                 radial-gradient(ellipse 100% 60% at 50% -20%, rgba(80, 180, 255, 0.35), transparent 50%),
                 linear-gradient(90deg, #d1fae5 0%, #ccfbf1 50%, #dbeafe 100%)
             `,
-            // Speech - Deep coral/red wave, audio waveform feel
+            // Speech - Soft peach/orange wave, warm audio feel
             'speech': `
-                radial-gradient(ellipse 130% 80% at 50% -30%, rgba(220, 38, 38, 0.5), transparent 50%),
-                radial-gradient(ellipse 100% 120% at -20% 80%, rgba(239, 68, 68, 0.45), transparent 50%),
-                radial-gradient(ellipse 80% 100% at 120% 50%, rgba(252, 165, 165, 0.5), transparent 50%),
-                linear-gradient(135deg, #fee2e2 0%, #fecaca 40%, #fef2f2 100%)
+                radial-gradient(ellipse 120% 100% at -10% -10%, rgba(253, 186, 116, 0.6), transparent 55%),
+                radial-gradient(ellipse 130% 80% at 80% -20%, rgba(251, 146, 60, 0.5), transparent 50%),
+                radial-gradient(ellipse 100% 120% at 110% 90%, rgba(253, 186, 116, 0.45), transparent 50%),
+                linear-gradient(160deg, #fff7ed 0%, #ffedd5 50%, #fff7ed 100%)
             `,
             // Other - Corner accents, creative/artistic feel
             'other': `

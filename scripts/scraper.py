@@ -182,9 +182,10 @@ CONFERENCES = {
         "base": "https://interspeech{year}.org",
         "seeds": [
             "",
-            "important-dates",
-            "paper-submission",  # Author guidelines
-            "call-for-papers",
+            "pages/calls/call-for-papers",
+            "pages/calls/submit-a-paper",
+            "pages/author-resources/resources",
+            "pages/important-dates",
         ],
         "link_only": [
             "special-sessions",
@@ -1076,10 +1077,23 @@ class ConferenceScraper:
                 if not event:
                     return ""
                 normalized = split_camel_case(event).lower().strip()
-                for suffix in [" deadline", " submission", " period"]:
-                    if normalized.endswith(suffix) and len(normalized) > len(suffix) + 3:
+
+                # Remove common suffixes
+                for suffix in [" deadline", " submission", " period", " date"]:
+                    if normalized.endswith(suffix):
                         normalized = normalized[:-len(suffix)].strip()
-                return normalized
+
+                # Remove common prefixes
+                for prefix in ["full ", "main ", "final "]:
+                    if normalized.startswith(prefix):
+                        normalized = normalized[len(prefix):]
+
+                # Map synonyms to canonical form
+                synonyms = {
+                    "submission": "paper",
+                    "paper submission": "paper",
+                }
+                return synonyms.get(normalized, normalized)
 
             for deadline in extracted.get("deadlines", []):
                 if not deadline:

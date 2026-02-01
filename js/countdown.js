@@ -147,18 +147,14 @@ const CountdownTimer = {
             `;
         } else if (formatted.isDetailed) {
             container.innerHTML = `
-                <div class="countdown-segment">
-                    <span class="segment-value">${formatted.hours}</span>
-                    <span class="segment-label">hrs</span>
-                </div>
-                <div class="countdown-segment">
-                    <span class="segment-value">${formatted.minutes}</span>
-                    <span class="segment-label">min</span>
-                </div>
-                <div class="countdown-segment">
-                    <span class="segment-value">${formatted.seconds}</span>
-                    <span class="segment-label">sec</span>
-                </div>
+                <span class="countdown-value">${formatted.hours}</span>
+                <span class="countdown-unit">hrs</span>
+                <span class="countdown-separator">:</span>
+                <span class="countdown-value">${formatted.minutes}</span>
+                <span class="countdown-unit">min</span>
+                <span class="countdown-separator">:</span>
+                <span class="countdown-value">${formatted.seconds}</span>
+                <span class="countdown-unit">sec</span>
             `;
         } else if (formatted.type === 'monthday') {
             container.innerHTML = `

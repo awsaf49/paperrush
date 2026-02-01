@@ -163,11 +163,10 @@ const TimelineDrawer = {
         }
 
         // Animation timing (must match app.js)
-        const delayPerCard = 0.35; // seconds between each card
-        const initialDelay = 0.4; // wait before starting
+        const delayPerCard = 0.35;
+        const initialDelay = 0.4;
 
         const lineColor = '#9CA3AF';
-        const lineColorLight = '#D1D5DB';
 
         // Build path segments (one per connection between cards)
         const segments = [];
@@ -213,12 +212,12 @@ const TimelineDrawer = {
                 />
             `).join('')}
 
-            <!-- Node markers (bubbles) -->
+            <!-- Node markers -->
             ${positions.map((pos, i) => {
                 const size = i === 0 ? 8 : 5;
                 return `
                     <g class="timeline-node" data-index="${i}" style="opacity: 0; transform: scale(0); transform-origin: ${pos.x}px ${pos.y}px;">
-                        <circle cx="${pos.x}" cy="${pos.y}" r="${size + 3}" fill="${lineColorLight}" />
+                        <circle cx="${pos.x}" cy="${pos.y}" r="${size + 3}" fill="#D1D5DB" />
                         <circle cx="${pos.x}" cy="${pos.y}" r="${size}" fill="${lineColor}" />
                         <circle cx="${pos.x}" cy="${pos.y}" r="${size - 2}" fill="white" opacity="0.4" />
                     </g>
@@ -228,26 +227,26 @@ const TimelineDrawer = {
 
         const segmentEls = this.svg.querySelectorAll('.timeline-segment');
         const nodeEls = this.svg.querySelectorAll('.timeline-node');
-        const drawDuration = delayPerCard * 0.6; // line draws in 60% of the interval
+        const drawDuration = delayPerCard * 0.6;
 
         // Animate: first node appears, then segment draws + next node appears
         nodeEls.forEach((node, i) => {
             const nodeDelay = (initialDelay + (i * delayPerCard)) * 1000;
 
-            // Show node (bubble) with scale animation
+            // Show node with scale animation
             setTimeout(() => {
                 node.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
                 node.style.opacity = '1';
                 node.style.transform = 'scale(1)';
-            }, Math.max(0, nodeDelay - 80)); // slightly before card
+            }, Math.max(0, nodeDelay - 80));
 
-            // Draw segment leading TO this node (segment i-1 leads to node i)
+            // Draw segment leading TO this node
             if (i > 0 && segmentEls[i - 1]) {
                 const segment = segmentEls[i - 1];
                 const segLength = segment.getTotalLength();
                 const segStartDelay = (initialDelay + ((i - 1) * delayPerCard) + 0.15) * 1000;
 
-                // Setup for draw animation (solid line first)
+                // Setup for draw animation
                 segment.style.strokeDasharray = segLength;
                 segment.style.strokeDashoffset = segLength;
                 segment.style.opacity = '1';

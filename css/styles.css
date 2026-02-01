@@ -21,7 +21,7 @@
     --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     
     /* Category Colors */
-    --color-ml: #AF52DE;
+    --color-ml: #EF4444;
     --color-cv: #007AFF;
     --color-nlp: #34C759;
     --color-speech: #FF9500;
@@ -715,7 +715,7 @@ body::before {
     gap: 48px 72px;
     position: relative;
     z-index: 2;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 /* Invisible placeholder to fill incomplete rows for snake pattern */
@@ -949,44 +949,13 @@ body::before {
     color: var(--text-secondary);
 }
 
-/* Detailed countdown for < 24 hours */
-.countdown.detailed {
-    gap: 2px;
-}
-
-.countdown.detailed .countdown-segment {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 6px;
-    position: relative;
-}
-
-.countdown.detailed .countdown-segment:not(:last-child)::after {
-    content: ':';
-    position: absolute;
-    right: -4px;
-    top: 0;
+/* Countdown separator for hrs:min:sec */
+.countdown-separator {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 300;
     color: var(--text-tertiary);
-}
-
-.countdown.detailed .segment-value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    min-width: 2ch;
-    text-align: center;
-}
-
-.countdown.detailed .segment-label {
-    font-size: 0.5rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-tertiary);
+    margin: 0 2px;
 }
 
 /* Passed state */
@@ -1088,6 +1057,10 @@ body::before {
     opacity: 0.6;
 }
 
+.deadline-item.passed .status-icon {
+    color: var(--status-passed);
+}
+
 .deadline-item.active {
     font-weight: 500;
     color: var(--text-primary);
@@ -1127,6 +1100,14 @@ body::before {
     vertical-align: middle;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    cursor: help;
+}
+
+/* Approximate date marker with tooltip */
+.approx-mark {
+    font-style: italic;
+    color: var(--status-future);
+    cursor: help;
 }
 
 /* Tap Hint */
