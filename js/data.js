@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-02-02T01:45:38Z
+ * Last updated: 2026-02-02T06:21:49Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-02-02T01:45:38Z",
+	"lastUpdated": "2026-02-02T06:21:49Z",
 	"conferences": [
 			{
 				"id": "iccv-2027",
@@ -63,62 +63,6 @@ const CONFERENCES_DATA = {
 				},
 				"deadlines": [
 					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-07-25T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Full papers",
-						"date": "2025-08-01T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "supplementary",
-						"label": "Supplementary material and code",
-						"date": "2025-08-04T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification of Phase 1 rejections",
-						"date": "2025-09-15",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Author feedback window",
-						"date": "2025-10-07",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification of final acceptance or rejection (Main Technical Track)",
-						"date": "2025-11-08",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission of camera-ready files (Main Technical Track)",
-						"date": "2025-11-16",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
 						"label": "Open Review submission site opens for author registration",
 						"date": "2025-06-16",
@@ -130,6 +74,14 @@ const CONFERENCES_DATA = {
 						"type": "paper",
 						"label": "Open Review submission site opens for paper submission",
 						"date": "2025-06-25",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2025-07-25T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -151,65 +103,33 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-11-07T23:59:00-12:00",
+						"type": "notification",
+						"label": "Phase 1 Notification",
+						"date": "2025-09-15",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-11-13T23:59:00-12:00",
+						"type": "rebuttal",
+						"label": "Author Rebuttal Period",
+						"date": "2025-10-13",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
+						"label": "Author Notification",
+						"date": "2025-11-08",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "notification",
-						"label": "Notification of Phase 1 rejections",
-						"date": "2025-09-08",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Author feedback window",
-						"date": "2025-10-02",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Author feedback window",
-						"date": "2025-10-08",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification of final acceptance or rejection (Main Technical Track)",
-						"date": "2025-11-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission of camera-ready files (Main Technical Track)",
-						"date": "2025-11-13",
+						"type": "camera",
+						"label": "Camera-Ready Deadline",
+						"date": "2025-11-16",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -221,9 +141,8 @@ const CONFERENCES_DATA = {
 					"authorGuide": "https://aaai.org/conference/aaai/aaai-26/submission-instructions",
 					"reviewerGuide": "https://aaai.org/conference/aaai/aaai-26/aaai-code-of-conduct-for-conferences-and-events/",
 					"author": "https://aaai.org/conference/aaai/aaai-26/",
-					"dates": "https://aaai.org/conference/aaai/aaai-26/",
 					"registration": "https://aaai.org/conference/aaai/aaai-26/registration/",
-					"faq": "https://aaai.org/conference/aaai/aaai-26/"
+					"faq": "https://aaai.org/conference/aaai/aaai-26/aaai-26-know-before-you-go/"
 				},
 				"info": {
 					"pageLimit": "7 pages + additional pages solely for references and the reproducibility checklist",
@@ -232,11 +151,8 @@ const CONFERENCES_DATA = {
 				},
 				"deskRejectReasons": [
 					"Placeholder titles or abstracts",
-					"Substantial changes between abstract and final deadlines",
-					"Papers not formatted in AAAI two-column, camera-ready style",
-					"Papers not in trouble-free, high-resolution PDF format",
-					"Anonymity violation",
-					"Exceeding submission limit per author"
+					"Changing abstracts substantially between abstract and final deadlines",
+					"Exceeding submission limit per author (10)"
 				],
 				"notes": []
 			},

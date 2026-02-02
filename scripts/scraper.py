@@ -672,12 +672,33 @@ Return a JSON object with these fields:
    - If time says "11:59 PM AoE" → time: "23:59", timezone: "AoE"
 
 5. **deadlines**: Return as array of objects. CRITICAL RULES:
-   - Extract ALL deadlines you can find - paper submission, abstract, rebuttal, notification, camera-ready, workshops, tutorials, etc.
-   - Use descriptive event names WITH SPACES:
-     - Good: "Abstract Submission", "Paper Submission", "Tutorial Submission Deadline"
-     - Bad: "AbstractSubmission", "PaperSubmission", "TutorialSubmissionDeadline" (NO CamelCase!)
+
+   **LABEL DEADLINES BY AUDIENCE** - distinguish author deadlines from internal reviewer/committee deadlines:
+
+   Author-facing deadlines (no prefix needed):
+   - "Paper Submission", "Abstract Submission", "Camera-Ready Deadline"
+   - "Author Notification", "Author Rebuttal Period"
+   - "Workshop Proposal Deadline", "Tutorial Proposal Deadline"
+
+   Internal reviewer/committee deadlines (ADD PREFIX to clarify):
+   - "Reviewer: Reviews Due" (not just "Reviews Due")
+   - "Reviewer: Phase 1 Reviews End"
+   - "AC: Recommendations Due" (not just "AC recommendations")
+   - "SPC: Meta-reviews Due"
+   - "PC: Discussion Period"
+
+   **EXAMPLE - AAAI review timeline:**
+   - "Phase 1 review starts: Aug 12" → "Reviewer: Phase 1 Starts"
+   - "Phase 1 reviews end: Sep 1" → "Reviewer: Phase 1 Reviews Due"
+   - "AC phase 1 recommendations: Sep 8" → "AC: Phase 1 Recommendations"
+   - "Phase 1 reject notifications: Sep 15" → "Phase 1 Notification" (author-facing, no prefix)
+   - "Author feedback window: Oct 7-13" → "Author Rebuttal Period" (author-facing)
+   - "PC discussion end: Oct 20" → "PC: Discussion Ends"
+
+   **Use descriptive event names WITH SPACES:**
+   - Good: "Abstract Submission", "Paper Submission", "Reviewer: Reviews Due"
+   - Bad: "AbstractSubmission", "PaperSubmission" (NO CamelCase!)
    - If you see "PaperRegistrationDeadline" → convert to "Paper Registration Deadline"
-   - If you see "SubmissionDeadline" → convert to "Submission Deadline" or "Paper Submission"
 
 6. **links.other**: Use for conference-specific links (call_for_art, datasets_track, etc.)
 
@@ -693,6 +714,74 @@ Return a JSON object with these fields:
 5. For next_urls_to_visit, only include URLs that appear in the LINKS section
 6. If information is not present, use null for single values or empty arrays for lists
 7. Return ONLY the JSON object, no other text'''
+
+
+# =============================================================================
+# SANITY CHECK PROMPT - Final pass to clean up conflicts
+# =============================================================================
+
+SANITY_CHECK_PROMPT = '''You are cleaning up conference deadline data that was scraped from multiple pages.
+
+**CONFERENCE:** {conference} {year}
+
+**RAW DEADLINES (may have duplicates and conflicts):**
+{deadlines_json}
+
+---
+
+**YOUR TASK:** Clean up and deduplicate the deadlines. Return a clean JSON array.
+
+**RULES:**
+
+1. **Remove duplicates** - If same event appears multiple times with same date, keep only one
+
+2. **Resolve date conflicts** - If same event has DIFFERENT dates:
+   - For submission deadlines: prefer the LATER date (deadlines often get extended)
+   - For notifications: prefer the LATER date (decisions often delayed)
+   - Example: "Phase 1 Notification" on Sep 8 AND Sep 15 → keep Sep 15
+
+3. **Merge similar events** - These are the same:
+   - "Abstracts due" = "Abstract Submission"
+   - "Full papers due" = "Paper Submission"
+   - "Phase 1 reject notifications" = "Phase 1 Notification"
+
+4. **Clean up labels** - Use consistent naming:
+   - "Abstract Submission" (not "Abstracts due")
+   - "Paper Submission" (not "Full papers due")
+   - "Author Notification" or "Phase 1 Notification" (not "Notification of Phase 1 rejections")
+   - "Author Rebuttal Period" (not "Author feedback window")
+   - "Camera-Ready Deadline" (not "Submission of camera-ready files")
+
+5. **Remove impossible/illogical dates** - CRITICAL: Check the actual DATE VALUES, not just labels!
+
+   **Required chronological order:**
+   Abstract → Paper → Supplementary → Phase1 Notification → Rebuttal → Final Notification → Camera-Ready → Conference
+
+   **DELETE any deadline that violates this order:**
+   - Abstract/Paper submission date AFTER notification date → DELETE (impossible to submit after decisions)
+   - Notification BEFORE paper submission → DELETE
+   - Camera-ready BEFORE final notification → DELETE
+   - Any deadline AFTER conference start → DELETE
+
+   **Example validation for AAAI 2026 (conference: Jan 20-27, 2026):**
+   ✅ KEEP: Abstract Jul 25 → Paper Aug 1 → Notification Sep 15 → Rebuttal Oct 7 → Final Nov 8 → Camera-ready Nov 16
+   ❌ DELETE: "Abstract Nov 7" - this is AFTER notification dates (Sep/Nov), impossible!
+   ❌ DELETE: "Paper Nov 13" - this is AFTER notification, impossible!
+   ❌ DELETE: "Notification Feb 2026" - this is AFTER conference, impossible!
+
+   When you see duplicate submission deadlines months apart (e.g., Abstract Jul AND Abstract Nov), DELETE the one that doesn't fit the timeline.
+
+6. **Sort by date** - Return deadlines in chronological order
+
+**RETURN FORMAT:**
+Return ONLY a JSON array of cleaned deadlines:
+[
+  {{"event": "Abstract Submission", "date": "2025-07-25", "time": "23:59", "timezone": "AoE"}},
+  {{"event": "Paper Submission", "date": "2025-08-01", "time": "23:59", "timezone": "AoE"}},
+  ...
+]
+
+Return ONLY the JSON array, no explanation.'''
 
 
 # =============================================================================
@@ -821,6 +910,46 @@ class ConferenceScraper:
         except json.JSONDecodeError as e:
             self.log(f"      ⚠️ JSON parse error: {e}")
         return None
+
+    def sanity_check_deadlines(self, deadlines: List[Dict],
+                                conference: str, year: int) -> List[Dict]:
+        """
+        Final LLM pass to clean up deadline conflicts and duplicates.
+        """
+        if not deadlines or len(deadlines) <= 3:
+            # No need to sanity check if few deadlines
+            return deadlines
+
+        self.log(f"\n🧹 Running sanity check on {len(deadlines)} deadlines...")
+
+        prompt = SANITY_CHECK_PROMPT.format(
+            conference=conference,
+            year=year,
+            deadlines_json=json.dumps(deadlines, indent=2)
+        )
+
+        response = self.call_llm(prompt)
+        if not response:
+            self.log("   ⚠️ Sanity check failed, using original deadlines")
+            return deadlines
+
+        # Parse JSON array response
+        try:
+            text = response.strip()
+            text = re.sub(r"^```json?\s*\n?", "", text)
+            text = re.sub(r"\n?```\s*$", "", text)
+
+            # Find JSON array
+            start = text.find("[")
+            end = text.rfind("]") + 1
+            if start != -1 and end > start:
+                cleaned = json.loads(text[start:end])
+                self.log(f"   ✅ Cleaned: {len(deadlines)} → {len(cleaned)} deadlines")
+                return cleaned
+        except json.JSONDecodeError as e:
+            self.log(f"   ⚠️ JSON parse error in sanity check: {e}")
+
+        return deadlines
 
     def extract_from_page(self, url: str, text: str, links: List[Dict]) -> Dict:
         """Extract info from page content using LLM with chunking"""
@@ -1244,6 +1373,14 @@ class ConferenceScraper:
         print(f"   Links found: {link_count}")
         print(f"   Desk reject reasons: {len(result['desk_reject_reasons'])}")
         print(f"   Deadlines: {len(result['deadlines'])}")
+
+        # Final sanity check - LLM pass to clean up conflicts
+        if result['deadlines']:
+            result['deadlines'] = self.sanity_check_deadlines(
+                result['deadlines'],
+                result['conference'],
+                result['year']
+            )
 
         return result
 

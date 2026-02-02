@@ -284,9 +284,53 @@ def snake_to_camel(snake_str: str) -> str:
 # DEADLINE CONVERSION
 # =============================================================================
 
+def normalize_label_for_dedup(label: str) -> str:
+    """Normalize label for deduplication comparison."""
+    if not label:
+        return ""
+
+    # Lowercase and remove common variations
+    normalized = label.lower()
+
+    # Common replacements to normalize similar labels
+    replacements = [
+        ("abstracts due", "abstract"),
+        ("abstract submission", "abstract"),
+        ("full papers due", "paper"),
+        ("full paper due", "paper"),
+        ("paper submission", "paper"),
+        ("papers due", "paper"),
+        ("supplementary material and code due", "supplementary"),
+        ("supplementary material and code", "supplementary"),
+        ("supplementary materials", "supplementary"),
+        ("camera-ready", "camera"),
+        ("camera ready", "camera"),
+        ("notification of final acceptance or rejection", "final notification"),
+        ("notification of acceptance or rejection", "final notification"),
+        ("notification of phase 1 rejections", "phase1 notification"),
+        ("author feedback window", "rebuttal"),
+        ("rebuttal period", "rebuttal"),
+        ("submission of camera-ready files", "camera"),
+    ]
+
+    for old, new in replacements:
+        if old in normalized:
+            return new
+
+    return normalized
+
+
+def extract_date_only(date_iso: str) -> str:
+    """Extract just the date portion from an ISO date string."""
+    if not date_iso:
+        return ""
+    # Handle both "2025-08-01" and "2025-08-01T23:59:00-12:00"
+    return date_iso[:10]
+
+
 def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
     """
-    Convert scraper deadlines to data.js format.
+    Convert scraper deadlines to data.js format with deduplication.
 
     Input:
     [{"event": "Paper Submission", "date": "2025-11-13", "time": "23:59", "timezone": "AoE"}]
@@ -294,8 +338,14 @@ def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
     Output:
     [{"type": "paper", "label": "Paper Submission", "date": "2025-11-13T23:59:00-12:00",
       "endDate": null, "status": "upcoming", "estimated": false}]
+
+    Deduplication strategy:
+    - Group by normalized label + date (within 3 days)
+    - Keep the version with more detail (time > no time)
+    - Prefer official-sounding labels over informal ones
     """
-    result = []
+    # First pass: convert all deadlines
+    converted_list = []
 
     for deadline in scraper_deadlines:
         if not isinstance(deadline, dict):
@@ -322,9 +372,56 @@ def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
             "endDate": None,  # Scraper doesn't capture date ranges yet
             "status": "upcoming",
             "estimated": False,  # Scraped data is considered accurate
+            "_has_time": "T" in date_iso,  # Track if has time for preference
+            "_normalized": normalize_label_for_dedup(event),
+            "_date_only": extract_date_only(date_iso),
         }
 
-        result.append(converted)
+        converted_list.append(converted)
+
+    # Second pass: deduplicate
+    # Group by type + normalized label
+    seen = {}  # key: (type, normalized_label, date_only) -> best deadline
+
+    for deadline in converted_list:
+        key = (deadline["type"], deadline["_normalized"], deadline["_date_only"])
+
+        if key not in seen:
+            seen[key] = deadline
+        else:
+            # Keep the one with more info (prefer one with time)
+            existing = seen[key]
+            if deadline["_has_time"] and not existing["_has_time"]:
+                seen[key] = deadline
+            # If both have same time status, keep shorter/cleaner label
+            elif deadline["_has_time"] == existing["_has_time"]:
+                if len(deadline["label"]) < len(existing["label"]):
+                    seen[key] = deadline
+
+    # Also dedupe by just type + date (for cases like "Author feedback window" appearing multiple times)
+    final_seen = {}
+    for deadline in seen.values():
+        # For event types, be more strict - only one per type+date
+        if deadline["type"] in ("event", "rebuttal"):
+            key = (deadline["type"], deadline["_date_only"])
+        else:
+            key = (deadline["type"], deadline["_normalized"], deadline["_date_only"])
+
+        if key not in final_seen:
+            final_seen[key] = deadline
+        else:
+            existing = final_seen[key]
+            if deadline["_has_time"] and not existing["_has_time"]:
+                final_seen[key] = deadline
+
+    # Clean up internal fields and sort by date
+    result = []
+    for deadline in final_seen.values():
+        clean = {k: v for k, v in deadline.items() if not k.startswith("_")}
+        result.append(clean)
+
+    # Sort by date
+    result.sort(key=lambda x: x.get("date", ""))
 
     return result
 
