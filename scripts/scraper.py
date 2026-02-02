@@ -210,6 +210,37 @@ CONFERENCES = {
 
 
 # =============================================================================
+# PLAYWRIGHT SUPPORT FOR JS-RENDERED SITES
+# =============================================================================
+
+# Sites that require JavaScript rendering
+JS_RENDERED_SITES = {"interspeech"}
+
+
+def fetch_with_playwright(url: str, timeout: int = 30000) -> Optional[str]:
+    """
+    Fetch page content using Playwright (headless browser).
+    Falls back to regular fetch if Playwright not available.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, timeout=timeout, wait_until="networkidle")
+            content = page.content()
+            browser.close()
+            return content
+    except ImportError:
+        print("      ⚠️ Playwright not installed, using regular fetch")
+        return None
+    except Exception as e:
+        print(f"      ⚠️ Playwright error: {e}")
+        return None
+
+
+# =============================================================================
 # HTML PARSER - SIMPLE, NO FILTERING
 # =============================================================================
 
@@ -613,19 +644,40 @@ Return a JSON object with these fields:
 
 1. **page_limit**: Return as INTEGER (e.g., 8), NOT a string. Put extra info in page_limit_extra.
 
-2. **date**: Return in ISO format YYYY-MM-DD (e.g., "2025-11-07"), NOT "November 7, 2025"
+2. **date**: ALWAYS convert to ISO format YYYY-MM-DD. Handle ALL these input formats:
+
+   | Input Format (on webpage)      | Output (in JSON)  |
+   |-------------------------------|-------------------|
+   | Feb 15 '26                    | 2026-02-15        |
+   | Dec 29 '25                    | 2025-12-29        |
+   | Mar 05 '26                    | 2026-03-05        |
+   | February 15, 2026             | 2026-02-15        |
+   | 15 February 2026              | 2026-02-15        |
+   | 2/15/2026                     | 2026-02-15        |
+   | 2026-02-15                    | 2026-02-15        |
+
+   NOTE: The format "Mon DD 'YY" (e.g., "Feb 15 '26") is VERY COMMON on conference sites!
+   The 'YY means 20YY, so '25 = 2025 and '26 = 2026.
 
 3. **time**: Return in 24-hour format HH:MM (e.g., "23:59"), or null if not specified
+   - "11:59 PM" → "23:59"
+   - "11:00 PM CET" → time: "23:00", timezone: "CET"
+   - "11:00 PM CEST" → time: "23:00", timezone: "CEST"
 
-4. **timezone**: Return as string abbreviation (e.g., "AoE", "UTC", "PST", "PT"), or null if not specified
+4. **timezone**: Return as string abbreviation (e.g., "AoE", "UTC", "CET", "CEST", "PST", "PT"), or null if not specified
    - "Anywhere on Earth" = "AoE"
    - "Pacific Time" = "PT" or "PST"
+   - "Central European Time" = "CET"
+   - "Central European Summer Time" = "CEST"
    - If time says "11:59 PM AoE" → time: "23:59", timezone: "AoE"
 
-5. **deadlines**: Return as array of objects. Use descriptive event names WITH SPACES:
-   - Good: "Abstract Submission", "Paper Submission", "Tutorial Submission Deadline"
-   - Bad: "AbstractSubmission", "PaperSubmission", "TutorialSubmissionDeadline" (NO CamelCase!)
-   - Always use proper spacing between words, never CamelCase or PascalCase
+5. **deadlines**: Return as array of objects. CRITICAL RULES:
+   - Extract ALL deadlines you can find - paper submission, abstract, rebuttal, notification, camera-ready, workshops, tutorials, etc.
+   - Use descriptive event names WITH SPACES:
+     - Good: "Abstract Submission", "Paper Submission", "Tutorial Submission Deadline"
+     - Bad: "AbstractSubmission", "PaperSubmission", "TutorialSubmissionDeadline" (NO CamelCase!)
+   - If you see "PaperRegistrationDeadline" → convert to "Paper Registration Deadline"
+   - If you see "SubmissionDeadline" → convert to "Submission Deadline" or "Paper Submission"
 
 6. **links.other**: Use for conference-specific links (call_for_art, datasets_track, etc.)
 
@@ -633,13 +685,14 @@ Return a JSON object with these fields:
 
 **IMPORTANT INSTRUCTIONS:**
 1. Extract information ONLY from the provided content - do not make up information
-2. For desk_reject_reasons, keep each reason SHORT (max 10 words). Use phrases not sentences.
+2. IMPORTANT: Look for dates in tables, lists, countdown timers, and any formatted text. Dates often appear as "Feb 15 '26" or similar abbreviated formats.
+3. For desk_reject_reasons, keep each reason SHORT (max 10 words). Use phrases not sentences.
    - Good: "Page limit exceeded (8 pages max)"
    - Bad: "Papers that have more than eight pages excluding references will be desk rejected"
-3. For links, prefer direct download links over general pages when available
-4. For next_urls_to_visit, only include URLs that appear in the LINKS section
-5. If information is not present, use null for single values or empty arrays for lists
-6. Return ONLY the JSON object, no other text'''
+4. For links, prefer direct download links over general pages when available
+5. For next_urls_to_visit, only include URLs that appear in the LINKS section
+6. If information is not present, use null for single values or empty arrays for lists
+7. Return ONLY the JSON object, no other text'''
 
 
 # =============================================================================
@@ -649,24 +702,43 @@ Return a JSON object with these fields:
 class ConferenceScraper:
     """Hybrid agentic conference scraper"""
 
-    def __init__(self, verbose: bool = True):
-        api_key = os.environ.get("OPENROUTER_API_KEY")
-        if not api_key:
-            raise ValueError("OPENROUTER_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
-
-        self.client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=api_key
-        )
-        self.model = "google/gemini-2.0-flash-001"
+    def __init__(self, verbose: bool = True, use_gemini: bool = False):
         self.verbose = verbose
+        self.use_gemini = use_gemini
+
+        if use_gemini:
+            # Use Gemini API directly
+            api_key = os.environ.get("GEMINI_API_KEY")
+            if not api_key:
+                raise ValueError("GEMINI_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
+            self.gemini_key = api_key
+            self.model = "gemini-2.0-flash"  # Stable Gemini Flash
+            self.client = None
+        else:
+            # Use OpenRouter
+            api_key = os.environ.get("OPENROUTER_API_KEY")
+            if not api_key:
+                raise ValueError("OPENROUTER_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
+            self.client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=api_key
+            )
+            self.model = "meta-llama/llama-3.3-70b-instruct:free"
+            self.gemini_key = None
 
     def log(self, msg: str, end="\n"):
         if self.verbose:
             print(msg, end=end, flush=True)
 
-    def fetch(self, url: str, timeout: int = 15) -> Optional[str]:
-        """Fetch URL content"""
+    def fetch(self, url: str, timeout: int = 15, use_playwright: bool = False) -> Optional[str]:
+        """Fetch URL content. Uses Playwright for JS-rendered sites."""
+        # Try Playwright for JS-heavy sites
+        if use_playwright:
+            content = fetch_with_playwright(url, timeout * 1000)
+            if content:
+                return content
+            # Fall through to regular fetch if Playwright fails
+
         try:
             headers = {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
@@ -687,26 +759,51 @@ class ConferenceScraper:
             return False
 
     def call_llm(self, prompt: str) -> Optional[str]:
-        """Call LLM with retry"""
-        for attempt in range(3):
+        """Call LLM with retry - supports both OpenRouter and Gemini API"""
+        max_retries = 5 if self.use_gemini else 3  # More retries for Gemini rate limits
+
+        for attempt in range(max_retries):
             try:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=0.1,
-                    max_tokens=3000
-                )
-                content = response.choices[0].message.content
-                if content:
-                    return content
+                if self.use_gemini:
+                    # Direct Gemini API call
+                    response = requests.post(
+                        f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
+                        params={"key": self.gemini_key},
+                        json={
+                            "contents": [{"parts": [{"text": prompt}]}],
+                            "generationConfig": {
+                                "temperature": 0.1,
+                                "maxOutputTokens": 8192
+                            }
+                        },
+                        timeout=60
+                    )
+                    response.raise_for_status()
+                    data = response.json()
+                    content = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
+                    if content:
+                        return content
+                else:
+                    # OpenRouter API call
+                    response = self.client.chat.completions.create(
+                        model=self.model,
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=0.1,
+                        max_tokens=8192
+                    )
+                    content = response.choices[0].message.content
+                    if content:
+                        return content
             except Exception as e:
-                self.log(f"      ⚠️ LLM error (attempt {attempt+1}): {e}")
-                time.sleep(1)
+                wait_time = 2 ** attempt  # Exponential backoff: 1, 2, 4, 8, 16 seconds
+                self.log(f"⚠️ retry {attempt+1}/{max_retries} in {wait_time}s")
+                time.sleep(wait_time)
         return None
 
     def parse_llm_response(self, response: str) -> Optional[Dict]:
         """Parse JSON from LLM response"""
         if not response:
+            self.log("      ⚠️ Empty response from LLM")
             return None
         try:
             # Clean markdown code blocks
@@ -719,8 +816,10 @@ class ConferenceScraper:
             end = text.rfind("}") + 1
             if start != -1 and end > start:
                 return json.loads(text[start:end])
-        except json.JSONDecodeError:
-            pass
+            else:
+                self.log(f"      ⚠️ No JSON object found in response (len={len(text)})")
+        except json.JSONDecodeError as e:
+            self.log(f"      ⚠️ JSON parse error: {e}")
         return None
 
     def extract_from_page(self, url: str, text: str, links: List[Dict]) -> Dict:
@@ -865,6 +964,11 @@ class ConferenceScraper:
         short_year = str(year)[2:]
         base_url = conf["base"].format(year=year, short_year=short_year)
         base_domain = urlparse(base_url).netloc
+
+        # Check if this is a JS-rendered site
+        self.use_playwright = conf_key in JS_RENDERED_SITES
+        if self.use_playwright:
+            print(f"\n⚡ Using Playwright for JS-rendered site: {conf_key}")
 
         print(f"\n{'='*70}")
         print(f" 🎯 {conf['name']} {year}")
@@ -1011,7 +1115,7 @@ class ConferenceScraper:
 
             # Fetch page
             self.log(f"\n📥 [{steps+1}/{max_steps}] {url}")
-            html = self.fetch(url)
+            html = self.fetch(url, use_playwright=getattr(self, 'use_playwright', False))
 
             if not html:
                 self.log(f"      ❌ Failed to fetch")
@@ -1332,14 +1436,22 @@ def main():
     parser.add_argument("--max-steps", "-m", type=int, default=15, help="Max pages to visit (default: 15)")
     parser.add_argument("--output", "-o", type=str, help="Output JSON file")
     parser.add_argument("--quiet", "-q", action="store_true", help="Less verbose output")
+    parser.add_argument("--gemini", "-g", action="store_true", help="Use Gemini API directly (faster)")
     args = parser.parse_args()
 
-    if not os.environ.get("OPENROUTER_API_KEY"):
-        print("❌ OPENROUTER_API_KEY not set")
-        print("   Run: export $(grep -v '^#' .env | xargs)")
-        return
+    # Check for required API key
+    if args.gemini:
+        if not os.environ.get("GEMINI_API_KEY"):
+            print("❌ GEMINI_API_KEY not set")
+            print("   Run: export $(grep -v '^#' .env | xargs)")
+            return
+    else:
+        if not os.environ.get("OPENROUTER_API_KEY"):
+            print("❌ OPENROUTER_API_KEY not set")
+            print("   Run: export $(grep -v '^#' .env | xargs)")
+            return
 
-    scraper = ConferenceScraper(verbose=not args.quiet)
+    scraper = ConferenceScraper(verbose=not args.quiet, use_gemini=args.gemini)
     result = scraper.scrape_conference(args.conference, args.year, args.max_steps)
 
     if not result:

@@ -208,6 +208,213 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
 
 
 # =============================================================================
+# FALLBACK / ESTIMATION LOGIC
+# =============================================================================
+
+# Key deadline types to keep for estimated data
+KEY_DEADLINE_TYPES = {"paper", "abstract", "notification", "camera", "event"}
+KEY_DEADLINE_LABELS = [
+    "paper submission", "abstract submission", "submission deadline",
+    "notification", "decision", "camera ready", "camera-ready",
+    "main conference", "conference"
+]
+
+
+def is_key_deadline(deadline: Dict) -> bool:
+    """Check if a deadline is a key deadline worth keeping for estimates."""
+    dtype = deadline.get("type", "").lower()
+    label = deadline.get("label", "").lower()
+
+    # Keep by type
+    if dtype in KEY_DEADLINE_TYPES:
+        return True
+
+    # Keep by label keywords
+    for keyword in KEY_DEADLINE_LABELS:
+        if keyword in label:
+            return True
+
+    return False
+
+
+def bump_year_in_date(date_str: str, years: int = 1) -> str:
+    """
+    Bump the year in a date string by N years.
+    Handles both 'YYYY-MM-DD' and 'YYYY-MM-DDTHH:MM:SS±HH:MM' formats.
+    """
+    if not date_str:
+        return date_str
+
+    import re
+
+    # Match year at the start
+    match = re.match(r'^(\d{4})', date_str)
+    if match:
+        old_year = int(match.group(1))
+        new_year = old_year + years
+        return str(new_year) + date_str[4:]
+
+    return date_str
+
+
+def create_estimated_from_existing(existing_conf: Dict, target_year: int) -> Optional[Dict]:
+    """
+    Create estimated conference data from existing data.
+    Bumps dates by the difference in years and marks as estimated.
+
+    Args:
+        existing_conf: Existing conference data
+        target_year: Target year for the estimated data
+
+    Returns:
+        New conference dict with estimated deadlines, or None if can't create
+    """
+    existing_year = existing_conf.get("year", 0)
+    if not existing_year or existing_year >= target_year:
+        return None
+
+    year_diff = target_year - existing_year
+
+    # Get existing deadlines
+    existing_deadlines = existing_conf.get("deadlines", [])
+    if not existing_deadlines:
+        return None
+
+    # Filter to key deadlines only and bump dates
+    new_deadlines = []
+    for deadline in existing_deadlines:
+        if not is_key_deadline(deadline):
+            continue
+
+        new_deadline = deadline.copy()
+
+        # Bump the date
+        if "date" in new_deadline:
+            new_deadline["date"] = bump_year_in_date(new_deadline["date"], year_diff)
+        if "endDate" in new_deadline and new_deadline["endDate"]:
+            new_deadline["endDate"] = bump_year_in_date(new_deadline["endDate"], year_diff)
+
+        # Mark as estimated
+        new_deadline["estimated"] = True
+        new_deadline["status"] = "upcoming"
+
+        new_deadlines.append(new_deadline)
+
+    if not new_deadlines:
+        return None
+
+    # Create new conference entry
+    conf_name = existing_conf.get("name", "").lower()
+    new_conf = {
+        "id": f"{conf_name}-{target_year}",
+        "name": existing_conf.get("name"),
+        "fullName": existing_conf.get("fullName"),
+        "year": target_year,
+        "category": existing_conf.get("category"),
+        "website": existing_conf.get("website", "").replace(str(existing_year), str(target_year)),
+        "brandColor": existing_conf.get("brandColor"),
+        "location": {
+            "city": "TBD",
+            "country": "TBD",
+            "flag": "🌍",
+            "venue": None
+        },
+        "deadlines": new_deadlines,
+        "links": {},  # Don't copy old links - they'd be wrong
+        "info": existing_conf.get("info", {}),
+        "notes": [],
+        "isEstimated": True,  # Mark entire conference as estimated
+    }
+
+    return new_conf
+
+
+def try_create_fallback(
+    conf_name: str,
+    target_year: int,
+    existing_conferences: List[Dict],
+    run_scraper_fn
+) -> Optional[Dict]:
+    """
+    Try to create fallback/estimated data when scraping fails.
+
+    Strategy:
+    1. Look for existing data for target year - use if found
+    2. Look for previous year data in existing - estimate from that
+    3. Try scraping previous year - estimate from that
+
+    Args:
+        conf_name: Conference name (e.g., "neurips")
+        target_year: Target year (e.g., 2026)
+        existing_conferences: List of existing conference data
+        run_scraper_fn: Function to run scraper for a conference
+
+    Returns:
+        Estimated conference dict, or None if can't create fallback
+    """
+    conf_name_lower = conf_name.lower()
+    target_id = f"{conf_name_lower}-{target_year}"
+    prev_year = target_year - 1
+    prev_id = f"{conf_name_lower}-{prev_year}"
+
+    # Build lookup
+    existing_by_id = {c["id"]: c for c in existing_conferences}
+
+    # Strategy 1: Check if we already have target year data
+    if target_id in existing_by_id:
+        existing = existing_by_id[target_id]
+        if existing.get("deadlines"):
+            print(f"    📦 Using existing {target_year} data as fallback")
+            # Mark deadlines as estimated if not already scraped fresh
+            for deadline in existing.get("deadlines", []):
+                deadline["estimated"] = True
+            existing["isEstimated"] = True
+            return existing
+
+    # Strategy 2: Check if we have previous year data in existing
+    if prev_id in existing_by_id:
+        prev_conf = existing_by_id[prev_id]
+        if prev_conf.get("deadlines"):
+            print(f"    📅 Creating {target_year} estimate from existing {prev_year} data")
+            return create_estimated_from_existing(prev_conf, target_year)
+
+    # Strategy 3: Try scraping previous year
+    print(f"    🔍 Trying to scrape {prev_year} for fallback...")
+
+    import tempfile
+    import os
+
+    tmpfile = tempfile.mktemp(suffix=".json", prefix=f"{conf_name_lower}_")
+
+    if run_scraper_fn(conf_name, prev_year, tmpfile):
+        try:
+            with open(tmpfile, "r") as f:
+                import json
+                prev_data = json.load(f)
+
+            if prev_data.get("deadlines"):
+                print(f"    ✅ Got {prev_year} data, creating {target_year} estimate")
+
+                # Convert to datajs format first
+                from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
+                metadata = load_metadata()
+                prev_conf = convert_scraper_to_datajs(prev_data, metadata)
+
+                return create_estimated_from_existing(prev_conf, target_year)
+            else:
+                print(f"    ⚠️ {prev_year} also has no deadlines")
+        except Exception as e:
+            print(f"    ⚠️ Error processing {prev_year} data: {e}")
+        finally:
+            if os.path.exists(tmpfile):
+                os.remove(tmpfile)
+    else:
+        print(f"    ⚠️ Failed to scrape {prev_year}")
+
+    return None
+
+
+# =============================================================================
 # SCRAPER INTEGRATION
 # =============================================================================
 
@@ -320,9 +527,18 @@ Examples:
         print("No conferences to process. Exiting.")
         return
 
+    # Load existing data for fallback
+    default_datajs = os.path.join(os.path.dirname(script_dir), "js", "data.js")
+    existing_conferences = []
+    if os.path.exists(default_datajs):
+        existing_conferences = load_existing_datajs(default_datajs)
+    elif os.path.exists(args.output):
+        existing_conferences = load_existing_datajs(args.output)
+
     # Convert all scraped data
     converted = []
     skipped = []
+    estimated = []
 
     for json_file in json_files:
         if not os.path.exists(json_file):
@@ -335,12 +551,28 @@ Examples:
 
         # Check if scrape actually succeeded (has deadlines)
         deadlines = scraper_data.get("deadlines", [])
+        conf_name = scraper_data.get("conference", "Unknown")
+        year = scraper_data.get("year", args.year)
+
         if not deadlines:
-            conf_name = scraper_data.get("conference", "Unknown")
-            year = scraper_data.get("year", "?")
-            print(f"  ⚠️  SKIPPED: {conf_name} {year} - no deadlines found (scrape failed or not announced)")
-            print(f"      Existing data will be preserved.")
-            skipped.append(f"{conf_name}-{year}")
+            print(f"  ⚠️  No deadlines found for {conf_name} {year}")
+            print(f"      Attempting fallback...")
+
+            # Try to create estimated data
+            fallback = try_create_fallback(
+                conf_name,
+                year,
+                existing_conferences,
+                run_scraper
+            )
+
+            if fallback:
+                converted.append(fallback)
+                estimated.append(f"{conf_name}-{year}")
+                print(f"  📊 Created estimated: {fallback['id']} ({len(fallback.get('deadlines', []))} key deadlines)")
+            else:
+                print(f"  ❌ No fallback available for {conf_name} {year}")
+                skipped.append(f"{conf_name}-{year}")
             continue
 
         conf = convert_scraper_to_datajs(scraper_data, metadata)
@@ -384,8 +616,10 @@ Examples:
         print(f" DRY RUN - Summary")
         print(f"{'=' * 70}")
         print(f"  Would update: {len(converted)} conferences")
+        if estimated:
+            print(f"  Estimated (from prev year): {', '.join(estimated)}")
         if skipped:
-            print(f"  Skipped (no deadlines): {', '.join(skipped)}")
+            print(f"  Skipped (no fallback): {', '.join(skipped)}")
         print(f"  Total would be: {len(conferences)} conferences")
         print(f"\nFirst 2000 chars of output:")
         print(js_content[:2000] + "..." if len(js_content) > 2000 else js_content)
@@ -402,9 +636,11 @@ Examples:
         print(f" ✅ Updated {args.output}")
         print(f"{'=' * 70}")
         print(f"  Conferences updated: {len(converted)}")
+        if estimated:
+            print(f"  Estimated (from prev year): {', '.join(estimated)}")
         print(f"  Total in data.js: {len(conferences)}")
         if skipped:
-            print(f"  Skipped (no deadlines): {', '.join(skipped)}")
+            print(f"  Skipped (no fallback): {', '.join(skipped)}")
         print(f"  Size: {len(js_content):,} bytes")
 
     # Cleanup temp directory if we created one

@@ -150,7 +150,7 @@ class AgentScraper:
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key
         )
-        self.model = "google/gemini-2.0-flash-001"
+        self.model = "meta-llama/llama-3.3-70b-instruct:free"
 
     def generate_seed_urls(self, base_url: str) -> List[str]:
         """Generate common conference URLs to try (for JS-heavy sites)"""

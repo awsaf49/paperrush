@@ -170,7 +170,7 @@ Extract and return JSON:
         print(f"PROMPT LENGTH: {len(prompt)} chars")
 
         response = client.chat.completions.create(
-            model="google/gemini-2.0-flash-001",
+            model="meta-llama/llama-3.3-70b-instruct:free",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
             max_tokens=1500

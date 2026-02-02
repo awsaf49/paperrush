@@ -376,7 +376,7 @@ class ConferenceUpdater:
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key
         )
-        self.model = "google/gemini-2.0-flash-001"  # Free model on OpenRouter
+        self.model = "meta-llama/llama-3.3-70b-instruct:free"  # Fallback if Gemini not available
         self.existing_data = self._load_existing_data(existing_data_path)
         self.results = []
 

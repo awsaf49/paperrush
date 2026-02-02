@@ -51,7 +51,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests openai
+          pip install requests openai playwright
+          playwright install chromium
 
       - name: Determine conferences to scrape
         id: config
@@ -70,6 +71,7 @@ jobs:
 
       - name: Run scraper for each conference
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           mkdir -p /tmp/scraped
@@ -86,6 +88,7 @@ jobs:
             python scripts/scraper.py "$conf" \
               --year ${{ steps.config.outputs.year }} \
               --output "/tmp/scraped/${conf}.json" \
+              --gemini \
               --quiet || echo "Warning: Failed to scrape $conf"
 
             # Small delay between conferences to avoid rate limiting

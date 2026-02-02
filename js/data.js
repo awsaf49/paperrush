@@ -1414,7 +1414,7 @@ const CONFERENCES_DATA = {
 				"fullName": "Annual Conference of the International Speech Communication Association",
 				"year": 2026,
 				"category": "speech",
-				"website": "https://www.interspeech2026.org/",
+				"website": "https://interspeech2026.org/",
 				"brandColor": "#FF6347",
 				"location": {
 					"city": "Rotterdam",
@@ -1426,21 +1426,52 @@ const CONFERENCES_DATA = {
 					{
 						"type": "paper",
 						"label": "Paper Submission Deadline",
-						"date": "2026-03-21T23:59:00-12:00",
+						"date": "2026-02-25T23:59:00-12:00",
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Paper Update Deadline",
+						"date": "2026-03-04T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Rebuttal Period",
+						"date": "2026-04-24",
+						"endDate": "2026-05-01",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Paper Acceptance Notification",
+						"date": "2026-06-05",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-ready Submission",
+						"date": "2026-06-19T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
 					},
 					{
 						"type": "event",
 						"label": "Main Conference",
-						"date": "2026-09-06",
-						"endDate": "2026-09-10",
+						"date": "2026-09-27",
+						"endDate": "2026-10-01",
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					}
 				],
 				"links": {
-					"official": "https://www.interspeech2026.org/"
+					"official": "https://interspeech2026.org/",
+					"author": "https://interspeech2026.org/pages/calls/call-for-papers",
+					"dates": "https://interspeech2026.org/pages/important-dates"
 				},
 				"info": {
 					"pageLimit": "4 pages",
