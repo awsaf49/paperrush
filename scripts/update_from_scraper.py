@@ -105,6 +105,7 @@ const CATEGORIES = {{
     cv: {{ name: "Computer Vision", color: "#007AFF" }},
     nlp: {{ name: "NLP", color: "#34C759" }},
     speech: {{ name: "Speech & Audio", color: "#FF9500" }},
+    robotics: {{ name: "Robotics", color: "#FF1493" }},
     other: {{ name: "Other", color: "#8E8E93" }}
 }};
 
@@ -211,28 +212,112 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
 # FALLBACK / ESTIMATION LOGIC
 # =============================================================================
 
-# Key deadline types to keep for estimated data
-KEY_DEADLINE_TYPES = {"paper", "abstract", "notification", "camera", "event"}
-KEY_DEADLINE_LABELS = [
-    "paper submission", "abstract submission", "submission deadline",
-    "notification", "decision", "camera ready", "camera-ready",
-    "main conference", "conference"
+# Key deadline types to keep for estimated data (minimal set)
+# Only keep: abstract, main paper submission, main conference event
+KEY_DEADLINE_TYPES = {"abstract", "event"}
+KEY_DEADLINE_LABELS_INCLUDE = [
+    "abstract submission",
+    "paper submission",
+    "full paper",
+    "main conference",
 ]
+# Exclude these even if they match above (be careful not to exclude main paper deadline)
+KEY_DEADLINE_LABELS_EXCLUDE = [
+    "workshop", "tutorial", "demo", "dataset", "benchmark",
+    "position", "competition", "creative", "education",
+    "camera", "notification", "rebuttal", "review",
+    "decision", "open", "assigned", "poster", "video",
+    "bid", "ac ", "acs ", "reviewer", "meta", "import",
+    "assignment", "check", "finalize", "careers", "expo", "sponsor",
+    "supplemental material", "supplementary material"  # separate from main submission
+]
+# Note: We allow "Submission and Supplementary Materials Deadline" (main paper)
+# but exclude "Supplemental Material Submission Deadline" (separate deadline)
+
+# Biennial conferences (happen every 2 years)
+BIENNIAL_CONFERENCES = {
+    "iccv": "odd",   # 2023, 2025, 2027
+    "eccv": "even",  # 2022, 2024, 2026
+}
+
+
+def get_year_offset(conf_name: str) -> int:
+    """Get year offset for conference (2 for biennial, 1 for annual)."""
+    return 2 if conf_name.lower() in BIENNIAL_CONFERENCES else 1
+
+
+def get_next_year(conf_name: str, current_year: int) -> int:
+    """Get next valid year for a conference."""
+    return current_year + get_year_offset(conf_name)
+
+
+def get_previous_year(conf_name: str, current_year: int) -> int:
+    """Get previous valid year for a conference."""
+    return current_year - get_year_offset(conf_name)
+
+
+def get_valid_target_year(conf_name: str, requested_year: int) -> int:
+    """
+    Get the valid target year for a conference.
+    For biennial conferences, adjusts to the nearest valid year.
+
+    - ICCV: odd years only (2023, 2025, 2027)
+    - ECCV: even years only (2022, 2024, 2026)
+    """
+    conf_lower = conf_name.lower()
+
+    if conf_lower == "iccv":
+        # ICCV is odd years only
+        if requested_year % 2 == 0:  # Even year requested
+            return requested_year + 1  # Move to next odd year
+    elif conf_lower == "eccv":
+        # ECCV is even years only
+        if requested_year % 2 == 1:  # Odd year requested
+            return requested_year + 1  # Move to next even year
+
+    return requested_year
 
 
 def is_key_deadline(deadline: Dict) -> bool:
-    """Check if a deadline is a key deadline worth keeping for estimates."""
+    """
+    Check if a deadline is a key deadline worth keeping for estimates.
+
+    For estimates, we only want 3 things:
+    - Abstract submission
+    - Main paper submission
+    - Main conference event
+    """
     dtype = deadline.get("type", "").lower()
     label = deadline.get("label", "").lower()
 
-    # Keep by type
-    if dtype in KEY_DEADLINE_TYPES:
+    # Always keep main conference event (type=event with "conference" or "main")
+    if dtype == "event":
+        # Skip if it's about poster, video, upload, etc.
+        if any(x in label for x in ["poster", "video", "upload", "deadline"]):
+            return False
+        if "main conference" in label or label == "main conference":
+            return True
+        if "conference" in label and "call" not in label:
+            return True
+        return False  # Skip other events (workshops, tutorials, etc.)
+
+    # First check exclusions - skip workshops, tutorials, etc.
+    for exclude in KEY_DEADLINE_LABELS_EXCLUDE:
+        if exclude in label:
+            return False
+
+    # Keep abstract submission
+    if dtype == "abstract" or ("abstract" in label and "submission" in label):
         return True
 
-    # Keep by label keywords
-    for keyword in KEY_DEADLINE_LABELS:
-        if keyword in label:
-            return True
+    # Keep main paper submission (various naming conventions)
+    paper_keywords = ["paper submission", "full paper", "submission deadline",
+                      "paper registration", "submission and supplementary"]
+    if dtype == "paper" or any(kw in label for kw in paper_keywords):
+        # Exclude sub-tracks
+        if any(x in label for x in ["dataset", "benchmark", "position", "workshop", "demo"]):
+            return False
+        return True
 
     return False
 
@@ -257,7 +342,56 @@ def bump_year_in_date(date_str: str, years: int = 1) -> str:
     return date_str
 
 
-def create_estimated_from_existing(existing_conf: Dict, target_year: int) -> Optional[Dict]:
+def parse_date_for_comparison(date_str: str) -> Optional[datetime]:
+    """
+    Parse a date string into a datetime for comparison.
+    Handles 'YYYY-MM-DD' and 'YYYY-MM-DDTHH:MM:SS±HH:MM' formats.
+    """
+    if not date_str:
+        return None
+
+    import re
+
+    # Try ISO format with timezone
+    match = re.match(r'^(\d{4})-(\d{2})-(\d{2})', date_str)
+    if match:
+        try:
+            year, month, day = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            return datetime(year, month, day, tzinfo=timezone.utc)
+        except ValueError:
+            return None
+
+    return None
+
+
+def all_deadlines_passed(conf_data: Dict) -> bool:
+    """
+    Check if ALL deadlines including the conference event have passed.
+
+    Args:
+        conf_data: Conference data (either scraper format or datajs format)
+
+    Returns:
+        True if all deadlines have passed, False otherwise
+    """
+    now = datetime.now(timezone.utc)
+
+    deadlines = conf_data.get("deadlines", [])
+    if not deadlines:
+        return True  # No deadlines means nothing upcoming
+
+    for deadline in deadlines:
+        # Handle both scraper format (event/date) and datajs format (type/label/date)
+        date_str = deadline.get("endDate") or deadline.get("date")
+        date = parse_date_for_comparison(date_str)
+
+        if date and date > now:
+            return False  # Found a future deadline
+
+    return True
+
+
+def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_offset: int = None) -> Optional[Dict]:
     """
     Create estimated conference data from existing data.
     Bumps dates by the difference in years and marks as estimated.
@@ -265,6 +399,7 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int) -> Opt
     Args:
         existing_conf: Existing conference data
         target_year: Target year for the estimated data
+        year_offset: Override for year offset (for biennial conferences)
 
     Returns:
         New conference dict with estimated deadlines, or None if can't create
@@ -272,6 +407,11 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int) -> Opt
     existing_year = existing_conf.get("year", 0)
     if not existing_year or existing_year >= target_year:
         return None
+
+    # Calculate year diff (use offset for biennial conferences)
+    conf_name = existing_conf.get("name", "")
+    if year_offset is None:
+        year_offset = get_year_offset(conf_name)
 
     year_diff = target_year - existing_year
 
@@ -304,9 +444,9 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int) -> Opt
         return None
 
     # Create new conference entry
-    conf_name = existing_conf.get("name", "").lower()
+    conf_name_lower = conf_name.lower()
     new_conf = {
-        "id": f"{conf_name}-{target_year}",
+        "id": f"{conf_name_lower}-{target_year}",
         "name": existing_conf.get("name"),
         "fullName": existing_conf.get("fullName"),
         "year": target_year,
@@ -338,10 +478,11 @@ def try_create_fallback(
     """
     Try to create fallback/estimated data when scraping fails.
 
-    Strategy:
-    1. Look for existing data for target year - use if found
-    2. Look for previous year data in existing - estimate from that
-    3. Try scraping previous year - estimate from that
+    Smart cascading fallback strategy (prioritizes accuracy):
+    1. Try scraping previous year - most accurate source for estimates
+    2. Fall back to existing data.js data - last resort if scraping fails
+
+    For biennial conferences (ICCV/ECCV), uses 2-year offsets.
 
     Args:
         conf_name: Conference name (e.g., "neurips")
@@ -354,31 +495,15 @@ def try_create_fallback(
     """
     conf_name_lower = conf_name.lower()
     target_id = f"{conf_name_lower}-{target_year}"
-    prev_year = target_year - 1
+    year_offset = get_year_offset(conf_name)
+    prev_year = get_previous_year(conf_name, target_year)
     prev_id = f"{conf_name_lower}-{prev_year}"
 
     # Build lookup
     existing_by_id = {c["id"]: c for c in existing_conferences}
 
-    # Strategy 1: Check if we already have target year data
-    if target_id in existing_by_id:
-        existing = existing_by_id[target_id]
-        if existing.get("deadlines"):
-            print(f"    📦 Using existing {target_year} data as fallback")
-            # Mark deadlines as estimated if not already scraped fresh
-            for deadline in existing.get("deadlines", []):
-                deadline["estimated"] = True
-            existing["isEstimated"] = True
-            return existing
-
-    # Strategy 2: Check if we have previous year data in existing
-    if prev_id in existing_by_id:
-        prev_conf = existing_by_id[prev_id]
-        if prev_conf.get("deadlines"):
-            print(f"    📅 Creating {target_year} estimate from existing {prev_year} data")
-            return create_estimated_from_existing(prev_conf, target_year)
-
-    # Strategy 3: Try scraping previous year
+    # Strategy 1: Try scraping previous year FIRST (most accurate)
+    # This gives us real dates to estimate from, rather than using old estimates
     print(f"    🔍 Trying to scrape {prev_year} for fallback...")
 
     import tempfile
@@ -393,14 +518,30 @@ def try_create_fallback(
                 prev_data = json.load(f)
 
             if prev_data.get("deadlines"):
-                print(f"    ✅ Got {prev_year} data, creating {target_year} estimate")
+                print(f"    ✅ Got {prev_year} data, creating {target_year} estimate (+{year_offset} year{'s' if year_offset > 1 else ''})")
 
                 # Convert to datajs format first
                 from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
                 metadata = load_metadata()
                 prev_conf = convert_scraper_to_datajs(prev_data, metadata)
 
-                return create_estimated_from_existing(prev_conf, target_year)
+                estimated = create_estimated_from_existing(prev_conf, target_year, year_offset)
+
+                # If estimate is missing "Main Conference" event, try to get from existing data.js
+                if estimated:
+                    has_event = any(d.get("type") == "event" for d in estimated.get("deadlines", []))
+                    if not has_event and target_id in existing_by_id:
+                        existing = existing_by_id[target_id]
+                        for deadline in existing.get("deadlines", []):
+                            if deadline.get("type") == "event" and "conference" in deadline.get("label", "").lower():
+                                # Copy the existing conference event
+                                event_copy = deadline.copy()
+                                event_copy["estimated"] = True
+                                estimated["deadlines"].append(event_copy)
+                                print(f"    📅 Added Main Conference event from existing data")
+                                break
+
+                return estimated
             else:
                 print(f"    ⚠️ {prev_year} also has no deadlines")
         except Exception as e:
@@ -411,16 +552,98 @@ def try_create_fallback(
     else:
         print(f"    ⚠️ Failed to scrape {prev_year}")
 
+    # Strategy 2: Fall back to existing data.js data (last resort)
+    if target_id in existing_by_id:
+        existing = existing_by_id[target_id]
+        if existing.get("deadlines"):
+            print(f"    📦 Using existing {target_year} data as last resort fallback")
+            # Mark deadlines as estimated
+            for deadline in existing.get("deadlines", []):
+                deadline["estimated"] = True
+            existing["isEstimated"] = True
+            return existing
+
     return None
+
+
+def try_roll_forward(
+    conf_data: Dict,
+    run_scraper_fn
+) -> Optional[Dict]:
+    """
+    When all deadlines have passed, try to get next year's data.
+
+    Strategy:
+    1. Try scraping next year
+    2. If next year doesn't exist, estimate from current year
+
+    Args:
+        conf_data: Current conference data (datajs format)
+        run_scraper_fn: Function to run scraper for a conference
+
+    Returns:
+        Next year's conference data, or estimated data
+    """
+    conf_name = conf_data.get("name", "")
+    current_year = conf_data.get("year", 0)
+
+    if not conf_name or not current_year:
+        return None
+
+    conf_name_lower = conf_name.lower()
+    year_offset = get_year_offset(conf_name)
+    next_year = get_next_year(conf_name, current_year)
+
+    print(f"    🔄 All deadlines passed for {conf_name} {current_year}, rolling forward to {next_year}...")
+
+    # Strategy 1: Try scraping next year
+    import tempfile
+    import os
+
+    tmpfile = tempfile.mktemp(suffix=".json", prefix=f"{conf_name_lower}_")
+
+    if run_scraper_fn(conf_name, next_year, tmpfile):
+        try:
+            with open(tmpfile, "r") as f:
+                import json
+                next_data = json.load(f)
+
+            if next_data.get("deadlines"):
+                print(f"    ✅ Got {next_year} data")
+
+                # Convert to datajs format
+                from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
+                metadata = load_metadata()
+                next_conf = convert_scraper_to_datajs(next_data, metadata)
+                return next_conf
+            else:
+                print(f"    ⚠️ {next_year} site exists but no deadlines yet")
+        except Exception as e:
+            print(f"    ⚠️ Error processing {next_year} data: {e}")
+        finally:
+            if os.path.exists(tmpfile):
+                os.remove(tmpfile)
+    else:
+        print(f"    ⚠️ {next_year} site not available yet")
+
+    # Strategy 2: Estimate from current year
+    print(f"    📅 Estimating {next_year} from {current_year} data (+{year_offset} year{'s' if year_offset > 1 else ''})")
+    return create_estimated_from_existing(conf_data, next_year, year_offset)
 
 
 # =============================================================================
 # SCRAPER INTEGRATION
 # =============================================================================
 
-def run_scraper(conference: str, year: int, output_path: str) -> bool:
+def run_scraper(conference: str, year: int, output_path: str, use_gemini: bool = True) -> bool:
     """
     Run the scraper for a single conference.
+
+    Args:
+        conference: Conference name (e.g., "cvpr")
+        year: Conference year
+        output_path: Path to save JSON output
+        use_gemini: Use Gemini API (default: True, matches workflow)
 
     Returns:
         True if successful, False otherwise
@@ -435,6 +658,10 @@ def run_scraper(conference: str, year: int, output_path: str) -> bool:
         "--output", output_path,
         "--quiet"
     ]
+
+    # Use Gemini by default (matches GitHub Actions workflow)
+    if use_gemini:
+        cmd.append("--gemini")
 
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
@@ -514,10 +741,16 @@ Examples:
         # Use /tmp directly instead of auto-deleting TemporaryDirectory
         tmpdir = tempfile.mkdtemp(prefix="scraper_")
         for conf in conferences:
-            print(f"Scraping {conf}...")
+            # Adjust year for biennial conferences (ICCV=odd, ECCV=even)
+            target_year = get_valid_target_year(conf, args.year)
+            if target_year != args.year:
+                print(f"Scraping {conf}... (adjusted to {target_year}, {conf.upper()} is biennial)")
+            else:
+                print(f"Scraping {conf}...")
+
             output_path = os.path.join(tmpdir, f"{conf}.json")
 
-            if run_scraper(conf, args.year, output_path):
+            if run_scraper(conf, target_year, output_path):
                 json_files.append(output_path)
                 print(f"  Success: {output_path}")
             else:
@@ -576,8 +809,23 @@ Examples:
             continue
 
         conf = convert_scraper_to_datajs(scraper_data, metadata)
-        converted.append(conf)
-        print(f"  ✅ Converted: {conf['id']} ({len(conf.get('deadlines', []))} deadlines)")
+
+        # Check if all deadlines have passed → roll forward to next year
+        if all_deadlines_passed(conf):
+            print(f"  ⏰ All deadlines passed for {conf_name} {year}")
+            rolled = try_roll_forward(conf, run_scraper)
+            if rolled:
+                converted.append(rolled)
+                if rolled.get("isEstimated"):
+                    estimated.append(f"{rolled['id']}")
+                print(f"  🔄 Rolled forward: {rolled['id']} ({len(rolled.get('deadlines', []))} deadlines)")
+            else:
+                # Keep current data if roll-forward fails
+                converted.append(conf)
+                print(f"  ⚠️ Roll-forward failed, keeping current: {conf['id']}")
+        else:
+            converted.append(conf)
+            print(f"  ✅ Converted: {conf['id']} ({len(conf.get('deadlines', []))} deadlines)")
 
     if not converted:
         print(f"\n{'=' * 70}")

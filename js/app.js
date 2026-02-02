@@ -103,13 +103,32 @@ const App = {
      */
     createNextYearConference(conf) {
         const nextYear = conf.year + 1;
-        
-        // Bump all deadline dates by 1 year and mark as estimated
-        const newDeadlines = conf.deadlines.map(d => {
+
+        // For estimates, only keep key deadlines: abstract, paper submission, main event
+        const keyDeadlines = conf.deadlines.filter(d => {
+            const label = (d.label || '').toLowerCase();
+            const type = (d.type || '').toLowerCase();
+
+            // Keep abstract submission
+            if (type === 'abstract' || label.includes('abstract')) return true;
+
+            // Keep main paper submission (but not workshops, tutorials, etc.)
+            if (type === 'paper' && label.includes('paper') &&
+                !label.includes('workshop') && !label.includes('tutorial') &&
+                !label.includes('demo') && !label.includes('position')) return true;
+
+            // Keep main conference event
+            if (type === 'event' && label.includes('conference')) return true;
+
+            return false;
+        });
+
+        // Bump deadline dates by 1 year and mark as estimated
+        const newDeadlines = keyDeadlines.map(d => {
             const oldDate = new Date(d.date);
             const newDate = new Date(oldDate);
             newDate.setFullYear(newDate.getFullYear() + 1);
-            
+
             // Also bump end date if exists
             let newEndDate = null;
             if (d.endDate) {
@@ -117,7 +136,7 @@ const App = {
                 newEndDate = new Date(oldEndDate);
                 newEndDate.setFullYear(newEndDate.getFullYear() + 1);
             }
-            
+
             return {
                 ...d,
                 date: newDate.toISOString(),
@@ -412,7 +431,7 @@ const App = {
      * Update category count badges
      */
     updateCategoryCounts() {
-        const categories = ['all', 'ml', 'cv', 'nlp', 'speech', 'other'];
+        const categories = ['all', 'ml', 'cv', 'nlp', 'speech', 'robotics', 'other'];
 
         categories.forEach(cat => {
             const countEl = document.getElementById(`count-${cat}`);
@@ -981,6 +1000,13 @@ const App = {
                 radial-gradient(ellipse 130% 80% at 80% -20%, rgba(251, 146, 60, 0.5), transparent 50%),
                 radial-gradient(ellipse 100% 120% at 110% 90%, rgba(253, 186, 116, 0.45), transparent 50%),
                 linear-gradient(160deg, #fff7ed 0%, #ffedd5 50%, #fff7ed 100%)
+            `,
+            // Robotics - Hot pink/magenta, bold and techy
+            'robotics': `
+                radial-gradient(ellipse 100% 120% at -20% 30%, rgba(255, 20, 147, 0.6), transparent 50%),
+                radial-gradient(ellipse 80% 100% at 110% 70%, rgba(255, 105, 180, 0.5), transparent 50%),
+                radial-gradient(ellipse 120% 80% at 50% -30%, rgba(255, 182, 193, 0.4), transparent 50%),
+                linear-gradient(170deg, #fff0f5 0%, #ffe4ec 50%, #ffebf0 100%)
             `,
             // Other - Corner accents, creative/artistic feel
             'other': `

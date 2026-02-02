@@ -206,6 +206,48 @@ CONFERENCES = {
             "workshops",
         ],
     },
+    "wacv": {
+        "name": "WACV",
+        "base": "https://wacv.thecvf.com/Conferences/{year}",
+        "seeds": [
+            "",
+            "Dates",
+            "AuthorGuidelines",
+            "CallForPapers",
+        ],
+        "link_only": [
+            "CallForWorkshops",
+            "CallForTutorials",
+        ],
+    },
+    "icip": {
+        "name": "ICIP",
+        "base": "https://{year}.ieeeicip.org",
+        "seeds": [
+            "",
+            "important-dates",
+            "call-for-papers-and-abstracts",
+            "author-kit",
+            "paper-submission",
+        ],
+        "link_only": [
+            "workshops",
+            "tutorials",
+        ],
+    },
+    "iros": {
+        "name": "IROS",
+        "base": "https://{year}.ieee-iros.org",
+        "seeds": [
+            "",
+            "about/important-dates",
+            "contribute/call-for-papers",
+        ],
+        "link_only": [
+            "contribute/call-for-workshops",
+            "contribute/call-for-tutorials",
+        ],
+    },
 }
 
 
@@ -572,6 +614,12 @@ EXTRACTION_PROMPT = '''You are extracting information from a conference website 
 
 **YOUR TASK:** Extract ALL relevant conference information with CLEAN DATA TYPES.
 
+⚠️ **CRITICAL: DO NOT HALLUCINATE OR GUESS!**
+- ONLY extract information that is EXPLICITLY stated in the page content above
+- If information is NOT found on this page, return null - DO NOT make up values
+- If you're unsure about a value, return null - it's better to miss info than to provide wrong info
+- The page content above is the ONLY source of truth - ignore your training data about this conference
+
 Return a JSON object with these fields:
 
 {{
@@ -595,10 +643,10 @@ Return a JSON object with these fields:
   }},
 
   "location": {{
-    "city": "City name (e.g., 'Vancouver', 'Seoul', 'Vienna') or null",
-    "country": "Country name (e.g., 'Canada', 'South Korea', 'Austria') or null",
-    "venue": "Venue/convention center name or null",
-    "dates": "Conference dates as string (e.g., 'June 5-7, 2026') or null"
+    "city": "City name if stated on page or null",
+    "country": "Country name if stated (e.g., 'USA', 'Finland') or null",
+    "venue": "Venue/convention center name if stated or null",
+    "dates": "Conference event dates if stated (e.g., 'September 27 - October 1, 2026') or null"
   }},
 
   "info": {{
@@ -705,14 +753,20 @@ Return a JSON object with these fields:
 7. **info.other**: Use for conference-specific info not in standard fields
 
 **IMPORTANT INSTRUCTIONS:**
-1. Extract information ONLY from the provided content - do not make up information
-2. IMPORTANT: Look for dates in tables, lists, countdown timers, and any formatted text. Dates often appear as "Feb 15 '26" or similar abbreviated formats.
+1. **NO HALLUCINATION**: Extract ONLY information explicitly stated in the page content above
+   - If a field is not mentioned on this page, return null - DO NOT guess or use prior knowledge
+   - Dates must be explicitly shown - don't guess based on historical patterns
+2. **LOCATION EXTRACTION**: Look for location in headers, banners, hero sections, venue info, etc.
+   - Common formats: "PITTSBURGH, PA, USA", "Vancouver, Canada", "Tampere, Finland"
+   - "City, STATE, COUNTRY" format: city is first part, country is last (e.g., "PA, USA" → country is "USA")
+   - If you see "September 27 - October 1, 2026 | Pittsburgh, PA" → extract both dates AND location
+3. Look for dates in tables, lists, countdown timers, and any formatted text. Dates often appear as "Feb 15 '26" or similar abbreviated formats.
 3. For desk_reject_reasons, keep each reason SHORT (max 10 words). Use phrases not sentences.
    - Good: "Page limit exceeded (8 pages max)"
    - Bad: "Papers that have more than eight pages excluding references will be desk rejected"
 4. For links, prefer direct download links over general pages when available
 5. For next_urls_to_visit, only include URLs that appear in the LINKS section
-6. If information is not present, use null for single values or empty arrays for lists
+6. **If information is not present, use null for single values or empty arrays for lists - NEVER GUESS**
 7. Return ONLY the JSON object, no other text'''
 
 
@@ -978,6 +1032,7 @@ class ConferenceScraper:
         # Process each chunk and merge
         merged = {
             "links": {},
+            "location": {},
             "info": {},
             "desk_reject_reasons": [],
             "deadlines": [],
@@ -1015,6 +1070,11 @@ class ConferenceScraper:
             for key, value in result.get("info", {}).items():
                 if value and not merged["info"].get(key):
                     merged["info"][key] = value
+
+            # Merge location (take first non-null for each field)
+            for key, value in result.get("location", {}).items():
+                if value and not merged["location"].get(key):
+                    merged["location"][key] = value
 
             # Merge lists (deduplicate)
             for reason in result.get("desk_reject_reasons", []):

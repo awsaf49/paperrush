@@ -152,5 +152,27 @@
       "flag": "\ud83c\uddfa\ud83c\uddf8",
       "venue": "JW Marriott Tucson Starr Pass"
     }
+  },
+  "icip": {
+    "fullName": "IEEE International Conference on Image Processing",
+    "category": "cv",
+    "brandColor": "#1E90FF",
+    "location": {
+      "city": "Tampere",
+      "country": "Finland",
+      "flag": "\ud83c\uddeb\ud83c\uddee",
+      "venue": "Tampere Exhibition and Sports Centre"
+    }
+  },
+  "iros": {
+    "fullName": "IEEE/RSJ International Conference on Intelligent Robots and Systems",
+    "category": "robotics",
+    "brandColor": "#FF1493",
+    "location": {
+      "city": "Pittsburgh",
+      "country": "USA",
+      "flag": "\ud83c\uddfa\ud83c\uddf8",
+      "venue": "David L. Lawrence Convention Center"
+    }
   }
 }
