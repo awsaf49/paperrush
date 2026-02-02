@@ -45,7 +45,7 @@
 ## 🚀 Quick Start
 
 ### Option 1: Use Directly
-Visit **[paperrush.github.io](https://awsaf49.github.io/paperrush/)** — no installation needed!
+Visit **[https://awsaf49.github.io/paperrush/](https://awsaf49.github.io/paperrush/)** — no installation needed!
 
 ### Option 2: Self-Host
 
