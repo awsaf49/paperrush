@@ -232,19 +232,21 @@ const CountdownTimer = {
      * @returns {string} Formatted date string
      */
     formatDate(dateString, endDateString = null) {
+        // Use UTC methods to avoid timezone issues with date-only strings
+        // "2026-02-06" should display as Feb 06, not Feb 05 for US users
         const date = new Date(dateString);
-        const month = date.toLocaleDateString('en-US', { month: 'short' });
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
+        const day = String(date.getUTCDate()).padStart(2, '0');
 
         if (endDateString) {
             const endDate = new Date(endDateString);
-            const endDay = String(endDate.getDate()).padStart(2, '0');
+            const endDay = String(endDate.getUTCDate()).padStart(2, '0');
             // Same month
-            if (date.getMonth() === endDate.getMonth()) {
+            if (date.getUTCMonth() === endDate.getUTCMonth()) {
                 return `${month} ${day}-${endDay}`;
             }
             // Different months
-            const endMonth = endDate.toLocaleDateString('en-US', { month: 'short' });
+            const endMonth = endDate.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
             return `${month} ${day} - ${endMonth} ${endDay}`;
         }
 

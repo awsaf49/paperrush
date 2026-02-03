@@ -36,9 +36,10 @@
 | Category | Conferences |
 |----------|-------------|
 | **ML** | ICML, NeurIPS, ICLR, AAAI |
-| **Vision** | CVPR, ICCV, ECCV |
+| **Vision** | CVPR, ICCV, ECCV, WACV, ICIP |
 | **NLP** | ACL, EMNLP, NAACL |
 | **Speech** | Interspeech, ICASSP |
+| **Robotics** | IROS |
 
 ---
 
@@ -85,6 +86,14 @@ To enable auto-updates on your fork:
 | **Weekly** | Automatic every Monday 6 AM UTC |
 | **On Push** | Include `[scrape]` in commit message |
 | **Manual** | Actions → "Update Conference Deadlines" → Run |
+
+### System Architecture
+
+```
+🌐 Conference Websites → 🤖 Gemini LLM → 📄 JSON → 📦 data.js → 🌍 GitHub Pages → 🖥️ Browser
+```
+
+📊 **See full interactive workflow diagrams**: [`docs/workflow.html`](docs/workflow.html)
 
 ---
 
@@ -167,10 +176,11 @@ paperrush/
 
 | Category | Color | Conferences |
 |----------|-------|-------------|
-| `ml` | Blue | ICML, NeurIPS, ICLR, AAAI |
-| `cv` | Purple | CVPR, ICCV, ECCV |
+| `ml` | Purple | ICML, NeurIPS, ICLR, AAAI |
+| `cv` | Blue | CVPR, ICCV, ECCV, WACV, ICIP |
 | `nlp` | Green | ACL, EMNLP, NAACL |
 | `speech` | Orange | Interspeech, ICASSP |
+| `robotics` | Hot Pink | IROS |
 | `other` | Gray | Others |
 
 </details>
@@ -222,7 +232,8 @@ paperrush/
 - [ ] Timezone selector
 - [ ] Favorite conferences
 - [ ] PWA offline support
-- [ ] More conferences (robotics, HCI, security)
+- [x] ~~More conferences (robotics, HCI, security)~~ Added IROS, ICIP, WACV
+- [ ] More conferences (HCI, security)
 
 See [Issues](https://github.com/awsaf49/paperrush/issues) for detailed tasks.
 

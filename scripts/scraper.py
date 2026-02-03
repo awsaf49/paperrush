@@ -283,36 +283,53 @@ def fetch_with_playwright(url: str, timeout: int = 30000) -> Optional[str]:
 
 
 # =============================================================================
-# HTML PARSER - SIMPLE, NO FILTERING
+# HTML TO MARKDOWN CONVERSION (preserves tables, headings, lists)
 # =============================================================================
 
-class HTMLTextExtractor(HTMLParser):
-    """Extract ALL text and links from HTML - no filtering bullshit"""
+def html_to_markdown(html: str) -> str:
+    """
+    Convert HTML to Markdown, preserving structure.
+    Uses html2text if available, falls back to simple extraction.
+    """
+    try:
+        import html2text
+        h = html2text.HTML2Text()
+        h.ignore_links = False  # Keep links as [text](url)
+        h.ignore_images = True  # Skip images
+        h.ignore_emphasis = False  # Keep bold/italic
+        h.body_width = 0  # Don't wrap lines
+        h.skip_internal_links = True
+        return h.handle(html)
+    except ImportError:
+        # Fallback to simple extraction if html2text not installed
+        return _simple_html_to_text(html)
+
+
+def _simple_html_to_text(html: str) -> str:
+    """Simple fallback HTML to text extraction."""
+    parser = _SimpleHTMLExtractor()
+    try:
+        parser.feed(html)
+    except:
+        return ""
+    return parser.get_text()
+
+
+class _SimpleHTMLExtractor(HTMLParser):
+    """Fallback text extractor if html2text not available."""
 
     def __init__(self):
         super().__init__()
         self.text = []
-        self.links = []
         self.in_script_or_style = False
-        self.current_href = None
 
     def handle_starttag(self, tag, attrs):
-        tag = tag.lower()
-        # Only skip script/style content (not useful)
-        if tag in ('script', 'style'):
+        if tag.lower() in ('script', 'style'):
             self.in_script_or_style = True
-        # Capture links
-        if tag == 'a':
-            for attr, value in attrs:
-                if attr == 'href' and value:
-                    self.current_href = value
 
     def handle_endtag(self, tag):
-        tag = tag.lower()
-        if tag in ('script', 'style'):
+        if tag.lower() in ('script', 'style'):
             self.in_script_or_style = False
-        if tag == 'a':
-            self.current_href = None
 
     def handle_data(self, data):
         if self.in_script_or_style:
@@ -320,28 +337,22 @@ class HTMLTextExtractor(HTMLParser):
         text = data.strip()
         if text:
             self.text.append(text)
-            if self.current_href:
-                self.links.append({"text": text, "href": self.current_href})
 
     def get_text(self):
         return ' '.join(self.text)
 
-    def get_links(self):
-        return self.links
 
-
-def extract_page_content(html: str, base_url: str) -> Dict:
-    """Extract text and links from HTML"""
-    parser = HTMLTextExtractor()
+def extract_links_from_html(html: str, base_url: str) -> List[Dict]:
+    """Extract links from HTML with resolved URLs."""
+    parser = _LinkExtractor()
     try:
         parser.feed(html)
     except:
-        return {"text": "", "links": []}
+        return []
 
-    # Resolve relative URLs and deduplicate
     seen_urls = set()
     links = []
-    for link in parser.get_links():
+    for link in parser.links:
         href = link["href"]
         if href.startswith("#") or href.startswith("javascript:") or href.startswith("mailto:"):
             continue
@@ -350,9 +361,54 @@ def extract_page_content(html: str, base_url: str) -> Dict:
         if href not in seen_urls:
             seen_urls.add(href)
             links.append({"text": link["text"][:100], "url": href})
+    return links
 
-    text = re.sub(r'\s+', ' ', parser.get_text()).strip()
-    return {"text": text, "links": links}
+
+class _LinkExtractor(HTMLParser):
+    """Extract links from HTML."""
+
+    def __init__(self):
+        super().__init__()
+        self.links = []
+        self.current_href = None
+        self.current_text = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == 'a':
+            for attr, value in attrs:
+                if attr == 'href' and value:
+                    self.current_href = value
+                    self.current_text = []
+
+    def handle_endtag(self, tag):
+        if tag.lower() == 'a' and self.current_href:
+            text = ' '.join(self.current_text).strip()
+            if text:
+                self.links.append({"text": text, "href": self.current_href})
+            self.current_href = None
+            self.current_text = []
+
+    def handle_data(self, data):
+        if self.current_href:
+            self.current_text.append(data.strip())
+
+
+def extract_page_content(html: str, base_url: str) -> Dict:
+    """
+    Extract content from HTML as Markdown (preserves tables, headings, lists).
+    Also extracts links separately for the LLM prompt.
+    """
+    # Convert to Markdown (preserves structure!)
+    markdown_text = html_to_markdown(html)
+
+    # Clean up excessive whitespace but keep structure
+    markdown_text = re.sub(r'\n{3,}', '\n\n', markdown_text)
+    markdown_text = markdown_text.strip()
+
+    # Extract links separately for the prompt
+    links = extract_links_from_html(html, base_url)
+
+    return {"text": markdown_text, "links": links}
 
 
 # =============================================================================

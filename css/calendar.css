@@ -519,6 +519,11 @@
     border-left-color: var(--color-other);
 }
 
+.cal-week-chip.category-robotics {
+    background: rgba(255, 20, 147, 0.1);
+    border-left-color: var(--color-robotics);
+}
+
 /* ============================================
    DAY VIEW
    ============================================ */
@@ -595,6 +600,10 @@
     border-left-color: var(--color-other);
 }
 
+.cal-day-card.category-robotics {
+    border-left-color: var(--color-robotics);
+}
+
 .cal-day-card-dot {
     width: 10px;
     height: 10px;
@@ -607,6 +616,7 @@
 .cal-day-card.category-cv .cal-day-card-dot { background: var(--color-cv); }
 .cal-day-card.category-nlp .cal-day-card-dot { background: var(--color-nlp); }
 .cal-day-card.category-speech .cal-day-card-dot { background: var(--color-speech); }
+.cal-day-card.category-robotics .cal-day-card-dot { background: var(--color-robotics); }
 .cal-day-card.category-other .cal-day-card-dot { background: var(--color-other); }
 
 .cal-day-card-content {
@@ -805,6 +815,7 @@
 .cal-mini-chip.category-cv { background: rgba(0, 122, 255, 0.3); }
 .cal-mini-chip.category-nlp { background: rgba(52, 199, 89, 0.3); }
 .cal-mini-chip.category-speech { background: rgba(255, 149, 0, 0.3); }
+.cal-mini-chip.category-robotics { background: rgba(255, 20, 147, 0.3); }
 .cal-mini-chip.category-other { background: rgba(142, 142, 147, 0.3); }
 
 /* ============================================
@@ -907,6 +918,13 @@
 }
 .cal-chip.category-other .chip-dot {
     background: var(--color-other);
+}
+
+.cal-chip.category-robotics {
+    background: rgba(255, 20, 147, 0.15);
+}
+.cal-chip.category-robotics .chip-dot {
+    background: var(--color-robotics);
 }
 
 /* ============================================

@@ -250,7 +250,8 @@ const Calendar = {
         this.conferences.forEach(conf => {
             conf.deadlines.forEach(deadline => {
                 const deadlineDate = new Date(deadline.date);
-                if (deadlineDate.getFullYear() === year && deadlineDate.getMonth() === month) {
+                // Use UTC to avoid timezone issues with date-only strings
+                if (deadlineDate.getUTCFullYear() === year && deadlineDate.getUTCMonth() === month) {
                     results.push({ conference: conf, deadline });
                 }
             });

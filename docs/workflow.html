@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperRush Workflow</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1, h2 { color: #333; }
+        .diagram-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .mermaid { text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>🚀 PaperRush Workflow</h1>
+
+    <h2>📊 Complete System Flow</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+flowchart TB
+    subgraph Triggers["⚡ TRIGGERS"]
+        direction LR
+        CRON["⏰ Weekly Cron<br/>Monday 6AM UTC"]
+        COMMIT["📝 Commit with [scrape]"]
+        MANUAL["🖱️ Manual Dispatch"]
+        CRON ~~~ COMMIT ~~~ MANUAL
+    end
+
+    Triggers --> GHA
+
+    subgraph GHA["🔄 GITHUB ACTIONS WORKFLOW"]
+        direction TB
+        LOOP["🔁 Loop: FOR EACH CONFERENCE<br/>cvpr, iccv, icml, neurips, aaai,<br/>acl, emnlp, icip, iros, ..."]
+
+        subgraph Scraper["🕷️ SCRAPER.PY"]
+            direction TB
+            SEEDS["📋 Seed URLs<br/>Landing, /Dates, /CFP"]
+            FETCH["🌐 Fetch Page"]
+            PARSE["📝 Parse HTML"]
+            LLM_EXTRACT["🤖 Gemini LLM<br/>Extract deadlines & location"]
+            QUEUE["📥 URL Queue"]
+            SANITY["🧹 LLM Sanity Check<br/>Resolve conflicts"]
+            JSON_OUT["📄 /tmp/conf.json"]
+
+            SEEDS --> FETCH --> PARSE --> LLM_EXTRACT --> QUEUE
+            QUEUE -->|"More URLs"| FETCH
+            QUEUE -->|"Done"| SANITY --> JSON_OUT
+        end
+
+        subgraph Updater["🔧 UPDATE_FROM_SCRAPER.PY"]
+            direction TB
+            CHECK{"Scrape<br/>Success?"}
+            USE_DATA["✅ Use data"]
+            FALLBACK["🔄 Fallback<br/>1. Scrape prev year<br/>2. Use existing"]
+            FILTER["🎯 Filter estimates<br/>to 3 key dates"]
+            MERGE["🔀 Merge + metadata"]
+            DATA_JS["📦 js/data.js"]
+
+            CHECK -->|"Yes"| USE_DATA --> MERGE
+            CHECK -->|"No"| FALLBACK --> FILTER --> MERGE
+            MERGE --> DATA_JS
+        end
+
+        LOOP --> Scraper
+        JSON_OUT --> CHECK
+    end
+
+    subgraph Deploy["🚀 DEPLOY"]
+        GIT["📤 Git Push"]
+        PAGES["🌍 GitHub Pages"]
+    end
+
+    DATA_JS --> GIT --> PAGES
+
+    subgraph Browser["🖥️ BROWSER"]
+        direction TB
+        LOAD["📥 Load data.js"]
+        PASSED{"All passed?"}
+        SHOW["📅 Show normal"]
+        ROLL["🔄 Auto-roll +1 year<br/>Filter to 3 dates"]
+        RENDER["🎨 Render Cards<br/>+ Countdowns"]
+
+        LOAD --> PASSED
+        PASSED -->|"No"| SHOW --> RENDER
+        PASSED -->|"Yes"| ROLL --> RENDER
+    end
+
+    PAGES --> LOAD
+
+    style Triggers fill:#e3f2fd
+    style GHA fill:#fff8e1
+    style Scraper fill:#f3e5f5
+    style Updater fill:#e8f5e9
+    style Deploy fill:#fce4ec
+    style Browser fill:#e0f7fa
+        </pre>
+    </div>
+
+    <h2>🔄 Fallback Logic</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+flowchart LR
+    A["🎯 Scrape 2026"] --> B{"Got<br/>data?"}
+    B -->|"Yes"| C{"All<br/>passed?"}
+    B -->|"No"| D["📅 Scrape 2025"]
+
+    C -->|"No"| E["✅ Use 2026"]
+    C -->|"Yes"| F["⏩ Roll to 2027"]
+
+    D --> G{"Got<br/>2025?"}
+    G -->|"Yes"| H["📈 Bump +1 year"]
+    G -->|"No"| I["📦 Use existing"]
+
+    H --> J["🎯 Filter 3 dates"]
+    I --> J
+    F --> J
+
+    E --> K["📦 data.js"]
+    J --> K
+
+    style A fill:#e3f2fd
+    style E fill:#c8e6c9
+    style K fill:#fff9c4
+        </pre>
+    </div>
+
+    <h2>🕷️ Scraper Detail</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+flowchart TB
+    CONF["📥 Conference: IROS 2026<br/>Base: https://2026.ieee-iros.org"]
+
+    CONF --> S1
+    CONF --> S2
+    CONF --> S3
+
+    S1["🌱 / landing"]
+    S2["🌱 /important-dates"]
+    S3["🌱 /call-for-papers"]
+
+    S1 --> FETCH
+    S2 --> FETCH
+    S3 --> FETCH
+
+    subgraph Process["🔄 PROCESS EACH PAGE"]
+        FETCH["🌐 Fetch HTML<br/>139K chars raw"]
+        HTML2MD["📝 HTML → Markdown<br/>html2text library<br/>Preserves tables, headings, lists"]
+        CHUNK["✂️ Chunk Text<br/>10K chars, 500 overlap"]
+
+        subgraph ChunkLoop["🔁 FOR EACH CHUNK"]
+            PROMPT["📋 Extract JSON:<br/>• Deadlines + timezone<br/>• Location (city, country)<br/>• Links (cfp, template)<br/>• Anti-hallucination:<br/>  'null if not found'"]
+            LLM_CALL["🤖 Gemini LLM"]
+            RESPONSE["📄 Chunk JSON"]
+            PROMPT --> LLM_CALL --> RESPONSE
+        end
+
+        MERGE_CHUNKS["🔀 Merge all chunks<br/>Dedupe by event+date"]
+        MERGE_PAGE["🔀 Merge to page result"]
+        DISCOVER["🔗 Discover new URLs<br/>from links"]
+
+        FETCH --> HTML2MD --> CHUNK --> ChunkLoop
+        RESPONSE -->|"More chunks"| PROMPT
+        RESPONSE -->|"All done"| MERGE_CHUNKS --> MERGE_PAGE --> DISCOVER
+    end
+
+    DISCOVER -->|"More URLs in queue"| FETCH
+
+    subgraph Output["📤 OUTPUT"]
+        SANITY["🧹 LLM Sanity Check<br/>• Dedupe conflicts<br/>• Fix date order<br/>• Resolve TZ conflicts"]
+        FINAL["📄 Clean JSON<br/>14 deadlines<br/>Location: Pittsburgh, PA"]
+    end
+
+    DISCOVER -->|"Queue empty"| SANITY --> FINAL
+
+    style LLM fill:#f3e5f5
+    style Output fill:#e8f5e9
+    style Process fill:#fff8e1
+        </pre>
+    </div>
+
+    <h2>📱 Client-Side Flow</h2>
+    <div class="diagram-container">
+        <pre class="mermaid">
+flowchart LR
+    subgraph Load["📥 LOAD"]
+        HTML["index.html"]
+        CSS["styles.css"]
+        DATA["data.js"]
+        APP["app.js"]
+    end
+
+    subgraph Process["⚙️ PROCESS"]
+        PARSE["Parse conferences"]
+        CHECK{"All deadlines<br/>passed?"}
+        KEEP["Keep as-is"]
+        ROLL["createNextYearConference<br/>• Filter 3 dates<br/>• Year +1<br/>• Mark Approx"]
+        SORT["Sort by deadline"]
+    end
+
+    subgraph Render["🎨 RENDER"]
+        CARDS["Conference Cards"]
+        COUNTDOWN["Live Countdowns"]
+        FILTERS["Category Filters"]
+        MODAL["Detail Modals"]
+    end
+
+    HTML --> APP
+    CSS --> HTML
+    DATA --> PARSE --> CHECK
+    CHECK -->|"No"| KEEP --> SORT
+    CHECK -->|"Yes"| ROLL --> SORT
+    SORT --> CARDS
+    CARDS --> COUNTDOWN
+    CARDS --> FILTERS
+    CARDS --> MODAL
+
+    style Load fill:#e3f2fd
+    style Process fill:#fff8e1
+    style Render fill:#e8f5e9
+        </pre>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>

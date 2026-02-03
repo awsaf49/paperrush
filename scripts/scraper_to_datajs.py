@@ -127,21 +127,23 @@ def convert_date_time(date_str: Optional[str], time_str: Optional[str],
     Input:  date="2025-11-13", time="23:59", timezone="AoE"
     Output: "2025-11-13T23:59:00-12:00"
 
+    Input:  date="2025-11-13", time=None, timezone="AoE"
+    Output: "2025-11-13T23:59:00-12:00" (default to end of day)
+
     Input:  date="2025-11-13", time=None, timezone=None
-    Output: "2025-11-13" (date-only for events without specific time)
+    Output: "2025-11-13T23:59:00-12:00" (default to AoE for deadlines)
     """
     if not date_str:
         return None
 
-    # If no time specified, return date-only format
+    # Default time to 23:59 (end of day) for deadlines
+    # This prevents timezone display bugs in browsers
     if not time_str:
-        return date_str
-
-    # Normalize time to HH:MM:SS
-    if len(time_str) == 5:  # HH:MM
+        time_str = "23:59:00"
+    elif len(time_str) == 5:  # HH:MM
         time_str = f"{time_str}:00"
 
-    # Get timezone offset
+    # Get timezone offset (defaults to AoE if not specified)
     offset = timezone_to_offset(timezone_str)
 
     return f"{date_str}T{time_str}{offset}"
