@@ -2,12 +2,53 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-02-02T19:34:09Z
+ * Last updated: 2026-02-03T01:08:18Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-02-02T19:34:09Z",
+	"lastUpdated": "2026-02-03T01:08:18Z",
 	"conferences": [
+			{
+				"id": "aaai-2027",
+				"name": "AAAI",
+				"fullName": "AAAI Conference on Artificial Intelligence",
+				"year": 2027,
+				"category": "ml",
+				"website": "https://aaai.org/conference/aaai/aaai-26",
+				"brandColor": "#00008B",
+				"location": {
+					"city": "TBD",
+					"country": "TBD",
+					"flag": "🌍",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-07-25T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
+					},
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2026-08-01T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
+					}
+				],
+				"links": {},
+				"info": {
+					"pageLimit": "7 pages + additional pages solely for references and the reproducibility checklist",
+					"reviewType": "Double-blind",
+					"submissionFormat": "PDF"
+				},
+				"notes": [],
+				"isEstimated": true
+			},
 			{
 				"id": "iccv-2027",
 				"name": "ICCV",
@@ -183,7 +224,7 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "paper",
-						"label": "Submission deadline",
+						"label": "Submission deadline (all papers are submitted to ARR)",
 						"date": "2026-01-05T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -199,7 +240,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Commitment deadline",
+						"label": "Commitment deadline for ACL 2026",
 						"date": "2026-03-14",
 						"endDate": null,
 						"status": "upcoming",
@@ -351,6 +392,14 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2025-11-13",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "event",
 						"label": "Enrollment Form Deadline",
 						"date": "2025-11-16T23:59:00-12:00",
@@ -359,17 +408,25 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "OpenReview Profile Deadline",
-						"date": "2025-11-16T23:59:00-12:00",
+						"type": "supplementary",
+						"label": "Supplementary Materials Deadline",
+						"date": "2025-11-20T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-11-13",
+						"label": "Tutorial Submission Deadline",
+						"date": "2025-12-15T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Reviews Released",
+						"date": "2026-01-22T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -401,63 +458,7 @@ const CONFERENCES_DATA = {
 					{
 						"type": "paper",
 						"label": "Art Submission Deadline",
-						"date": "2026-03-08",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Early Registration Deadline",
-						"date": "2026-04-23T12:59:00-06:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Cancellation Deadline",
-						"date": "2026-05-13",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Open Review Profile Deadline",
-						"date": "2025-11-16T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "supplementary",
-						"label": "Supplementary Materials Deadline",
-						"date": "2025-11-20T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Tutorial Submission Deadline",
-						"date": "2025-12-15T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Rebuttal Period Starts",
-						"date": "2026-01-22T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Reviews Released",
-						"date": "2026-01-22T23:59:00-12:00",
+						"date": "2026-03-08T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -479,25 +480,17 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-11-06",
+						"type": "event",
+						"label": "Early Registration Deadline",
+						"date": "2026-04-23T12:59:00-06:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Rebuttal Period",
-						"date": "2026-01-22",
+						"type": "event",
+						"label": "Cancellation Deadline",
+						"date": "2026-05-13",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -505,7 +498,7 @@ const CONFERENCES_DATA = {
 				],
 				"links": {
 					"official": "https://cvpr.thecvf.com/Conferences/2026",
-					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Conference",
+					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Workshop_Proposals",
 					"template": "https://github.com/cvpr-org/author-kit",
 					"authorGuide": "https://cvpr.thecvf.com/Conferences/2026/AuthorGuidelines",
 					"reviewerGuide": "https://cvpr.thecvf.com/Conferences/2026/ReviewerGuidelines",
@@ -516,25 +509,18 @@ const CONFERENCES_DATA = {
 				},
 				"info": {
 					"pageLimit": "8 pages + unlimited references",
-					"reviewType": "Double-blind",
+					"reviewType": "Double blind",
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
 					"Papers not properly anonymized",
-					"Papers not using the template",
-					"Papers exceeding page limit (excluding references)",
-					"Authors not completing OpenReview profiles",
-					"Prompt injection or hidden instructions",
-					"Incomplete OpenReview profiles",
-					"Incomplete author enrollment",
+					"Papers that do not use the template",
+					"Papers with more than eight pages (excluding references)",
+					"Submissions containing prompt injection",
+					"Incomplete OpenReview profile",
+					"Inaccurate conflict information",
 					"Papers with incomplete author registrations after the deadline",
-					"Incomplete submission",
-					"Submission does not meet required criteria",
-					"Papers containing citations of non-existent material",
-					"Papers containing obvious factual inaccuracies",
-					"Prompt injection found in submission",
-					"Anonymity violation",
-					"Prompt injection detected"
+					"Prompt injection"
 				],
 				"notes": []
 			},
@@ -586,6 +572,54 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "paper",
+						"label": "ACs receive papers and suggest reviewers",
+						"date": "2026-03-13",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "ACs receive papers and suggest reviewers",
+						"date": "2026-03-20",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Papers assigned to reviewers",
+						"date": "2026-03-31",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Workshop/Tutorial decisions notified",
+						"date": "2026-04-12T20:00:00+00:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Reviewer: Reviews Due",
+						"date": "2026-04-21",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "ACs ensure every paper has at least 3 high-quality reviews",
+						"date": "2026-05-01",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "rebuttal",
 						"label": "Reviews Released To Authors",
 						"date": "2026-05-02",
@@ -602,8 +636,56 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "paper",
+						"label": "ACs discuss papers with reviewers",
+						"date": "2026-05-20",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Reviewer: Final reviewer recommendations due",
+						"date": "2026-05-20",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "AC: ACs’ preliminary meta-reviews and recommendations due",
+						"date": "2026-05-25",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "AC Triplet meetings (flexibly scheduled by each triplet)",
+						"date": "2026-06-04",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "AC: ACs’ final meta-reviews and recommendations due",
+						"date": "2026-06-09",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "notification",
 						"label": "Final Decisions",
+						"date": "2026-06-17",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Final accept/reject decisions to authors",
 						"date": "2026-06-17",
 						"endDate": null,
 						"status": "upcoming",
@@ -613,86 +695,6 @@ const CONFERENCES_DATA = {
 						"type": "camera",
 						"label": "Camera Ready Deadline",
 						"date": "2026-06-26",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "supplementary",
-						"label": "Supplementary Material Deadline",
-						"date": "2026-03-12T23:00:00+01:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Reviews Due",
-						"date": "2026-04-21",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Final Reviewer Recommendations Due",
-						"date": "2026-05-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "ACs’ Preliminary Meta-Reviews and Recommendations Due",
-						"date": "2026-05-25",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "ACs’ Final Meta-Reviews and Recommendations Due",
-						"date": "2026-06-09",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-11-07T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-11-13T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Workshop/Tutorial decisions notified",
-						"date": "2026-04-12T20:00:00+00:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "supplementary",
-						"label": "Supplementary Materials Deadline",
-						"date": "2026-03-12T23:00:00+01:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -710,17 +712,16 @@ const CONFERENCES_DATA = {
 				},
 				"info": {
 					"pageLimit": "14 pages + unlimited references",
-					"reviewType": "Double-blind",
+					"reviewType": "Double blind",
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
-					"Not properly anonymized",
-					"Do not use the template",
-					"More than 14 pages (excluding references)",
-					"Incomplete or inaccurate conflict information",
+					"Papers not properly anonymized",
+					"Papers that do not use the template",
+					"Papers with more than 14 pages (excluding references)",
+					"Submissions with significantly altered margins and formatting",
 					"Authors who have not completed their OpenReview profiles",
-					"Margins and formatting significantly altered from template",
-					"Papers with supplementary materials violating the guidelines",
+					"Incomplete or inaccurate conflict information",
 					"Papers containing citations of non-existent material",
 					"Papers containing obvious factual inaccuracies",
 					"Submission found to contain prompt injection"
@@ -784,6 +785,38 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "paper",
+						"label": "Paper Submissions (regular papers)",
+						"date": "2025-09-17",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "OJSP Paper Submissions",
+						"date": "2025-09-24",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Response Deadline",
+						"date": "2025-12-22",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Published Journal Presentation Request",
+						"date": "2026-01-09",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
 						"label": "Paper Acceptance",
 						"date": "2026-01-16T23:59:00-12:00",
 						"endDate": null,
@@ -837,59 +870,18 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submissions (regular papers)",
-						"date": "2025-09-17",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "OJSP Paper Submissions",
-						"date": "2025-09-24",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Author Response Deadline",
-						"date": "2025-12-22",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Published Journal Presentation Request",
-						"date": "2026-01-09",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "art",
-						"label": "Open Preview Starts",
-						"date": "2026-04-07",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
 					}
 				],
 				"links": {
 					"official": "https://2026.ieeeicassp.org",
 					"submission": "https://cmsworkshops.com/ICASSP2026/papers.php",
-					"template": "https://cmsworkshops.com/ICASSP2026/papers/paper_kit.php#PartII",
-					"authorGuide": "https://2026.ieeeicassp.org/paper-submission-instructions/",
+					"authorGuide": "https://2026.ieeeicassp.org/author-presentation-instructions/",
 					"author": "https://2026.ieeeicassp.org/call-for-papers/",
 					"dates": "https://2026.ieeeicassp.org/eventtype/important-dates/",
 					"registration": "https://2026.ieeeicassp.org/registration-rates-and-options/"
 				},
 				"info": {
-					"pageLimit": "8 pages"
+					"pageLimit": "8 pages + +1 pages"
 				},
 				"notes": []
 			},
@@ -926,7 +918,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Special Session proposal due",
+						"label": "Special Session proposal",
 						"date": "2025-12-31",
 						"endDate": null,
 						"status": "upcoming",
@@ -934,7 +926,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "tutorial",
-						"label": "Tutorial proposal due",
+						"label": "Tutorial proposal",
 						"date": "2025-12-31",
 						"endDate": null,
 						"status": "upcoming",
@@ -957,6 +949,14 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "notification",
+						"label": "Grand Challenge proposal notification of acceptance",
+						"date": "2026-01-21",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "paper",
 						"label": "Paper Submission",
 						"date": "2026-02-04",
@@ -965,8 +965,16 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "art",
+						"label": "Grand Challenge web pages with instructions to participants published",
+						"date": "2026-02-11",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "workshop",
-						"label": "Satellite Workshop proposals due",
+						"label": "Satellite Workshop proposals",
 						"date": "2026-02-18",
 						"endDate": null,
 						"status": "upcoming",
@@ -990,7 +998,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "workshop",
-						"label": "Satellite Workshop webpages due",
+						"label": "Satellite Workshop webpages",
 						"date": "2026-03-18",
 						"endDate": null,
 						"status": "upcoming",
@@ -998,31 +1006,15 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "notification",
-						"label": "Notification",
+						"label": "Notification of acceptance",
 						"date": "2026-04-22",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Open Journal of Signal Processing paper notification of acceptance",
-						"date": "2026-04-22",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Camera-ready paper due",
-						"date": "2026-05-13",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "One-page abstract due",
+						"type": "event",
+						"label": "Request",
 						"date": "2026-05-13",
 						"endDate": null,
 						"status": "upcoming",
@@ -1030,63 +1022,31 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Request to present a paper recently accepted in an SPS Journal",
+						"label": "Submission",
 						"date": "2026-05-13",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Satellite Workshop paper due",
+						"type": "camera",
+						"label": "Camera-Ready Deadline",
 						"date": "2026-05-13",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "abstract",
-						"label": "Two-page extended abstract of entries to a Grand Challenge",
-						"date": "2026-05-13",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Notification of acceptance to present a paper recently accepted in an SPS Journal",
+						"type": "notification",
+						"label": "Notification of acceptance",
 						"date": "2026-05-27",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "abstract",
-						"label": "One-page abstract notification of acceptance",
-						"date": "2026-05-27",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Conference registration of Authors of papers and abstracts due",
-						"date": "2026-06-10",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Satellite Workshop paper notification of acceptance",
-						"date": "2026-06-10",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Two-page extended abstracts of entries to a Grand Challenge notification of acceptance",
+						"type": "notification",
+						"label": "Notification of acceptance",
 						"date": "2026-06-10",
 						"endDate": null,
 						"status": "upcoming",
@@ -1102,32 +1062,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Request for a Demo at a Show & Tell Session due",
+						"label": "Requests for demos due",
 						"date": "2026-07-01",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Grand Challenge camera-ready two-page extended abstract due",
-						"date": "2026-07-01",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Grand Challenge author registration due",
-						"date": "2026-07-16",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "workshop",
-						"label": "Satellite Workshop author registration due",
-						"date": "2026-07-16",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1140,11 +1076,11 @@ const CONFERENCES_DATA = {
 					"authorGuide": "https://2026.ieeeicip.org/general-and-author-policies/",
 					"author": "https://2026.ieeeicip.org/call-for-papers-and-abstracts/",
 					"dates": "https://2026.ieeeicip.org/important-dates/",
-					"registration": "https://2026.ieeeicip.org/why-attend/",
+					"registration": "https://2026.ieeeicip.org/author-kit/#submission-required-registration",
 					"faq": "https://2026.ieeeicip.org/author-kit/#FAQ"
 				},
 				"info": {
-					"pageLimit": "6 pages + optional 6th page for references only",
+					"pageLimit": "5 pages + one optional 6th page for references only",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF"
 				},
@@ -1152,36 +1088,38 @@ const CONFERENCES_DATA = {
 					"Page count limits",
 					"Page margins",
 					"Font problems",
-					"Title mismatch",
-					"Author list mismatch",
-					"Author list on the uploaded document does not match the online form",
+					"Title on the uploaded file does not match the title typed into the paper management system submission form",
+					"Author list on the uploaded NOT ANONYMISED file does not match the author list typed into the web submission form",
+					"Author list on file does not match online form",
 					"Page numbers appear on the uploaded file",
 					"Documents that exceed the 6 page limit",
 					"6th page containing anything other than references",
-					"Author list on the uploaded file does not match the online form",
-					"Exceeding the 6 page limit",
-					"Failure to follow double-blind instructions",
-					"More than two self-citations in the reference list",
-					"Referring to their own work in the first person context",
-					"Removing the entire reference list",
-					"Leaving out any references",
-					"Replacing the text of reference listings with anything that could indicate the reference refers to their prior work",
-					"Shortening a reference citation with “et al.” in the reference list",
-					"Self-plagiarism",
+					"Failure to follow all instructions",
 					"IEEE Requirements for PDF Documents not followed exactly",
 					"Adobe Document Protection or Document Security enabled",
 					"Pages not 'US Letter' sized",
 					"Pages not in first-page-first order",
 					"Fonts not embedded and subset",
-					"File names contain personal information",
-					"ALL FONTS not embedded and subset",
-					"Title on the uploaded file does not match the title typed into the paper management system submission form",
-					"Author list on the uploaded NOT ANONYMISED file does not match the author list typed into the web submission form",
-					"Failure to follow all instructions will result in an automatic rejection",
+					"File size exceeds 200 MB",
 					"Page limit exceeded",
+					"Failure to follow double-blind instructions",
+					"Papers exceeding page limits will be rejected.",
+					"Author list on the uploaded document does not match the online form",
+					"Not in first-page-first order",
+					"ALL FONTS not embedded and subset",
+					"The author list on the uploaded NOT ANONYMISED file does not match the author list typed into the web submission form",
+					"Author list on the uploaded file does not match the online form",
+					"PDF files with Postscript Type 3 fonts",
+					"Exceeding the 6 page limit",
+					"IEEE Requirements for PDF Documents MUST be followed EXACTLY",
+					"Papers must be submitted in Adobe’s Portable Document Format (PDF) format",
+					"PDF files must not have Adobe Document Protection or Document Security enabled",
+					"PDF files must have ‘US Letter’ sized pages",
+					"PDF files must be in first-page-first order",
+					"PDF files must have ALL FONTS embedded and subset",
 					"Anonymity violation",
-					"Wrong template",
-					"Failure to follow all instructions"
+					"Pages not ‘US Letter’ sized",
+					"Papers exceeding page limits"
 				],
 				"notes": []
 			},
@@ -1200,14 +1138,6 @@ const CONFERENCES_DATA = {
 					"venue": "Austria Center Vienna"
 				},
 				"deadlines": [
-					{
-						"type": "event",
-						"label": "Volunteer Application Deadline",
-						"date": "2026-03-08",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
 					{
 						"type": "abstract",
 						"label": "Abstract Submission",
@@ -1241,6 +1171,22 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "event",
+						"label": "Attendees Registration Open",
+						"date": "2025-12-29",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Volunteer Application Open",
+						"date": "2026-01-13T11:00:00+00:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "paper",
 						"label": "Paper Decision Notification",
 						"date": "2026-01-25",
@@ -1250,8 +1196,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Volunteer Application Open",
-						"date": "2026-01-13T11:00:00+00:00",
+						"label": "Volunteer Application Deadline",
+						"date": "2026-03-08",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1266,80 +1212,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Attendees Registration Open",
-						"date": "2025-12-29",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
 						"label": "Dietary Preference Deadline",
 						"date": "2026-03-31",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Reviews Released",
-						"date": "2025-11-11",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Public Discussion Period",
-						"date": "2025-12-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Decision Notification",
-						"date": "2026-01-22",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-11-07T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-11-13T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Author Last Day to Reply",
-						"date": "2025-12-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Final Decisions",
-						"date": "2026-01-25",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1357,20 +1231,19 @@ const CONFERENCES_DATA = {
 					"faq": "https://iclr.cc/FAQ"
 				},
 				"info": {
-					"pageLimit": "9 pages + unlimited references, unlimited appendices (reviewers not required to read)",
+					"pageLimit": "9 pages + unlimited references",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
-					"Placeholder or duplicate abstracts",
-					"Author identity revealed in submission",
-					"Page limit exceeded",
-					"Wrong template",
-					"Failure to register as reviewer",
+					"Placeholder or duplicate abstracts will be removed",
+					"Papers with main text beyond the page limit will be desk-rejected",
+					"Any paper where author identity is revealed will be desk rejected",
+					"Authors on 3+ papers failing to review may have papers desk rejected",
+					"No registered reviewer will result in desk rejection",
+					"Not disclosing significant LLM usage can lead to desk rejection",
 					"Not disclosing significant LLM usage",
-					"Exceeding page limit",
-					"Anonymity violation",
-					"Failure to adhere to Code of Ethics"
+					"LLMs are eligible for authorship"
 				],
 				"notes": []
 			},
@@ -1390,9 +1263,49 @@ const CONFERENCES_DATA = {
 				},
 				"deadlines": [
 					{
+						"type": "tutorial",
+						"label": "Tutorial Community Nomination Deadline",
+						"date": "2025-12-07",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Paper Submission Opens for Main Conference",
+						"date": "2026-01-08T00:00:00+00:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "workshop",
+						"label": "Workshop Application Open",
+						"date": "2026-01-21",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "abstract",
+						"label": "Abstract Submission Deadline",
+						"date": "2026-01-23",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "paper",
 						"label": "Full Paper Submission Deadline",
 						"date": "2026-01-28",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Sponsor Portal Open",
+						"date": "2026-01-29T21:23:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1422,6 +1335,14 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "paper",
+						"label": "Suggested Submission Date for Workshop Contributions",
+						"date": "2026-04-24",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "notification",
 						"label": "Author Notification",
 						"date": "2026-04-30",
@@ -1430,33 +1351,17 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "Attendees Registration Cancellation Deadline",
-						"date": "2026-06-15T11:59:00+00:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Early Cancellation Deadline",
-						"date": "2026-06-14T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
-						"label": "Paper Submission Opens for Main Conference",
-						"date": "2026-01-08T00:00:00+00:00",
+						"label": "Universal notification deadline for all submissions to individual ICML workshops",
+						"date": "2026-05-15",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2026-01-23T23:59:00-12:00",
+						"type": "event",
+						"label": "Early pricing before this date",
+						"date": "2026-05-24",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1470,249 +1375,25 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "tutorial",
-						"label": "Tutorial Community Nomination Deadline",
-						"date": "2025-12-07T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "workshop",
-						"label": "Workshop Application Open",
-						"date": "2026-01-21T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Suggested Submission Date for Workshop Contributions",
-						"date": "2026-04-24T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Universal notification deadline for all submissions to individual ICML workshops",
-						"date": "2026-05-15T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2025-11-07T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-11-13T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
+						"type": "event",
+						"label": "Deadline to set your Dietary Preference",
+						"date": "2026-06-03",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "event",
-						"label": "Bidding period",
-						"date": "2026-01-27",
+						"label": "Registration Cancellation Deadline",
+						"date": "2026-06-15T20:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "event",
-						"label": "Bidding period",
-						"date": "2026-02-02",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission assignment period",
-						"date": "2026-02-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission assignment period",
-						"date": "2026-02-11",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Check/adjust reviewer assignments",
-						"date": "2026-02-06",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Check/adjust reviewer assignments",
-						"date": "2026-02-10",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Reviewing period",
-						"date": "2026-02-12",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Reviewing period",
-						"date": "2026-03-12",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Deadline for reviews",
-						"date": "2026-03-12",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Emergency reviewing period",
-						"date": "2026-03-13",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Emergency reviewing period",
-						"date": "2026-03-23",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Authors’ response and discussion period",
-						"date": "2026-03-24",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Authors’ response and discussion period",
-						"date": "2026-04-07",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Deadline to acknowledge authors’ response",
-						"date": "2026-04-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-reviewer discussion period",
-						"date": "2026-03-31",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-reviewer discussion period",
-						"date": "2026-04-12",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Meta-review deadline",
-						"date": "2026-04-13",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-SAC discussion period",
-						"date": "2026-04-14",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-SAC discussion period",
-						"date": "2026-04-18",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Check SAC-AC assignment",
-						"date": "2026-01-26T14:00:00-05:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Bidding period for ACs and reviewers",
-						"date": "2026-01-27",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Bidding period for ACs and reviewers",
-						"date": "2026-02-02",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "SAC-PC discussion period",
-						"date": "2026-04-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "SAC-PC discussion period",
-						"date": "2026-04-24",
+						"label": "Sponsor Portal Close",
+						"date": "2026-08-19T07:00:00+00:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1726,6 +1407,7 @@ const CONFERENCES_DATA = {
 					"reviewerGuide": "https://icml.cc/Conferences/2026/ReviewerInstructions",
 					"author": "https://icml.cc/Conferences/2026/CallForPapers",
 					"dates": "https://icml.cc/Conferences/2026/Dates",
+					"registration": "https://icml.cc/Register2",
 					"faq": "https://icml.cc/Conferences/2026/PeerReviewFAQ"
 				},
 				"info": {
@@ -1734,17 +1416,16 @@ const CONFERENCES_DATA = {
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
-					"Page limit exceeded (8 pages max)",
-					"Anonymity violation",
-					"Wrong format",
-					"Submitted papers that do not conform to policies",
-					"Submissions that do not meet per-submission requirement",
-					"Authors do not meet per-author requirement",
-					"Reviewers fail to adequately participate in review process",
-					"Prompt injection",
-					"Plagiarism",
-					"Advertising work as being under submission to ICML",
-					"Collusion"
+					"Main body goes over the 8 page limit",
+					"Submissions not anonymized",
+					"Submissions not following the required format",
+					"Papers that explicitly or implicitly reveal the authors’ identities",
+					"Submitted papers that do not conform to policies will be rejected",
+					"Submissions that do not meet the per-submission requirement",
+					"Authors do not meet the per-author requirement",
+					"Reviewers fail to adequately participate in the review process",
+					"All submissions must be anonymized",
+					"Prompt injection"
 				],
 				"notes": []
 			},
@@ -1765,7 +1446,7 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "paper",
-						"label": "Paper Submission",
+						"label": "Paper Submission Opens",
 						"date": "2026-01-17",
 						"endDate": null,
 						"status": "upcoming",
@@ -1781,14 +1462,6 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Paper Submission Portal Opens",
-						"date": "2026-01-17",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
 						"label": "Paper Update Deadline",
 						"date": "2026-03-04",
 						"endDate": null,
@@ -1797,32 +1470,24 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "rebuttal",
-						"label": "Rebuttal Period",
+						"label": "Author Rebuttal Period",
 						"date": "2026-04-24",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Paper Acceptance Notification",
+						"type": "notification",
+						"label": "Author Notification",
 						"date": "2026-06-05",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Camera-ready Paper Submission",
+						"type": "camera",
+						"label": "Camera-Ready Deadline",
 						"date": "2026-06-19",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission Opens",
-						"date": "2026-01-17",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1837,17 +1502,12 @@ const CONFERENCES_DATA = {
 					"dates": "https://interspeech2026.org/pages/important-dates"
 				},
 				"info": {
-					"pageLimit": "8 pages + plus 2 additional pages for references and acknowledgments (long papers)",
+					"pageLimit": "8 pages + plus 2 additional pages for references and acknowledgments",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
-					"Dual submission of the same work as both long and regular paper",
-					"Work includes fabrication, falsification, or data breach",
-					"Work includes plagiarism or significant self-plagiarism",
-					"Submitted to another conference/journal during review",
-					"Copyright of figures/photos not owned by authors",
-					"Inappropriate content in terms of human rights"
+					"Dual submission of the same work is not permitted"
 				],
 				"notes": []
 			},
@@ -2100,16 +1760,8 @@ const CONFERENCES_DATA = {
 				},
 				"deadlines": [
 					{
-						"type": "event",
-						"label": "Conference registration deadline",
-						"date": "2025-01-06",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
-						"label": "Paper enrollment",
+						"label": "Round 1 Paper Registration Deadline",
 						"date": "2025-07-11",
 						"endDate": null,
 						"status": "upcoming",
@@ -2117,23 +1769,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Paper Registration Deadline",
-						"date": "2025-07-11",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper & supplementary material submission",
-						"date": "2025-07-18",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission Deadline",
+						"label": "Round 1 Paper Submission Deadline",
 						"date": "2025-07-18",
 						"endDate": null,
 						"status": "upcoming",
@@ -2148,16 +1784,8 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "supplementary",
-						"label": "Supplementary material",
-						"date": "2025-07-18T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
-						"label": "Reviewer: Papers assigned to reviewers",
+						"label": "Papers assigned to ACs + Reviewers",
 						"date": "2025-07-28",
 						"endDate": null,
 						"status": "upcoming",
@@ -2173,16 +1801,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "notification",
-						"label": "Reviews and decisions released to authors",
-						"date": "2025-09-03",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Author Notification",
-						"date": "2025-09-04",
+						"label": "AC: Decisions and meta-reviews due",
+						"date": "2025-08-29",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -2191,6 +1811,14 @@ const CONFERENCES_DATA = {
 						"type": "notification",
 						"label": "Round 1 Reviews and Decisions To Authors",
 						"date": "2025-09-05T06:39:00+00:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Round 2 New Paper Registration",
+						"date": "2025-09-12",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -2205,15 +1833,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Rebuttal and revision submission in round 2",
-						"date": "2025-09-19",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper & supplementary material submission",
+						"label": "Round 2 Paper Submissions",
 						"date": "2025-09-19",
 						"endDate": null,
 						"status": "upcoming",
@@ -2236,32 +1856,16 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-09-19T23:59:00-12:00",
+						"type": "rebuttal",
+						"label": "Rebuttal+Revision deadline",
+						"date": "2025-09-19",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Rebuttal and Revision submission",
-						"date": "2025-09-19T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "supplementary",
-						"label": "Supplementary material",
-						"date": "2025-09-19T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Reviewer: Papers assigned to reviewers",
+						"label": "Papers assigned to ACs + AC Pairs(first) + Reviewers(second)",
 						"date": "2025-09-29",
 						"endDate": null,
 						"status": "upcoming",
@@ -2285,24 +1889,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "notification",
-						"label": "Final Decisions released to authors",
-						"date": "2025-11-05",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Reviews and Final Decisions released to authors",
-						"date": "2025-11-06",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "notification",
-						"label": "Author Notification",
-						"date": "2025-11-06",
+						"label": "AC: Decisions and meta-reviews due",
+						"date": "2025-10-31",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -2341,16 +1929,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Demo Submission Deadline",
-						"date": "2025-11-22",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Demo Submission Notification",
-						"date": "2025-12-05T02:00:00+00:00",
+						"label": "Camera ready deadline for accepted R2 papers",
+						"date": "2025-11-27",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -2420,14 +2000,6 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "notification",
-						"label": "Notification",
-						"date": "2026-02-20",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "event",
 						"label": "Onsite Poster Printing",
 						"date": "2026-02-21T06:59:00+00:00",
@@ -2456,26 +2028,24 @@ const CONFERENCES_DATA = {
 				},
 				"info": {
 					"pageLimit": "8 pages + unlimited references",
-					"reviewType": "Double-blind",
+					"reviewType": "Double blind",
 					"submissionFormat": "PDF"
 				},
 				"deskRejectReasons": [
 					"Papers not properly anonymized",
-					"Papers do not use the template",
-					"Papers have more than eight pages (excluding references)",
+					"Papers that do not use the template",
+					"Papers with more than eight pages (excluding references)",
 					"Incomplete or inaccurate conflict information",
 					"Authors added or deleted after paper registration deadlines",
 					"No valid OpenReview profile by submission deadline",
-					"Violation of double-blind guidelines",
-					"Not properly anonymized",
-					"Do not use the template",
-					"More than eight pages (excluding references)",
-					"Substantially the same as a round 1 paper submitted as new round 2 paper",
+					"Violation of double blind guidelines",
+					"Rejected round 1 papers submitted to round 2 as new papers",
+					"Submitting a round 1 paper as a new round 2 paper",
 					"Incomplete submission",
 					"Submission not meeting required criteria",
-					"Irresponsible reviews (one-sentence, LLM-generated, irrelevant)",
-					"Reviews that overlook substantial portions of the paper",
-					"Failure to meet the review submission deadlines"
+					"Formatting issues",
+					"Anonymity violations",
+					"Conflicts of interest"
 				],
 				"notes": []
 			}
