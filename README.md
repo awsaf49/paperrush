@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/github/stars/awsaf49/paperrush?style=social" alt="Stars">
 </p>
 
-<h1 align="center">⏱️ PaperRush</h1>
+<h1 align="center">⏱️ Conference Deadline Tracker</h1>
 
 <p align="center">
   <strong>Never miss a paper deadline again!</strong><br>
@@ -16,6 +16,10 @@
   <a href="#-features">Features</a> •
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-contributing">Contributing</a>
+</p>
+
+<p align="center">
+<img width="700" height="606" alt="image" align="center" src="https://github.com/user-attachments/assets/31b2f33f-8c2d-47d4-8407-4b74028d0b32" />
 </p>
 
 ---
