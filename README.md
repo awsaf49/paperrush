@@ -86,6 +86,15 @@ To enable auto-updates on your fork:
 | **On Push** | Include `[scrape]` in commit message |
 | **Manual** | Actions → "Update Conference Deadlines" → Run |
 
+### Troubleshooting Hosted Runner Errors
+
+If a run fails with **"The job was not acquired by Runner of type hosted"** or an **Internal server error**, the workflow never reached your code. This typically means GitHub Actions could not provision a hosted runner due to temporary capacity or a service outage. It is not caused by this repository’s workflow configuration.
+
+**What to do:**
+- Retry the workflow after a few minutes.
+- Check [GitHub Status](https://www.githubstatus.com/) for Actions incidents.
+- If the issue persists, consider switching to a self-hosted runner or running the workflow during off-peak hours.
+
 ---
 
 ## 🤝 Contributing
