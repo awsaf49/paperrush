@@ -232,21 +232,24 @@ const CountdownTimer = {
      * @returns {string} Formatted date string
      */
     formatDate(dateString, endDateString = null) {
-        // Use UTC methods to avoid timezone issues with date-only strings
-        // "2026-02-06" should display as Feb 06, not Feb 05 for US users
-        const date = new Date(dateString);
-        const month = date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
-        const day = String(date.getUTCDate()).padStart(2, '0');
+        // Parse date directly from ISO string to preserve AoE date
+        // "2026-02-04T23:59:00-12:00" should display as "Feb 04" (not Feb 05)
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        // Extract YYYY-MM-DD from start of string (works for both date-only and full ISO)
+        const [, monthNum, day] = dateString.match(/^\d{4}-(\d{2})-(\d{2})/) || [];
+        const month = monthNames[parseInt(monthNum, 10) - 1];
 
         if (endDateString) {
-            const endDate = new Date(endDateString);
-            const endDay = String(endDate.getUTCDate()).padStart(2, '0');
+            const [, endMonthNum, endDay] = endDateString.match(/^\d{4}-(\d{2})-(\d{2})/) || [];
+            const endMonth = monthNames[parseInt(endMonthNum, 10) - 1];
+
             // Same month
-            if (date.getUTCMonth() === endDate.getUTCMonth()) {
+            if (monthNum === endMonthNum) {
                 return `${month} ${day}-${endDay}`;
             }
             // Different months
-            const endMonth = endDate.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' });
             return `${month} ${day} - ${endMonth} ${endDay}`;
         }
 
