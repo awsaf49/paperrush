@@ -172,6 +172,7 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
     """
     Merge new conference data with existing data.
     New data takes precedence for matching conferences.
+    Removes stale entries when a newer year exists (e.g., removes aaai-2026 when aaai-2027 is added).
 
     Args:
         existing: Existing conferences from data.js
@@ -182,6 +183,14 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
     """
     # Build lookup by ID
     result = {c["id"]: c for c in existing}
+
+    # Track which conference names have new entries (to remove stale years)
+    new_conf_years = {}  # name -> max_year
+    for conf in new:
+        name = conf.get("name", "").lower()
+        year = conf.get("year", 0)
+        if name and year:
+            new_conf_years[name] = max(new_conf_years.get(name, 0), year)
 
     # Update/add new conferences
     for conf in new:
@@ -204,6 +213,18 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
                     conf.setdefault("info", {})["acceptanceRate"] = existing_info["acceptanceRate"]
 
             result[conf_id] = conf
+
+    # Remove stale entries: if we have aaai-2027, remove aaai-2026, aaai-2025, etc.
+    stale_ids = []
+    for conf_id, conf in result.items():
+        name = conf.get("name", "").lower()
+        year = conf.get("year", 0)
+        if name in new_conf_years and year < new_conf_years[name]:
+            stale_ids.append(conf_id)
+
+    for stale_id in stale_ids:
+        del result[stale_id]
+        print(f"    🗑️  Removed stale entry: {stale_id}")
 
     return list(result.values())
 
