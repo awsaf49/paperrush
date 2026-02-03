@@ -99,18 +99,16 @@ To enable auto-updates on your fork:
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the complete guide.
 
-### Adding/Updating Conference Data
-
-Edit `js/data.js` and submit a PR:
+**Quick start:** Edit `js/data.js` and submit a PR:
 
 ```javascript
 {
     id: "conf-2026",
     name: "CONF",
     year: 2026,
-    category: "ml",  // ml, cv, nlp, speech, other
+    category: "ml",  // ml, cv, nlp, speech, robotics, other
     website: "https://conf.cc/",
     location: { city: "City", country: "Country", flag: "🏳️" },
     deadlines: [
@@ -124,34 +122,7 @@ Edit `js/data.js` and submit a PR:
 
 > **Tip:** Use `-12:00` timezone for AoE (Anywhere on Earth) deadlines.
 
-### Development
-
-```bash
-# No build tools needed - just edit and refresh!
-
-# Project structure
-paperrush/
-├── index.html          # Main HTML
-├── css/
-│   ├── styles.css      # Main styles
-│   └── calendar.css    # Calendar view styles
-├── js/
-│   ├── data.js         # Conference data (edit this!)
-│   ├── app.js          # Main app logic
-│   ├── calendar.js     # Calendar module
-│   ├── countdown.js    # Countdown timers
-│   └── timeline.js     # Timeline visualization
-└── scripts/
-    ├── scraper.py      # LLM deadline scraper
-    └── update_from_scraper.py  # Data merger
-```
-
-### Guidelines
-
-- **Keep it simple** — No build tools, no frameworks
-- **Test responsiveness** — Check mobile/tablet layouts
-- **Use existing patterns** — Follow the code style you see
-- **One PR per feature** — Easier to review
+**No build tools needed** — just edit and refresh! See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding conferences to the scraper, creating new categories, and more
 
 ---
 
