@@ -1271,9 +1271,23 @@ class ConferenceScraper:
             "call-for-paper", "callforpaper", "cfp",  # Call for Papers
         ]
 
+        # URLs to NEVER crawl (downloads, binaries, external sites)
+        # We still COLLECT these links, just don't visit them
+        skip_url_keywords = [
+            "authorkit", "author-kit", "template",  # Download pages
+            ".pdf", ".zip", ".tar", ".gz", ".docx",  # File extensions
+            "github.com", "gitlab.com", "drive.google",  # External sites
+            "overleaf.com", "sharelatex",  # LaTeX editors
+            "openreview.net", "cmt3.research", "easychair",  # Submission portals
+        ]
+
         def is_allowed_url(url: str) -> bool:
             """Check if URL matches one of our 4 allowed categories"""
             url_lower = url.lower()
+            # FIRST: Skip download/binary/external URLs (even if they match allowed keywords)
+            for skip in skip_url_keywords:
+                if skip in url_lower:
+                    return False
             # Always allow the base/landing page
             if url_lower.rstrip("/") == base_url.lower().rstrip("/"):
                 return True
@@ -1375,6 +1389,12 @@ class ConferenceScraper:
             result["_meta"]["pages_visited"].append(url)
 
             self.log(f"      ✅ {len(html):,} chars HTML")
+
+            # Safety check: skip pages that are too large (likely downloads/binaries)
+            MAX_PAGE_SIZE = 500_000  # 500KB
+            if len(html) > MAX_PAGE_SIZE:
+                self.log(f"      ⚠️ Page too large ({len(html):,} chars > {MAX_PAGE_SIZE:,}), skipping")
+                continue
 
             # Extract content
             content = extract_page_content(html, url)

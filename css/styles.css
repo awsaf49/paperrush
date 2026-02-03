@@ -388,6 +388,41 @@ body::before {
     z-index: 1;
 }
 
+/* GitHub Pill */
+.github-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 50px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.github-pill:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text-primary);
+    border-color: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.github-pill .github-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.github-pill .star-icon {
+    width: 12px;
+    height: 12px;
+    color: #f59e0b;
+}
+
 /* Filter group container */
 .filter-group {
     display: inline-flex;

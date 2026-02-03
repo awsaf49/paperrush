@@ -1052,7 +1052,28 @@ const App = {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     App.init();
+    fetchGitHubStars();
 });
+
+// Fetch GitHub star count
+async function fetchGitHubStars() {
+    const starCountEl = document.getElementById('star-count');
+    if (!starCountEl) return;
+
+    try {
+        const response = await fetch('https://api.github.com/repos/awsaf49/paperrush');
+        if (response.ok) {
+            const data = await response.json();
+            const stars = data.stargazers_count;
+            // Format: 1234 -> "1.2k" for large numbers
+            starCountEl.textContent = stars >= 1000
+                ? (stars / 1000).toFixed(1) + 'k'
+                : stars;
+        }
+    } catch (e) {
+        // Silently fail - keep showing "—"
+    }
+}
 
 // Handle visibility change (pause/resume timers)
 document.addEventListener('visibilitychange', () => {
