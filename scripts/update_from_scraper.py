@@ -33,6 +33,111 @@ from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
 
 
 # =============================================================================
+# COUNTRY TO FLAG EMOJI MAPPING
+# =============================================================================
+
+COUNTRY_FLAGS = {
+    "united states": "🇺🇸", "usa": "🇺🇸", "us": "🇺🇸", "u.s.a.": "🇺🇸", "america": "🇺🇸",
+    # US state abbreviations (scrapers sometimes return state instead of country)
+    "al": "🇺🇸", "ak": "🇺🇸", "az": "🇺🇸", "ar": "🇺🇸", "ca": "🇺🇸", "co": "🇺🇸",
+    "ct": "🇺🇸", "de": "🇺🇸", "fl": "🇺🇸", "ga": "🇺🇸", "hi": "🇺🇸", "id": "🇺🇸",
+    "il": "🇺🇸", "in": "🇺🇸", "ia": "🇺🇸", "ks": "🇺🇸", "ky": "🇺🇸", "la": "🇺🇸",
+    "me": "🇺🇸", "md": "🇺🇸", "ma": "🇺🇸", "mi": "🇺🇸", "mn": "🇺🇸", "ms": "🇺🇸",
+    "mo": "🇺🇸", "mt": "🇺🇸", "ne": "🇺🇸", "nv": "🇺🇸", "nh": "🇺🇸", "nj": "🇺🇸",
+    "nm": "🇺🇸", "ny": "🇺🇸", "nc": "🇺🇸", "nd": "🇺🇸", "oh": "🇺🇸", "ok": "🇺🇸",
+    "or": "🇺🇸", "pa": "🇺🇸", "ri": "🇺🇸", "sc": "🇺🇸", "sd": "🇺🇸", "tn": "🇺🇸",
+    "tx": "🇺🇸", "ut": "🇺🇸", "vt": "🇺🇸", "va": "🇺🇸", "wa": "🇺🇸", "wv": "🇺🇸",
+    "wi": "🇺🇸", "wy": "🇺🇸", "dc": "🇺🇸",
+    "canada": "🇨🇦",
+    "united kingdom": "🇬🇧", "uk": "🇬🇧", "england": "🇬🇧",
+    "germany": "🇩🇪",
+    "france": "🇫🇷",
+    "italy": "🇮🇹",
+    "spain": "🇪🇸",
+    "netherlands": "🇳🇱",
+    "belgium": "🇧🇪",
+    "switzerland": "🇨🇭",
+    "austria": "🇦🇹",
+    "sweden": "🇸🇪",
+    "norway": "🇳🇴",
+    "denmark": "🇩🇰",
+    "finland": "🇫🇮",
+    "poland": "🇵🇱",
+    "czech republic": "🇨🇿", "czechia": "🇨🇿",
+    "portugal": "🇵🇹",
+    "greece": "🇬🇷",
+    "ireland": "🇮🇪",
+    "australia": "🇦🇺",
+    "new zealand": "🇳🇿",
+    "japan": "🇯🇵",
+    "china": "🇨🇳",
+    "south korea": "🇰🇷", "korea": "🇰🇷",
+    "singapore": "🇸🇬",
+    "hong kong": "🇭🇰",
+    "taiwan": "🇹🇼",
+    "india": "🇮🇳",
+    "israel": "🇮🇱",
+    "brazil": "🇧🇷",
+    "mexico": "🇲🇽",
+    "argentina": "🇦🇷",
+    "south africa": "🇿🇦",
+    "uae": "🇦🇪", "united arab emirates": "🇦🇪",
+    "thailand": "🇹🇭",
+    "vietnam": "🇻🇳",
+    "indonesia": "🇮🇩",
+    "malaysia": "🇲🇾",
+    "philippines": "🇵🇭",
+}
+
+
+def get_flag_emoji(country: str) -> str:
+    """Get flag emoji for a country name, or 🌍 if unknown."""
+    if not country or not isinstance(country, str):
+        return "🌍"
+    return COUNTRY_FLAGS.get(country.lower().strip(), "🌍")
+
+
+def is_valid_location(location: dict) -> bool:
+    """Check if location has valid city/country (not null/TBD)."""
+    if not location or not isinstance(location, dict):
+        return False
+    city = location.get("city")
+    country = location.get("country")
+    # Check for null-like values
+    null_values = {None, "", "null", "None", "TBD", "tbd", "N/A", "n/a", "unknown"}
+    return city not in null_values and country not in null_values
+
+
+def normalize_location(location: dict) -> dict:
+    """Normalize location: ensure flag is set, handle null values."""
+    if not location or not isinstance(location, dict):
+        return {"city": "TBD", "country": "TBD", "flag": "🌍", "venue": None}
+
+    null_values = {None, "", "null", "None", "TBD", "tbd", "N/A", "n/a", "unknown"}
+
+    city = location.get("city")
+    country = location.get("country")
+    venue = location.get("venue")
+    flag = location.get("flag")
+
+    # Normalize null-like values
+    city = city if city not in null_values else "TBD"
+    country = country if country not in null_values else "TBD"
+    venue = venue if venue not in null_values else None
+
+    # Derive flag from country if not set or invalid
+    if not flag or flag in null_values or flag == "🌍":
+        flag = get_flag_emoji(country) if country != "TBD" else "🌍"
+
+    return {
+        "city": city,
+        "country": country,
+        "flag": flag,
+        "venue": venue
+    }
+
+
+# =============================================================================
 # DATA.JS GENERATION
 # =============================================================================
 
@@ -197,11 +302,25 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
         conf_id = conf.get("id")
         if conf_id:
             if conf_id in result:
-                # Merge: keep existing location/metadata, update deadlines/links
+                # Merge with existing data
                 existing_conf = result[conf_id]
 
-                # Preserve manually-set fields
-                preserved_fields = ["location", "brandColor", "notes"]
+                # LOCATION: Prefer scraped location if valid, else use existing
+                new_location = conf.get("location")
+                existing_location = existing_conf.get("location")
+
+                if is_valid_location(new_location):
+                    # Use freshly scraped location (normalize to ensure flag is set)
+                    conf["location"] = normalize_location(new_location)
+                elif is_valid_location(existing_location):
+                    # Fall back to existing location (normalize in case flag is missing)
+                    conf["location"] = normalize_location(existing_location)
+                else:
+                    # Both invalid - use TBD
+                    conf["location"] = normalize_location(None)
+
+                # Preserve other manually-set fields
+                preserved_fields = ["brandColor", "notes"]
                 for field in preserved_fields:
                     if field in existing_conf and existing_conf[field]:
                         conf[field] = existing_conf[field]
@@ -211,6 +330,9 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
                 new_info = conf.get("info", {})
                 if existing_info.get("acceptanceRate") and not new_info.get("acceptanceRate"):
                     conf.setdefault("info", {})["acceptanceRate"] = existing_info["acceptanceRate"]
+            else:
+                # New conference - normalize location
+                conf["location"] = normalize_location(conf.get("location"))
 
             result[conf_id] = conf
 
@@ -474,12 +596,7 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_o
         "category": existing_conf.get("category"),
         "website": existing_conf.get("website", "").replace(str(existing_year), str(target_year)),
         "brandColor": existing_conf.get("brandColor"),
-        "location": {
-            "city": "TBD",
-            "country": "TBD",
-            "flag": "🌍",
-            "venue": None
-        },
+        "location": normalize_location(None),  # TBD for estimated conferences
         "deadlines": new_deadlines,
         "links": {},  # Don't copy old links - they'd be wrong
         "info": existing_conf.get("info", {}),

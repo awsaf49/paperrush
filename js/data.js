@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-02-03T04:31:59Z
+ * Last updated: 2026-02-04T15:32:04Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-02-03T04:31:59Z",
+	"lastUpdated": "2026-02-04T15:32:04Z",
 	"conferences": [
 			{
 				"id": "aaai-2027",
@@ -221,11 +221,19 @@ const CONFERENCES_DATA = {
 				"brandColor": "#CC0000",
 				"location": {
 					"city": "Denver",
-					"country": "USA",
+					"country": "CO",
 					"flag": "🇺🇸",
 					"venue": "Denver Convention Center"
 				},
 				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Workshop Submission Deadline",
+						"date": "2025-11-03T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
 					{
 						"type": "abstract",
 						"label": "Abstract Submission",
@@ -244,7 +252,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Enrollment Form Deadline",
+						"label": "OpenReview Profile Deadline",
 						"date": "2025-11-16T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -293,6 +301,14 @@ const CONFERENCES_DATA = {
 					{
 						"type": "notification",
 						"label": "Final Decisions",
+						"date": "2026-02-20T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Author Notification",
 						"date": "2026-02-20T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -351,15 +367,12 @@ const CONFERENCES_DATA = {
 					"Papers not properly anonymized",
 					"Papers that do not use the template",
 					"Papers with more than eight pages (excluding references)",
+					"Authors who have not completed their OpenReview profiles",
 					"Incomplete or inaccurate conflict information",
-					"Authors added or deleted after the abstract submission deadline",
-					"Authors without a valid OpenReview profile by the abstract submission deadline",
+					"Prompt injection",
 					"Papers with incomplete author registrations after the deadline",
-					"Responses longer than one page will not be reviewed",
-					"Margins and formatting altered from style guide",
-					"Rebuttal includes links to external material",
-					"Rebuttal includes new contributions or experimental results",
-					"Incomplete submission or does not meet required criteria"
+					"Incomplete submission",
+					"Submission does not meet the required criteria"
 				],
 				"notes": []
 			},
@@ -948,44 +961,12 @@ const CONFERENCES_DATA = {
 				"website": "https://iclr.cc/Conferences/2026",
 				"brandColor": "#4B0082",
 				"location": {
-					"city": "Vienna",
-					"country": "Austria",
-					"flag": "🇦🇹",
-					"venue": "Austria Center Vienna"
+					"city": "Rio de Janeiro",
+					"country": "Brazil",
+					"flag": "🇧🇷",
+					"venue": "Riocentro Convention and Event Center"
 				},
 				"deadlines": [
-					{
-						"type": "abstract",
-						"label": "Abstract Submission Deadline",
-						"date": "2025-09-19T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Submission Deadline",
-						"date": "2025-09-24T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Paper Reviews Released To Authors",
-						"date": "2025-11-11T21:00:00+00:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Author, Reviewer, A C - Discussion Ends",
-						"date": "2025-12-03T21:00:00+00:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
 					{
 						"type": "event",
 						"label": "Registration Open",
@@ -1054,11 +1035,9 @@ const CONFERENCES_DATA = {
 				"deskRejectReasons": [
 					"Author identity revealed in main text or supplementary material",
 					"Papers with main text beyond the page limit",
-					"Authors on 3+ papers failing to finish reviews by rebuttal",
-					"No authors registered as reviewers",
-					"Not disclosing significant LLM usage",
-					"Violations of the Code of Ethics",
-					"All placeholder abstract submissions will be deleted."
+					"Authors on 3+ papers failing to review 6+ papers",
+					"No authors registered as a reviewer",
+					"Not disclosing significant LLM usage"
 				],
 				"notes": []
 			},
@@ -1110,22 +1089,6 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "SAC-AC assignment",
-						"date": "2026-01-26T14:00:00-05:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Bidding period",
-						"date": "2026-01-27T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
 						"label": "Full Paper Submission Deadline",
 						"date": "2026-01-28T23:59:00-12:00",
@@ -1142,22 +1105,6 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "Bidding period",
-						"date": "2026-02-02T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission assignment",
-						"date": "2026-02-03T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "tutorial",
 						"label": "Tutorial Application Deadline",
 						"date": "2026-02-06T23:59:00-12:00",
@@ -1167,32 +1114,8 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Check/adjust reviewer assignments",
-						"date": "2026-02-06T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Check/adjust reviewer assignments",
-						"date": "2026-02-10T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "paper",
-						"label": "Submission assignment",
-						"date": "2026-02-11T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Reviewing period",
-						"date": "2026-02-12T23:59:00-12:00",
+						"label": "Financial Aid Application Open",
+						"date": "2026-02-09T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1206,14 +1129,6 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "Deadline for reviews",
-						"date": "2026-03-12T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "notification",
 						"label": "Workshop Application Notification",
 						"date": "2026-03-20T23:59:00-12:00",
@@ -1222,72 +1137,8 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
-						"label": "Emergency reviewing period",
-						"date": "2026-03-23T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Authors’ response and discussion period",
-						"date": "2026-03-24T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Deadline to acknowledge authors’ response",
-						"date": "2026-04-03T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "rebuttal",
-						"label": "Authors’ response and discussion period",
-						"date": "2026-04-07T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-reviewer discussion period",
-						"date": "2026-04-12T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "Meta-review deadline",
-						"date": "2026-04-13T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "AC-SAC discussion period",
-						"date": "2026-04-18T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
 						"type": "paper",
 						"label": "Suggested Submission Date for Workshop Contributions",
-						"date": "2026-04-24T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false
-					},
-					{
-						"type": "event",
-						"label": "SAC-PC discussion period",
 						"date": "2026-04-24T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -1311,6 +1162,14 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
+						"label": "Financial Aid Application Deadline",
+						"date": "2026-05-18T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
 						"label": "Early pricing before this date",
 						"date": "2026-05-24T23:59:00-12:00",
 						"endDate": null,
@@ -1321,6 +1180,22 @@ const CONFERENCES_DATA = {
 						"type": "event",
 						"label": "Sponsor Payment Deadline",
 						"date": "2026-05-25T07:00:00+00:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Financial Aid Notification",
+						"date": "2026-06-01T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Volunteer Notification",
+						"date": "2026-06-01T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
@@ -1370,12 +1245,13 @@ const CONFERENCES_DATA = {
 					"Main body goes over the 8 page limit",
 					"Submissions that explicitly or implicitly reveal the authors’ identities",
 					"Submissions not anonymized",
-					"Submissions that do not follow the required format",
-					"Submitted papers that do not conform to the policies",
+					"Submissions not following the required format",
+					"Submitted papers that do not conform to policies will be rejected",
 					"Submissions that do not meet per-submission requirement",
 					"Authors do not meet the per-author requirement",
-					"Attempts at prompt injection",
-					"Violating the double-blind reviewing policy"
+					"Reviewers fail to adequately participate in review process",
+					"Anonymity violation",
+					"Prompt injection"
 				],
 				"notes": []
 			},
