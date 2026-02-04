@@ -51,7 +51,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests openai playwright html2text
+          pip install requests openai playwright html2text google-genai
           playwright install chromium
 
       - name: Determine conferences to scrape
