@@ -19,6 +19,10 @@ from urllib.parse import urljoin, urlparse
 from html.parser import HTMLParser
 from openai import OpenAI
 
+# Google GenAI SDK for Gemini
+from google import genai
+from google.genai import types
+
 
 # =============================================================================
 # CONFERENCE SEED URLS
@@ -906,12 +910,12 @@ class ConferenceScraper:
         self.use_gemini = use_gemini
 
         if use_gemini:
-            # Use Gemini API directly
+            # Use Gemini API with google-genai SDK
             api_key = os.environ.get("GEMINI_API_KEY")
             if not api_key:
                 raise ValueError("GEMINI_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
-            self.gemini_key = api_key
-            self.model = "gemini-2.0-flash"  # Stable Gemini Flash
+            self.gemini_client = genai.Client(api_key=api_key)
+            self.model = "gemini-2.5-flash"  # Latest Gemini Flash with JSON mode
             self.client = None
         else:
             # Use OpenRouter
@@ -923,7 +927,7 @@ class ConferenceScraper:
                 api_key=api_key
             )
             self.model = "meta-llama/llama-3.3-70b-instruct:free"
-            self.gemini_key = None
+            self.gemini_client = None
 
     def log(self, msg: str, end="\n"):
         if self.verbose:
@@ -957,29 +961,33 @@ class ConferenceScraper:
         except:
             return False
 
-    def call_llm(self, prompt: str) -> Optional[str]:
+    def call_llm(self, prompt: str, json_mode: bool = True) -> Optional[str]:
         """Call LLM with retry - supports both OpenRouter and Gemini API"""
         max_retries = 5 if self.use_gemini else 3  # More retries for Gemini rate limits
 
         for attempt in range(max_retries):
             try:
                 if self.use_gemini:
-                    # Direct Gemini API call
-                    response = requests.post(
-                        f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
-                        params={"key": self.gemini_key},
-                        json={
-                            "contents": [{"parts": [{"text": prompt}]}],
-                            "generationConfig": {
-                                "temperature": 0.1,
-                                "maxOutputTokens": 8192
-                            }
-                        },
-                        timeout=60
+                    # Use google-genai SDK with JSON output mode
+                    config = types.GenerateContentConfig(
+                        temperature=0.1,
+                        max_output_tokens=16384,  # Increased for larger responses
                     )
-                    response.raise_for_status()
-                    data = response.json()
-                    content = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text")
+                    # Enable JSON mode for structured output
+                    if json_mode:
+                        config.response_mime_type = "application/json"
+
+                    response = self.gemini_client.models.generate_content(
+                        model=self.model,
+                        contents=[
+                            types.Content(
+                                role="user",
+                                parts=[types.Part.from_text(text=prompt)]
+                            )
+                        ],
+                        config=config
+                    )
+                    content = response.text
                     if content:
                         return content
                 else:
@@ -995,7 +1003,7 @@ class ConferenceScraper:
                         return content
             except Exception as e:
                 wait_time = 2 ** attempt  # Exponential backoff: 1, 2, 4, 8, 16 seconds
-                self.log(f"⚠️ retry {attempt+1}/{max_retries} in {wait_time}s")
+                self.log(f"⚠️ retry {attempt+1}/{max_retries} in {wait_time}s: {e}")
                 time.sleep(wait_time)
         return None
 
