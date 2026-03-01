@@ -2496,6 +2496,7 @@ const CATEGORIES = {
     nlp: { name: "NLP", color: "#34C759" },
     speech: { name: "Speech & Audio", color: "#FF9500" },
     robotics: { name: "Robotics", color: "#FF1493" },
+	swe: { name: "Software Engineering", color: "#FFFF00" },
     other: { name: "Other", color: "#8E8E93" }
 };
 
