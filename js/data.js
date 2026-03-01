@@ -1856,6 +1856,176 @@ const CONFERENCES_DATA = {
 				"isEstimated": true
 			},
 			{
+				"id": "ase-2026",
+				"name": "ASE",
+				"fullName": "IEEE/ACM Automated Software Engineering Conference",
+				"year": 2026,
+				"category": "swe",
+				"website": "https://conf.researchr.org/home/ase-2026",
+				"brandColor": "#20B2AA",
+				"location": {
+					"city": "Munich",
+					"country": "Germany",
+					"flag": "🇩🇪",
+					"venue": "Hotel Holiday Inn Munich"
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Research Paper Submission",
+						"date": "2026-03-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Industry Paper Submission",
+						"date": "2026-04-23T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Research Paper Notification",
+						"date": "2026-06-18",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Industry Paper Notification",
+						"date": "2026-06-21",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera Ready Deadline (All Papers)",
+						"date": "2026-08-03",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Main Conference",
+						"date": "2026-10-12",
+						"endDate": "2026-10-16",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://conf.researchr.org/home/ase-2026"
+				},
+				"info": {
+					"pageLimit": "10 pages + 2 pages of references for full papers; 5 pages + 1 page of references for short papers",
+					"reviewType": "Double-blind"
+				},
+				"notes": []
+			},
+			{
+				"id": "icse-2027",
+				"name": "ICSE",
+				"fullName": "International Conference on Software Engineering",
+				"year": 2027,
+				"category": "swe",
+				"website": "https://conf.researchr.org/home/icse-2027",
+				"brandColor": "#20B2AA",
+				"location": {
+					"city": "Dublin",
+					"country": "Ireland",
+					"flag": "🇮🇪",
+					"venue": "Convention Centre Dublin"
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-06-23T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Research Paper Submission",
+						"date": "2026-07-03T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Research Paper Notification",
+						"date": "2026-10-20",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "SEIP/SEIS/NIER Track Paper Submission",
+						"date": "2026-10-23T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera Ready Deadline (Research Papers)",
+						"date": "2026-11-24T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "SEIP Track Paper Notification",
+						"date": "2026-12-11",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "SEIS/NIER Track Paper Notification",
+						"date": "2026-12-18",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera Ready Deadline (SEIP/SEIS/NIER Track Papers)",
+						"date": "2027-01-20T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "Main Conference",
+						"date": "2027-04-25",
+						"endDate": "2027-05-01",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://conf.researchr.org/home/icse-2027"
+				},
+				"info": {
+					"pageLimit": "10 pages + 2 pages of references for research/seis/seip papers; 4 pages + 1 page of references for nier papers",
+					"reviewType": "Double-blind"
+				},
+				"notes": []
+			},
+			{
 				"id": "wacv-2026",
 				"name": "WACV",
 				"fullName": "Winter Conference on Applications of Computer Vision",
@@ -2496,6 +2666,7 @@ const CATEGORIES = {
     nlp: { name: "NLP", color: "#34C759" },
     speech: { name: "Speech & Audio", color: "#FF9500" },
     robotics: { name: "Robotics", color: "#FF1493" },
+	swe: { name: "Software Engineering", color: "#FFFF00" },
     other: { name: "Other", color: "#8E8E93" }
 };
 

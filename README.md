@@ -44,6 +44,7 @@
 | **NLP** | ACL, EMNLP, NAACL |
 | **Speech** | Interspeech, ICASSP |
 | **Robotics** | IROS |
+| **SWE** | ICSE, ASE |
 
 ---
 
@@ -156,6 +157,7 @@ We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the c
 | `nlp` | Green | ACL, EMNLP, NAACL |
 | `speech` | Orange | Interspeech, ICASSP |
 | `robotics` | Hot Pink | IROS |
+| `swe` | Yellow | ICSE, ASE |
 | `other` | Gray | Others |
 
 </details>
