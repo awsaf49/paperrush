@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://awsaf49.github.io/paperrush/sitemap.xml
