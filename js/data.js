@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-03-09T07:46:09Z
+ * Last updated: 2026-03-16T08:15:46Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-03-09T07:46:09Z",
+	"lastUpdated": "2026-03-16T08:15:46Z",
 	"conferences": [
 			{
 				"id": "aaai-2027",
@@ -45,12 +45,27 @@ const CONFERENCES_DATA = {
 					"pageLimit": "7 pages + additional pages solely for references and the reproducibility checklist",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF",
+					"submissionLimitPerAuthor": "10 submissions combined to technical track",
+					"authorChangesPolicy": "Authors may not be added to papers following submission",
+					"modificationDeadline": "Modifications to submissions only allowed until full paper deadline (August 1)",
+					"multipleSubmissionPolicy": "Paper not under review or published elsewhere",
+					"reviewerPoolExpectation": "All authors expected to join reviewer pool",
+					"contemporaneousPapersPolicy": "Papers published less than two months before Aug 1, 2025, are contemporaneous; authors not obliged to address",
+					"totalSubmissionsReceived": "29,000",
+					"papersUnderReview": "23,000",
+					"pcMembersRecruited": "28,000+",
+					"uniqueSubmittingAuthors": "75,000+",
+					"topSubmissionCountry": "China",
+					"topResearchKeywords": [
+						"Computer Vision",
+						"Machine Learning",
+						"Natural Language Processing"
+					],
 					"rebuttalCharacterLimit": 2500,
-					"rebuttalUrlPolicy": "responses detected to contain URLs may be withheld",
-					"aiAssistedReviewExperiment": "shows promising early results",
-					"authorRegistrationRequirement": "Authors must register at the AAAI-26 web-based technical track paper submission site before they can submit abstracts and papers.",
-					"reviewerPoolExpectation": "all authors of AAAI-26 submissions will be expected to join the conference’s reviewer pool",
-					"submissionLimitPerAuthor": "Each individual author is limited to no more than a combined limit of 10 submissions to the AAAI-26 technical track"
+					"rebuttalUrlRestriction": "The response must not include any URLs",
+					"rebuttalNewResultsPolicy": "Authors should not provide new results during the rebuttal",
+					"aiAssistedReviewPilotProgramParticipationVoluntary": true,
+					"authorRebuttalWindowEnd": "2025-10-08"
 				},
 				"notes": [],
 				"isEstimated": true
@@ -234,7 +249,7 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "paper",
-						"label": "Workshop Submission Deadline",
+						"label": "Workshop Submission",
 						"date": "2025-11-03T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -266,7 +281,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "supplementary",
-						"label": "Supplementary Materials Deadline",
+						"label": "Supplementary Materials",
 						"date": "2025-11-20T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -274,7 +289,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Tutorial Submission Deadline",
+						"label": "Tutorial Submission",
 						"date": "2025-12-15T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -282,7 +297,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "rebuttal",
-						"label": "Author Rebuttal Period Start",
+						"label": "Reviews Released",
 						"date": "2026-01-22T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -290,7 +305,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "rebuttal",
-						"label": "Author Rebuttal Period End",
+						"label": "Author Rebuttal Period",
 						"date": "2026-01-29T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -305,8 +320,8 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Tutorial Submission Notification",
+						"type": "notification",
+						"label": "Tutorial Notification",
 						"date": "2026-02-10T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -322,7 +337,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Art Submission Deadline",
+						"label": "Art Submission",
 						"date": "2026-03-08T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -330,7 +345,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Demo Submission Deadline",
+						"label": "Demo Submission",
 						"date": "2026-03-20T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -345,6 +360,14 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
+						"type": "paper",
+						"label": "Broadening Participation Submission",
+						"date": "2026-03-31T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
 						"type": "notification",
 						"label": "Demo Acceptance Notification",
 						"date": "2026-04-10T23:59:00-12:00",
@@ -354,7 +377,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Early Registration Deadline",
+						"label": "Early Registration",
 						"date": "2026-04-23T12:59:00-06:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -387,7 +410,7 @@ const CONFERENCES_DATA = {
 				],
 				"links": {
 					"official": "https://cvpr.thecvf.com/Conferences/2026",
-					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Workshop_Proposals",
+					"submission": "https://openreview.net/group?id=thecvf.com/CVPR/2026/Conference",
 					"template": "https://github.com/cvpr-org/author-kit",
 					"authorGuide": "https://cvpr.thecvf.com/Conferences/2026/AuthorGuidelines",
 					"reviewerGuide": "https://cvpr.thecvf.com/Conferences/2026/ReviewerGuidelines",
@@ -397,260 +420,204 @@ const CONFERENCES_DATA = {
 					"faq": "https://cvpr.thecvf.com/FAQ"
 				},
 				"info": {
-					"pageLimit": "8 pages + Additional pages containing only cited references are allowed.",
+					"pageLimit": "8 pages + excluding references",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF",
-					"computeReportingInitiative": "experimental compute reporting initiative for authors, with awards recognizing exceptional efficiency and transparency. Reports are not visible to reviewers and will not influence acceptance decisions.",
-					"findingsTrack": "new Findings Track, offering a venue for technically sound papers with solid experimental validation, even if their novelty is more incremental. Findings papers will appear in the workshop proceedings.",
+					"findingsTrack": "CVPR 2026 introduces a new Findings Track",
+					"computeReportingInitiative": "experimental compute reporting initiative for authors",
+					"openreviewProfileRequired": true,
+					"mandatoryReviewerService": true
+				},
+				"deskRejectReasons": [
+					"Security incident information misuse",
+					"External links in submission/rebuttal",
+					"Prompt injection attempts",
+					"Anonymity violation",
+					"Incorrect template usage",
+					"Page limit exceeded",
+					"Incomplete OpenReview profiles",
+					"Inaccurate conflict information",
+					"Author list changes after abstract deadline",
+					"Missing OpenReview profiles by abstract deadline",
+					"Dual submission violation",
+					"Incomplete author registration",
+					"Exceeded submission limit (25 papers)",
+					"Missing OpenReview profile",
+					"Incomplete author registrations",
+					"Rebuttal longer than one page",
+					"Rebuttal formatting significantly altered",
+					"Grave ethical issues",
+					"Incomplete submission",
+					"Submission not meeting required criteria",
+					"Creating new submission after abstract deadline",
+					"Adding/deleting authors after abstract deadline",
+					"External links expanding content or subverting review",
+					"Discussing paper with media before acceptance",
+					"Posting paper with 'will be submitted to CVPR' note",
+					"Mentioning 'under submission to CVPR'",
+					"Citations of non-existent material",
+					"Obvious factual inaccuracies",
+					"Prompt injection (collusion attempt)",
+					"Late OpenReview profile creation"
+				],
+				"notes": []
+			},
+			{
+				"id": "eccv-2026",
+				"name": "ECCV",
+				"fullName": "European Conference on Computer Vision",
+				"year": 2026,
+				"category": "cv",
+				"website": "https://eccv.ecva.net/Conferences/2026",
+				"brandColor": "#2E8B57",
+				"location": {
+					"city": "Malmö",
+					"country": "Sweden",
+					"flag": "🇸🇪",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Tutorial Proposal Submission",
+						"date": "2026-02-15T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Paper Registration Deadline",
+						"date": "2026-02-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Workshop Proposal Submission",
+						"date": "2026-02-27T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2026-03-05T23:00:00+01:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "event",
+						"label": "OpenReview Profile/Enrollment",
+						"date": "2026-03-06T23:00:00+01:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Supplementary Materials Submission",
+						"date": "2026-03-12T23:00:00+01:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Notification: Reviews Released",
+						"date": "2026-05-02T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Rebuttal Submission",
+						"date": "2026-05-11T23:00:00+02:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Author Notification: Final Decisions",
+						"date": "2026-06-17T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Deadline",
+						"date": "2026-06-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://eccv.ecva.net/Conferences/2026",
+					"submission": "https://openreview.net/group?id=thecvf.com/ECCV/2026/Conference",
+					"authorGuide": "/Conferences/2026/AuthorGuide",
+					"reviewerGuide": "https://eccv.ecva.net/Conferences/2026/ReviewerGuidelines",
+					"author": "/Conferences/2026/CallForPapers",
+					"dates": "/Conferences/2026/Dates",
+					"faq": "/Conferences/2026/FAQs"
+				},
+				"info": {
 					"topicsOfInterest": [
 						"3D from multi-view and sensors",
 						"3D from single images",
 						"Adversarial attack and defense",
 						"Autonomous driving",
 						"Biometrics",
+						"Camera pose estimation and calibration",
 						"Computational imaging",
+						"Computer vision for robotics",
 						"Computer vision for social good",
-						"Computer vision theory",
-						"Datasets and evaluation",
 						"Deep learning architectures and techniques",
 						"Document analysis and understanding",
 						"Efficient and scalable vision",
-						"Embodied vision: Active agents, simulation",
+						"Embodied vision: active agents, simulation",
 						"Event-based cameras",
 						"Explainable computer vision",
-						"Humans: Face, body, pose, gesture, movement",
+						"First person (egocentric) vision",
+						"Geometric deep learning",
+						"Humans: face, body, pose, gesture, movement",
 						"Image and video synthesis and generation",
 						"Low-level vision",
 						"Machine learning (other than deep learning)",
 						"Medical and biological vision, cell microscopy",
-						"Multimodal learning",
+						"Multimodal learning (other than language)",
+						"(Neural) scene representations",
+						"Object pose estimation and tracking",
 						"Optimization methods (other than deep learning)",
 						"Photogrammetry and remote sensing",
 						"Physics-based vision and shape-from-X",
-						"Recognition: Categorization, detection, retrieval",
+						"Recognition: categorization, detection, retrieval",
 						"Representation learning",
-						"Computer Vision for Robotics",
 						"Scene analysis and understanding",
 						"Segmentation, grouping and shape analysis",
 						"Self-, semi-, meta- and unsupervised learning",
-						"Transfer/ low-shot/ continual/ long-tail learning",
-						"Transparency, fairness, accountability, privacy and ethics in vision",
-						"Video: Action and event understanding",
-						"Video: Low-level analysis, motion, and tracking",
+						"Synthetic data and simulation",
+						"Transfer, low-shot, continual, long-tail learning",
+						"Transparency, fairness, accountability, and ethics in vision",
+						"Video: action and event understanding",
+						"Video: low-level analysis, motion, and tracking",
 						"Vision + graphics",
+						"Vision for edge devices",
 						"Vision, language, and reasoning",
-						"Vision applications and systems"
+						"Vision for climate and sustainability",
+						"Visual localization, SLAM, Structure-from-Motion",
+						"Safety and privacy"
 					]
 			},
 			"deskRejectReasons": [
-				"Security incident information misuse",
-				"Not properly anonymized",
-				"Does not use the template",
-				"Exceeds 8-page limit (excluding references)",
-				"Authors with incomplete OpenReview profiles",
-				"Incomplete or inaccurate conflict information",
-				"Prompt injection attempts",
-				"External links in submission/rebuttal",
-				"Late submissions",
-				"Misconfigured author accounts",
-				"Author list changes after abstract deadline",
-				"Incomplete OpenReview profile",
-				"Anonymity violation",
+				"Not registered by deadline",
 				"Dual submission",
-				"Exceeds 25 submissions per author",
-				"Incomplete author registration",
-				"Rebuttal page limit exceeded",
-				"Rebuttal formatting significantly altered",
-				"Rebuttal anonymity violation",
-				"Rebuttal includes external links",
-				"Rebuttal includes new contributions or experimental results",
-				"Grave ethical issues",
-				"Incomplete submission",
-				"Does not meet required criteria",
-				"External links expanding content",
-				"Violating anonymity",
-				"Breaching media ban",
-				"Bypassing length/deadline restrictions",
-				"Citing public codebase",
-				"Plagiarism or academic dishonesty",
-				"Media discussion before acceptance",
-				"Posting online with submission note",
-				"Mentioning 'under submission to CVPR'",
-				"Mention of paper as 'under submission to CVPR'",
-				"Citations to non-existent material",
-				"Obvious factual inaccuracies",
-				"Prompt injection detected",
-				"Dual submission violation"
-			],
-			"notes": []
-		},
-		{
-			"id": "eccv-2026",
-			"name": "ECCV",
-			"fullName": "European Conference on Computer Vision",
-			"year": 2026,
-			"category": "cv",
-			"website": "https://eccv.ecva.net/Conferences/2026",
-			"brandColor": "#2E8B57",
-			"location": {
-				"city": "Malmö",
-				"country": "Sweden",
-				"flag": "🇸🇪",
-				"venue": "Malmö Arena and Malmömässan"
-			},
-			"deadlines": [
-				{
-					"type": "paper",
-					"label": "Tutorial Proposal Submission",
-					"date": "2026-02-15T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper Registration",
-					"date": "2026-02-26T22:00:00+00:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Workshop Proposal Submission",
-					"date": "2026-02-27T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "OpenReview Profile Completion",
-					"date": "2026-03-02T23:00:00+01:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper Submission",
-					"date": "2026-03-05T23:00:00+01:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Supplementary Materials Submission",
-					"date": "2026-03-12T23:00:00+01:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Workshop/Tutorial Notification",
-					"date": "2026-04-12T20:00:00+00:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "rebuttal",
-					"label": "Reviews Released",
-					"date": "2026-05-02T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "rebuttal",
-					"label": "Author Rebuttal Deadline",
-					"date": "2026-05-11T23:00:00+02:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Author Notification",
-					"date": "2026-06-17T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "camera",
-					"label": "Camera-Ready Deadline",
-					"date": "2026-06-26T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				}
-			],
-			"links": {
-				"official": "https://eccv.ecva.net/Conferences/2026",
-				"submission": "https://openreview.net/group?id=thecvf.com/ECCV/2026/Conference",
-				"template": "https://www.overleaf.com/read/fkngkknmbycc#8e2acb",
-				"authorGuide": "https://eccv.ecva.net/Conferences/2026/AuthorGuide",
-				"reviewerGuide": "https://eccv.ecva.net/Conferences/2026/ReviewerGuidelines",
-				"author": "https://eccv.ecva.net/Conferences/2026/CallForPapers",
-				"dates": "https://eccv.ecva.net/Conferences/2026/Dates",
-				"faq": "https://eccv.ecva.net/Conferences/2026/FAQs"
-			},
-			"info": {
-				"pageLimit": "14 pages + Additional pages for references allowed",
-				"reviewType": "Double-blind",
-				"submissionFormat": "PDF",
-				"contributionTypes": "Authors are asked to select one primary Contribution Type that best characterizes the main focus of their paper.",
-				"datasetReleasePolicyDetails": "Public availability of claimed datasets/benchmarks required by camera-ready deadline.",
-				"irbEthicsApproval": "IRB/ethics approval encouraged for new datasets with personal/human subject data.",
-				"negativeSocietalImpactDiscussionEncouraged": "Discussion of negative societal impact encouraged, not mandatory for rejection.",
-				"limitationsDiscussionEncouraged": "Discussion of limitations encouraged.",
-				"ethicsCommitteeReview": "Papers with significant ethical concerns referred to ethics committee",
-				"concurrentSubmissionPolicy": "No paper substantially similar in content has been or will be submitted to another conference or workshop during the review period (March 13, 2026 – June 17, 2026).",
-				"plagiarismCheck": "Papers will be checked for plagiarism using iThenticate.",
-				"presentationRequirement": "Each accepted paper is expected to be presented at ECCV in-person by an author (or an authorized delegate).",
-				"publicationPolicy": "All accepted papers will be made publicly available by Springer and/or the European Computer Vision Association (ECVA) no earlier than four weeks before the conference."
-			},
-			"deskRejectReasons": [
-				"Not properly anonymized",
-				"Do not use the template",
-				"More than 14 pages (excluding references)",
-				"Using non-template font",
-				"Altered margins or formatting",
-				"Incomplete OpenReview profiles",
-				"Incomplete/inaccurate conflict information",
-				"Anonymity violation",
-				"Identifying information in submission",
-				"Identifying links in submission",
-				"Dual submission",
-				"Concurrent submission",
-				"Substantially similar ECCV submission",
-				"Supplementary material guidelines violation",
-				"Improved method in supplementary material",
-				"Embargo violation",
-				"External links expanding content",
-				"Rebuttal page limit exceeded",
-				"Altered rebuttal formatting/margins",
-				"Rebuttal anonymity violation",
-				"External links in rebuttal",
-				"Citations of non-existent material",
-				"Obvious factual inaccuracies",
-				"Prompt injection",
-				"Missing dataset URL by camera-ready deadline",
-				"Grave ethical issues",
-				"Use of discredited datasets",
-				"Missing ethics approval statement",
-				"Missing informed consent statement",
-				"Copyright violation for images",
-				"Missing consent for images of individuals",
-				"Late submissions",
-				"Submissions via email",
-				"Author list modification requests",
-				"Late paper registration",
-				"Late paper submission",
-				"Concurrent submission violation",
 				"Plagiarism detected"
 			],
 			"notes": []
@@ -680,8 +647,16 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Author Registration Deadline",
+					"label": "Reviewer: Registration Deadline for ALL Authors",
 					"date": "2026-05-27T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "rebuttal",
+					"label": "Author Rebuttal Period",
+					"date": "2026-07-07T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
@@ -752,9 +727,25 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
+					"type": "notification",
+					"label": "Author Notification",
+					"date": "2026-01-16T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
 					"type": "event",
-					"label": "Show & Tell Proposals",
+					"label": "Show and Tell Proposals",
 					"date": "2026-01-31T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "camera",
+					"label": "Camera-Ready Deadline",
+					"date": "2026-02-13T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
@@ -768,32 +759,24 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Paper Acceptance Notification",
-					"date": "2026-02-13T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
 					"type": "event",
-					"label": "Author Registration Deadline",
+					"label": "Author Registration",
 					"date": "2026-03-02T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "art",
-					"label": "Open Preview Start",
+					"type": "event",
+					"label": "Call for Pitch Competition Proposals",
 					"date": "2026-04-07T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Pitch Competition Proposals",
+					"type": "art",
+					"label": "Open Preview Starts",
 					"date": "2026-04-07T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -810,10 +793,7 @@ const CONFERENCES_DATA = {
 				"registration": "https://2026.ieeeicassp.org/registration-rates-and-options/"
 			},
 			"info": {
-				"pageLimit": "8 pages + 1 page for references",
-				"tagline": "Where Signals Meet Intelligence",
-				"conferenceName": "The 51 th IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP)",
-				"presentationInstructionsStatus": "will be posted after paper acceptance notification"
+				"conferenceFullName": "The 51 th IEEE International Conference on Acoustics, Speech, and Signal Processing (ICASSP)"
 			},
 			"notes": []
 		},
@@ -833,32 +813,16 @@ const CONFERENCES_DATA = {
 			},
 			"deadlines": [
 				{
-					"type": "paper",
-					"label": "Grand Challenge Proposal Submission",
+					"type": "event",
+					"label": "Special Session proposal due",
 					"date": "2025-12-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Short Course Proposal Submission",
-					"date": "2025-12-31T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Special Session Proposal Submission",
-					"date": "2025-12-31T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Tutorial Proposal Submission",
+					"type": "tutorial",
+					"label": "Tutorial proposal due",
 					"date": "2025-12-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -866,7 +830,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Special Session Notification",
+					"label": "Special Session notification of acceptance",
 					"date": "2026-01-07T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -874,7 +838,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Tutorial Notification",
+					"label": "Tutorial notification of acceptance",
 					"date": "2026-01-14T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -882,7 +846,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Grand Challenge Proposal Notification",
+					"label": "Grand Challenge proposal notification of acceptance",
 					"date": "2026-01-21T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -897,14 +861,6 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Grand Challenge Web Pages Published",
-					"date": "2026-02-11T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
 					"type": "paper",
 					"label": "OJSP Paper Submission",
 					"date": "2026-02-11T23:59:00-12:00",
@@ -913,8 +869,16 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Satellite Workshop Proposal Submission",
+					"type": "art",
+					"label": "Grand Challenge web pages with instructions to participants published",
+					"date": "2026-02-11T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "workshop",
+					"label": "Satellite Workshop proposals due",
 					"date": "2026-02-18T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -922,7 +886,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Satellite Workshop Notification",
+					"label": "Satellite Workshop notification of acceptance",
 					"date": "2026-02-25T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -937,6 +901,22 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
+					"type": "notification",
+					"label": "Notification",
+					"date": "2026-04-22T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "OJSP Notification",
+					"date": "2026-04-22T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
 					"type": "paper",
 					"label": "OJSP Paper Notification",
 					"date": "2026-04-22T23:59:00-12:00",
@@ -946,15 +926,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper Notification",
+					"label": "Regular/Special Session Paper Notification",
 					"date": "2026-04-22T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "camera",
-					"label": "Camera-Ready Deadline",
+					"type": "paper",
+					"label": "Workshop Paper Submission",
 					"date": "2026-05-13T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -962,7 +942,31 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "abstract",
-					"label": "One-page Abstract Submission",
+					"label": "Abstract Submission",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Journal Paper Presentation Request Due",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Camera-Ready Paper Due",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "abstract",
+					"label": "One-Page Abstract Due",
 					"date": "2026-05-13T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -986,7 +990,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Satellite Workshop Paper Submission",
+					"label": "Satellite Workshop Paper Due",
 					"date": "2026-05-13T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -994,7 +998,39 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "abstract",
-					"label": "One-page Abstract Notification",
+					"label": "Grand Challenge Extended Abstract Due",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Request to present a paper recently accepted in an SPS Journal",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "abstract",
+					"label": "Two-page extended abstract of entries to a Grand Challenge",
+					"date": "2026-05-13T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "abstract",
+					"label": "Abstract Notification",
+					"date": "2026-05-27T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Journal Paper Presentation Notification",
 					"date": "2026-05-27T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1009,8 +1045,16 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Author Registration",
+					"type": "abstract",
+					"label": "One-page abstract notification of acceptance",
+					"date": "2026-05-27T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Workshop Paper Notification",
 					"date": "2026-06-10T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1018,7 +1062,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "abstract",
-					"label": "Grand Challenge Extended Abstract Notification",
+					"label": "Grand Challenge Abstract Notification",
 					"date": "2026-06-10T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1033,8 +1077,32 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
+					"type": "abstract",
+					"label": "Grand Challenge Extended Abstract Notification",
+					"date": "2026-06-10T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "abstract",
+					"label": "Conference registration of Authors of papers and abstracts due",
+					"date": "2026-06-10T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "camera",
+					"label": "Workshop Camera-Ready Deadline",
+					"date": "2026-07-01T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
 					"type": "event",
-					"label": "Demo Request",
+					"label": "Demo Request Due",
 					"date": "2026-07-01T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1042,31 +1110,31 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "abstract",
-					"label": "Grand Challenge Extended Abstract Camera-Ready Deadline",
+					"label": "Grand Challenge Camera-Ready Extended Abstract Due",
 					"date": "2026-07-01T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "camera",
-					"label": "Satellite Workshop Camera-Ready Deadline",
+					"type": "paper",
+					"label": "Satellite Workshop camera-ready paper due",
 					"date": "2026-07-01T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Grand Challenge Author Registration",
-					"date": "2026-07-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
 					"type": "workshop",
-					"label": "Satellite Workshop Author Registration",
+					"label": "Satellite Workshop Author Registration Due",
+					"date": "2026-07-16T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "event",
+					"label": "Grand Challenge author registration due",
 					"date": "2026-07-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1075,7 +1143,7 @@ const CONFERENCES_DATA = {
 			],
 			"links": {
 				"official": "https://2026.ieeeicip.org",
-				"submission": "https://proposalsicip2026.exordo.com/",
+				"submission": "https://2026.ieeeicip.org/paper-submission/",
 				"template": "https://2026.ieeeicip.org/author-kit/",
 				"authorGuide": "https://2026.ieeeicip.org/author-kit/",
 				"author": "https://2026.ieeeicip.org/call-for-papers-and-abstracts/",
@@ -1084,28 +1152,31 @@ const CONFERENCES_DATA = {
 			},
 			"info": {
 				"pageLimit": "5 pages + 1 page of only references",
-				"conferenceThemesAndTopicsUrl": "https://2026.ieeeicip.org/topics/",
-				"presentationOptions": [
-					"Presented at the conference",
-					"Option to present a demo at the Show & Tell session"
-				],
-				"publicationDetails": [
-					"Open Preview IEEE Xplore",
-					"Published in IEEE Xplore as part of ICIP 2026 Proceedings"
-				],
-				"extendedManuscriptsToJournals": "Extended manuscripts can be submitted to IEEE SPS Journals. Top papers will be spotlighted and awarded expedite review for IEEE Transactions on Image Processing or IEEE Transactions on Computational Imaging.",
-				"preprintPolicy": "Authors may post preprints; this does not count as prior publication.",
-				"ieeeXploreOpenPreview": "All papers accepted to IEEE ICIP 2026 will be published on IEEE Xplore through Open Preview and will be freely accessible and downloadable by all in final format from August 13th through September 13th.",
-				"publicationType": "Open Access articles in OJSP",
-				"articleProcessingCharge": "$1,500",
-				"originalApc": "$2,160",
-				"apcWaiver": "$660"
+				"presentationOptions": "Presented at the conference, Option to present a demo at the Show & Tell session",
+				"publicationDetails": "Open Preview IEEE Xplore, Published in IEEE Xplore as part of ICIP 2026 Proceedings",
+				"journalExtensionInfo": "Extended manuscripts can be submitted to IEEE SPS Journals, Top papers awarded expedite review for IEEE Transactions on Image Processing or IEEE Transactions on Computational Imaging",
+				"conflictOfInterestDisclosureLocation": "acknowledgments section of the paper",
+				"ethicalComplianceStatementLocation": "separate section entitled “Compliance with Ethical Standards”",
+				"ieeeXploreOpenPreview": true,
+				"publicationType": "Open Access articles in OJSP, not in the ICIP conference proceedings",
+				"ojspApcFull": "$2,160",
+				"ojspApcDiscounted": "$1,500",
+				"registrationCoversPapers": "up to four accepted papers"
 			},
 			"deskRejectReasons": [
-				"Late submission of accepted papers",
-				"Manuscript entirely produced by LLM",
-				"Direct use of unverified LLM-generated code",
-				"Direct use of unverified LLM-generated text"
+				"No-show policy violation",
+				"Page limit exceeded",
+				"Incorrect formatting (Author Kit)",
+				"Paper not presented at conference",
+				"Paper not registered for conference",
+				"Late camera-ready submission",
+				"Figures not displaying correctly",
+				"Missing required acknowledgements",
+				"Late submission",
+				"Manuscript entirely LLM-generated",
+				"Unverified LLM-generated code",
+				"Unverified LLM-generated text",
+				"Figures not showing correctly"
 			],
 			"notes": []
 		},
@@ -1149,17 +1220,17 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Author/Reviewer Discussion Ends",
-					"date": "2025-12-03T21:00:00+00:00",
+					"type": "art",
+					"label": "Author/Reviewer Discussion Starts",
+					"date": "2025-11-11T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "art",
-					"label": "Reviewer/AC Private Discussion Starts",
-					"date": "2025-12-03T23:59:00-12:00",
+					"type": "event",
+					"label": "Author/Reviewer Discussion Ends",
+					"date": "2025-12-03T21:00:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
@@ -1181,14 +1252,6 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Reviewer/AC Private Discussion Ends",
-					"date": "2026-01-22T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
 					"type": "notification",
 					"label": "Author Notification",
 					"date": "2026-01-25T23:59:00-12:00",
@@ -1198,7 +1261,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Sponsor Expo Calls Open",
+					"label": "Sponsor: Expo Calls Open",
 					"date": "2026-02-20T17:51:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1214,8 +1277,8 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Reviewer Compensation Transfer Deadline",
-					"date": "2026-03-01T23:59:00-12:00",
+					"label": "Reviewer: Compensation Transfer Deadline",
+					"date": "2026-03-02T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
@@ -1262,15 +1325,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Registration Cancellation Deadline",
-					"date": "2026-04-02T19:00:00-12:00",
+					"label": "Poster Printing Request",
+					"date": "2026-04-02T03:00:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Poster Topics Submission Deadline",
+					"type": "event",
+					"label": "Poster Topics Deadline",
 					"date": "2026-04-07T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1278,7 +1341,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "workshop",
-					"label": "Workshop Schedule Finalized Deadline",
+					"label": "Workshop: Schedule Finalized Deadline",
 					"date": "2026-04-17T00:00:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1286,7 +1349,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "workshop",
-					"label": "Workshop Complimentary Registration Deadline",
+					"label": "Workshop: Complimentary Registration Deadline",
 					"date": "2026-04-20T00:00:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1301,40 +1364,39 @@ const CONFERENCES_DATA = {
 				"reviewerGuide": "https://iclr.cc/Conferences/2026/ReviewerGuide",
 				"author": "https://iclr.cc/Conferences/2026/CallForPapers",
 				"dates": "https://iclr.cc/Conferences/2026/Dates",
-				"registration": "https://iclr.cc/Register/view-registration",
+				"registration": "https://iclr.cc/Register2",
 				"faq": "https://iclr.cc/FAQ"
 			},
 			"info": {
-				"pageLimit": "9 pages + unlimited references; unlimited appendices (reviewers not required to read); optional ethics statement (max 1 page, not counted); optional reproducibility statement (not counted)",
+				"pageLimit": "9 pages + Unlimited references. Unlimited appendices (reviewers not required to read). Optional ethics statement (max 1 page) and reproducibility statement do not count towards page limit. Page limit increases to 10 pages for discussion/camera ready.",
 				"reviewType": "Double-blind",
 				"submissionFormat": "PDF",
-				"ethicsStatementRecommended": true,
-				"reproducibilityStatementRecommended": true,
-				"reciprocalReviewingRequirement": "Authors on 3+ papers must serve as reviewer for at least 6 papers",
+				"conferenceName": "The Fourteenth International Conference on Learning Representations",
+				"submissionSiteOpenDate": "2025-09-13",
+				"authorChangesPolicy": "Author order may be edited after abstract deadline, but new authors cannot be added. No changes to authors permitted after submission deadline.",
+				"titleChangesPolicy": "No changes to title permitted after submission deadline until end of discussion period.",
+				"supplementaryMaterialGuidelines": "Authors are encouraged to submit a single file (paper + supplementary text). Source code can be uploaded as supplementary material.",
+				"reciprocalReviewingRequirement": "Authors on 3 or more papers must serve as a reviewer for at least 6 papers.",
 				"conferencePosterSize": "landscape: Maximum size: 1.90m x 0.90m (76.4in x 37.4in) width/height",
 				"workshopPosterSize": "Portrait: Maximum size: 61cm x 91cm (24in x 36in) width/height",
-				"approvedTapeProvided": [
-					"Command strips",
-					"painters tape"
-				],
-				"posterDisplayRestriction": "Do not use anything that can damage poster boards or walls",
-				"arxivPolicy": "allowed per the dual submission policy outlined in the author guide"
+				"posterDisplayInstructionsMainConference": "Use only approved tape on workshop walls. Command strips and painters tape will be provided and available in the workshop room. Command strips are double sided. Instructions: separate the strips; remove backing on one side and stick to backside corners of poster; remove backing on other side and attach poster to wall. Do not use adhesive backed self-sticking posters or anything that can damage poster boards",
+				"posterDisplayInstructionsWorkshops": "Use only approved tape on workshop walls. Command strips and painters tape will be provided and available in the workshop room. Command strips are double sided. Instructions: separate the strips; remove backing on one side and stick to backside corners of poster; remove backing on other side and attach poster to wall. Do not use adhesive backed self-sticking posters or anything that can damage the walls or poster boards",
+				"posterPrintingPolicy": "self-sticking posters are not allowed. Poster tape will be provided by the conference. Please only use approved tape. You can print your poster using any service you want."
 			},
 			"deskRejectReasons": [
-				"Anonymity violation",
-				"Page limit exceeded",
-				"Placeholder/duplicate abstracts",
-				"Failure to finish reciprocal reviews",
+				"Author identity revealed",
+				"Main text beyond page limit",
+				"Placeholder or duplicate abstracts",
+				"Failure to finish assigned reviews",
 				"No author registered as reviewer",
-				"Not disclosing significant LLM usage",
 				"Dual submission policy violation",
-				"Paper uploaded after deadline",
-				"Wrong version uploaded after deadline",
-				"Missing OpenReview account by abstract deadline",
-				"Missing OpenReview account by full paper deadline (all authors)",
-				"Adding/removing authors after abstract deadline",
+				"Undisclosed significant LLM usage",
+				"Not all authors have OpenReview account by deadline",
 				"Placeholder abstract submission",
-				"Major title/abstract change from original submission"
+				"Major title/abstract changes",
+				"Anonymous link tracking visitors",
+				"Authors without OpenReview account by full paper deadline",
+				"Adding/removing authors after abstract deadline"
 			],
 			"notes": []
 		},
@@ -1371,7 +1433,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "OpenReview Account Creation",
+					"label": "OpenReview Account Creation Deadline",
 					"date": "2026-01-08T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1507,7 +1569,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Workshop Contributions Suggested Submission Date",
+					"label": "Workshop: Suggested Submission Date",
 					"date": "2026-04-24T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1530,8 +1592,8 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Workshop Submissions Notification",
+					"type": "notification",
+					"label": "Workshop: Universal Notification Deadline",
 					"date": "2026-05-15T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1547,7 +1609,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Early Registration Deadline",
+					"label": "Registration: Early Pricing Deadline",
 					"date": "2026-05-24T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1592,14 +1654,6 @@ const CONFERENCES_DATA = {
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Sponsor Portal Close",
-					"date": "2026-08-19T07:00:00+00:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
 				}
 			],
 			"links": {
@@ -1614,38 +1668,44 @@ const CONFERENCES_DATA = {
 				"faq": "https://icml.cc/Conferences/2026/PeerReviewFAQ"
 			},
 			"info": {
-				"pageLimit": "8 pages + unlimited references and appendices",
+				"pageLimit": "8 pages + unlimited references and appendices; final version allowed 1 extra page",
 				"reviewType": "Double-blind",
-				"submissionFormat": "PDF",
-				"conferenceDayBreakdown": "July 6: Expo/Tutorial Day; July 7–9: Main Conference; July 10–11: Workshops",
+				"submissionFormat": "PDF (LaTeX only)",
+				"expoTutorialDay": "July 6",
+				"mainConferenceDates": "July 7–9",
+				"workshopDates": "July 10–11",
 				"submissionPdfMaxSize": "50MB",
 				"cameraReadyPdfMaxSize": "20MB",
+				"reproducibilityEncouraged": true,
+				"codeSubmissionAllowed": true,
+				"codeSubmissionFormat": "zip file, pdf, or anonymous GitHub repositories",
+				"supplementaryMaterialTypes": "supplementary manuscripts and code/data",
+				"supplementaryMaterialDeadlineSameAsPaper": true,
+				"acceptedPaperExtraPage": "one extra page for the main paper",
 				"authorAttendanceOptional": true,
-				"originalSubmittedVersionPublished": true,
-				"capOnReciprocalReviewers": true
+				"submittedVersionPublication": true,
+				"llmPolicyForReviewing": true,
+				"reciprocalReviewerCapPolicy": true
 			},
 			"deskRejectReasons": [
 				"Anonymity violation",
 				"Format not followed",
 				"Main body page limit exceeded",
-				"Author identity revealed",
+				"Authors' identities revealed",
+				"Anonymity violation in response",
+				"Non-anonymized or shortened URLs in response",
 				"Page limit exceeded",
-				"Incorrect file format",
-				"Does not conform to policies",
-				"Wrong style files",
-				"Placeholder abstracts substantially rewritten",
-				"Author list changed without approval",
-				"Not meeting per-submission reviewer requirement",
-				"Authors not meeting per-author reviewer requirement",
-				"Reviewers failing to adequately participate",
-				"Dual or concurrent submission violation",
-				"Identical or substantially similar prior work",
-				"Concurrent ICML submissions too incremental",
+				"Incorrect style files",
+				"Substantially rewritten placeholder abstracts",
+				"Author list changed after abstract deadline",
+				"Failed reciprocal review requirements",
+				"Reviewers failing review duties",
+				"Dual/concurrent submission violation",
 				"Prompt injection attempts",
 				"Plagiarism",
-				"Advertising work during review period",
+				"Advertising work during review",
 				"Collusion",
-				"Rejected on ethical grounds",
+				"Ethics violation",
 				"Ethical grounds"
 			],
 			"notes": []
@@ -1766,8 +1826,8 @@ const CONFERENCES_DATA = {
 			},
 			"deadlines": [
 				{
-					"type": "paper",
-					"label": "Special Session Proposal Submission",
+					"type": "event",
+					"label": "Special Session Proposal Deadline",
 					"date": "2026-01-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1775,7 +1835,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Special Session Proposal Notification",
+					"label": "Special Session Notification",
 					"date": "2026-02-09T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1798,16 +1858,16 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Special Session, Competition, and Forum Proposal Submission",
+					"type": "event",
+					"label": "Competition and Forum Proposal Deadline",
 					"date": "2026-03-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Workshop/Tutorial Proposal Submission",
+					"type": "workshop",
+					"label": "Workshop/Tutorial Proposal Deadline",
 					"date": "2026-03-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1815,15 +1875,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Special Session, Competition, and Forum Proposal Notification",
+					"label": "Competition and Forum Notification",
 					"date": "2026-04-13T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Paper Acceptance Notification",
+					"type": "notification",
+					"label": "Author Notification",
 					"date": "2026-06-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1838,16 +1898,16 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Camera-Ready Submission",
+					"type": "camera",
+					"label": "Camera-Ready Deadline",
 					"date": "2026-07-10T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Late Breaking Results & Award Nominations Submission",
+					"type": "notification",
+					"label": "Late Breaking Results and Award Nominations Deadline",
 					"date": "2026-07-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1863,7 +1923,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Final Late Breaking Results Submission",
+					"label": "Final Late Breaking Results Submission Deadline",
 					"date": "2026-08-21T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1887,16 +1947,17 @@ const CONFERENCES_DATA = {
 				"attendeesExpected": "1200 +",
 				"countriesRepresented": "1 +",
 				"paperSubmissionsExpected": "200 +",
-				"irosEdition": "1 th",
-				"videoSupplementDetails": "1-minute video (up to 10 MB), MPG, MPEG or MP4 video formats",
-				"showAndTellOption": "New 'Show and Tell' option for some accepted papers",
-				"icraIrosTransferCategory": "Submission category for papers rejected from ICRA 2026",
-				"generativeAiPolicy": "Generative AI tools may not be listed as authors"
+				"videoSupplementLimit": "1-minute video (up to 10 MB)",
+				"irosRalSubmissionOption": "IROS no longer offers an RA-L+IROS submission option.",
+				"generativeAiUsageGuidelines": "Generative AI tools and technologies, such as ChatGPT, may not be listed as authors of a paper submitted",
+				"inPersonPresentationExpectation": "All papers accepted at the 2026 IROS are to be presented, in person",
+				"showAndTellOption": "IROS is testing a new 'Show and Tell' option for papers",
+				"icraIrosTransferCategory": "IROS 2026 has a submission category 'ICRA-IROS transfer'"
 			},
 			"deskRejectReasons": [
 				"Page limit exceeded",
 				"Anonymity violation",
-				"Generative AI listed as author",
+				"Generative AI as author",
 				"AI tools listed as authors",
 				"Processing manuscript through AI system"
 			],
@@ -1951,45 +2012,59 @@ const CONFERENCES_DATA = {
 			"website": "https://neurips.cc/Conferences/2026",
 			"brandColor": "#8B0000",
 			"location": {
-				"city": "Vancouver",
-				"country": "Canada",
-				"flag": "🇨🇦",
-				"venue": "Vancouver Convention Center"
+				"city": "Sydney",
+				"country": "Australia",
+				"flag": "🇦🇺",
+				"venue": "International Convention Centre"
 			},
 			"deadlines": [
 				{
 					"type": "abstract",
 					"label": "Abstract Submission",
-					"date": "2026-05-11",
+					"date": "2026-05-04T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
 				},
 				{
 					"type": "paper",
-					"label": "Full Paper Submission Deadline",
-					"date": "2026-05-15",
+					"label": "Paper Submission",
+					"date": "2026-05-06T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Main Conference",
-					"date": "2026-12-06",
-					"endDate": "2026-12-12",
+					"type": "notification",
+					"label": "Author Notification",
+					"date": "2026-09-24T23:59:00-12:00",
+					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "Evaluations and Datasets Author Notification",
+					"date": "2026-09-24T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
 				}
 			],
-			"links": {},
-			"info": {
-				"pageLimit": "8 pages + unlimited references",
-				"reviewType": "Double-blind",
-				"submissionFormat": "PDF"
+			"links": {
+				"official": "https://neurips.cc/Conferences/2026",
+				"submission": "https://openreview.net/group?id=NeurIPS.cc/2026/Conference",
+				"template": "https://media.neurips.cc/Conferences/NeurIPS2026/Formatting_Instructions_For_NeurIPS_2026.zip",
+				"authorGuide": "https://neurips.cc/Conferences/2026/MainTrackHandbook",
+				"reviewerGuide": "https://neurips.cc/Conferences/2026/ReviewerGuidelines",
+				"author": "https://neurips.cc/Conferences/2026/CallForPapersEvalDatasets",
+				"dates": "https://neurips.cc/Conferences/2026/Dates",
+				"faq": "https://neurips.cc/FAQ"
 			},
-			"notes": [],
-			"isEstimated": true
+			"info": {
+				"conferenceFullName": "The Fortieth Annual Conference on Neural Information Processing Systems (NeurIPS 2026)"
+			},
+			"notes": []
 		},
 		{
 			"id": "wacv-2026",
@@ -2024,7 +2099,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper Enrollment (Round 1)",
+					"label": "Paper Enrollment Round 1",
 					"date": "2025-07-11T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2040,7 +2115,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper Registration Deadline (Round 1)",
+					"label": "Round 1 Paper Registration Deadline",
 					"date": "2025-07-11T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2048,7 +2123,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper & Supplementary Material Submission (Round 1)",
+					"label": "Paper & Supplementary Material Submission Round 1",
 					"date": "2025-07-18T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2071,8 +2146,8 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "supplementary",
-					"label": "Supplementary Material (Round 1)",
+					"type": "paper",
+					"label": "Round 1 Supplementary Material Submission",
 					"date": "2025-07-18T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2088,15 +2163,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "AC: Paper Assignment",
-					"date": "2025-07-28T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Reviewer: Papers Assigned",
+					"label": "AC/Reviewer: Paper Assignment",
 					"date": "2025-07-28T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2120,24 +2187,8 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Notification (Round 1)",
+					"label": "Author Notification Round 1",
 					"date": "2025-09-03T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Author Notification",
-					"date": "2025-09-03T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Notification: Round 1",
-					"date": "2025-09-04T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": false
@@ -2145,6 +2196,14 @@ const CONFERENCES_DATA = {
 				{
 					"type": "notification",
 					"label": "Notification",
+					"date": "2025-09-03T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "Round 1 Notification",
 					"date": "2025-09-04T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2152,7 +2211,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Author Notification (Round 1)",
+					"label": "Notification (Round 1)",
+					"date": "2025-09-04T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "Round 1 Notification",
 					"date": "2025-09-05T06:39:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2160,31 +2227,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper Enrollment (Round 2)",
-					"date": "2025-09-12T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper Registration Deadline: Round 2",
-					"date": "2025-09-12T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper and Supplementary Submission (Round 2)",
-					"date": "2025-09-12T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper Registration Deadline (Round 2)",
+					"label": "Paper Enrollment Round 2",
 					"date": "2025-09-12T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2193,6 +2236,30 @@ const CONFERENCES_DATA = {
 				{
 					"type": "paper",
 					"label": "Round 2 Paper Registration Deadline",
+					"date": "2025-09-12T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Paper Submission (Round 2)",
+					"date": "2025-09-12T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Round 2 New Paper Registration",
+					"date": "2025-09-12T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Paper Registration Deadline (Round 2)",
 					"date": "2025-09-12T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2208,7 +2275,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "camera",
-					"label": "Camera-Ready Deadline: Round 1",
+					"label": "Round 1 Camera-Ready Deadline",
 					"date": "2025-09-18T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2216,7 +2283,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Rebuttal & Revision Submission (Round 2 for Round 1 papers)",
+					"label": "Rebuttal and Revision Submission Round 2",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2224,7 +2291,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper & Supplementary Material Submission (Round 2)",
+					"label": "Paper & Supplementary Material Submission Round 2",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2232,7 +2299,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "rebuttal",
-					"label": "Author Rebuttal and Revision Deadline",
+					"label": "Rebuttal and Revision Deadline",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2240,7 +2307,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper and Supplementary Submission Deadline: Round 2",
+					"label": "Round 2 Paper and Supplementary Submission Deadline",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2256,15 +2323,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Rebuttal and Revision Submission (Round 1)",
-					"date": "2025-09-19T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "supplementary",
-					"label": "Supplemental Material (Round 2)",
+					"label": "Round 1 Rebuttal and Revision Submission",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2272,7 +2331,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Round 2 Supplementary Material Submission",
+					"label": "Round 2 Supplemental Material Submission",
+					"date": "2025-09-19T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "paper",
+					"label": "Supplementary Material Submission (Round 2)",
 					"date": "2025-09-19T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2280,7 +2347,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "art",
-					"label": "AC: Review Checking Period Start",
+					"label": "AC: Check Reviews Start",
 					"date": "2025-09-26T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2288,15 +2355,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "AC: Paper Assignment: Round 2",
-					"date": "2025-09-29T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Reviewer: Papers Assigned (Round 2)",
+					"label": "AC/Reviewer: Round 2 Paper Assignment",
 					"date": "2025-09-29T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2311,8 +2370,8 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "AC: Desk Rejection Screening Deadline",
+					"type": "paper",
+					"label": "AC: Screen Papers for Desk Rejections",
 					"date": "2025-10-03T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2328,7 +2387,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "art",
-					"label": "AC: Chase Late Reviewers / Find Emergency Reviewers Start",
+					"label": "AC: Chase Late Reviewers Start",
 					"date": "2025-10-17T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2336,7 +2395,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "Reviewer: Reviews Due: Round 2",
+					"label": "Reviewer: Round 2 Reviews Due",
+					"date": "2025-10-20T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "art",
+					"label": "AC: Find Emergency Reviewers Start",
 					"date": "2025-10-20T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2344,7 +2411,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "AC: Chase Late Reviewers / Find Emergency Reviewers End",
+					"label": "AC: Chase Late Reviewers End",
 					"date": "2025-10-22T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2360,7 +2427,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "AC: Decisions and Meta-reviews Due: Round 2",
+					"label": "AC: Round 2 Decisions and Meta-reviews Due",
 					"date": "2025-10-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2392,7 +2459,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Round 2 Final Notification",
+					"label": "Notification (Round 2)",
 					"date": "2025-11-05T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2400,7 +2467,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Final Decisions Released to Authors (Round 1)",
+					"label": "Round 1 Final Notification",
 					"date": "2025-11-06T07:59:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2408,15 +2475,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Author Notification (Round 2)",
-					"date": "2025-11-06T07:59:00+00:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Notification (Round 2)",
+					"label": "Author Notification Round 2",
 					"date": "2025-11-06T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2424,7 +2483,15 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "notification",
-					"label": "Notification: Round 2",
+					"label": "Round 2 Notification",
+					"date": "2025-11-06T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "Notification (Round 2)",
 					"date": "2025-11-06T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2440,7 +2507,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "camera",
-					"label": "Camera-Ready Deadline: Round 2",
+					"label": "Round 2 Camera-Ready Deadline",
 					"date": "2025-11-27T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2472,7 +2539,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Camera Ready Submission (Round 1 & 2)",
+					"label": "Camera Ready Submission Round 1",
 					"date": "2025-12-08T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2520,7 +2587,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "camera",
-					"label": "Workshops Camera Ready Deadline",
+					"label": "Workshop Camera Ready Deadline",
 					"date": "2026-01-10T07:59:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2543,8 +2610,8 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "paper",
-					"label": "Poster Image and Video Upload for Main Conference Papers",
+					"type": "event",
+					"label": "Poster Image and Video Upload Deadline",
 					"date": "2026-02-23T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2560,7 +2627,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "event",
-					"label": "AC: Find Emergency Reviewers",
+					"label": "AC: Assign Emergency Reviewers",
 					"date": "2026-08-18T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -2594,64 +2661,59 @@ const CONFERENCES_DATA = {
 				"registration": "https://wacv.thecvf.com/Conferences/2026/Pricing2"
 			},
 			"info": {
-				"pageLimit": "8 pages + including figures and tables; additional pages for references only",
+				"pageLimit": "8 pages + unlimited references",
 				"reviewType": "Double-blind",
 				"submissionFormat": "PDF",
-				"twoRoundReviewProcess": true,
-				"openreviewProfileRequired": true,
-				"programChairsEmail": "wacv2026-pcs@googlegroups.com",
-				"codeAnonymizationToolExample": "https://github.com/tdurieux/anonymous_github",
+				"reviewProcess": "two-round",
+				"round2NoRebuttal": true,
+				"paperEvaluationTracks": "Application Papers vs Algorithm Papers",
+				"conferenceName": "WACV",
+				"conferenceYear": 2026,
 				"tracks": [
 					"applications",
 					"algorithms"
-				],
-				"journalSpecialIssue": "Machine Vision and Applications (MVA)"
+				]
 			},
 			"deskRejectReasons": [
 				"Anonymity violation",
-				"Incorrect template usage",
+				"Wrong template",
 				"Page limit exceeded",
 				"Late submission",
-				"Misconfigured OpenReview accounts",
+				"Misconfigured OpenReview account",
 				"Author list changes after deadline",
 				"Incomplete or inaccurate conflict information",
-				"Submitting substantially same paper in round 2 as new",
-				"Authors without valid OpenReview profile by deadline",
-				"Identifying information in acknowledgments or supplemental material",
-				"Links to websites that identify authors",
-				"Violation of dual/double submission conditions",
+				"Duplicate submission (round 1 to round 2)",
+				"Missing valid OpenReview profile for authors",
+				"Anonymity violation (identifying authors)",
+				"Reviewers failing to provide timely/quality reviews",
 				"Not properly anonymized",
-				"Not using the template",
-				"More than eight pages excluding references",
-				"Authors not completing timely, quality reviews/metareviews",
-				"Page limit exceeded (8 pages excluding references)",
-				"Does not use template",
-				"Supplementary material violates guidelines",
-				"Source code reveals author identity",
-				"Round 1 rejected papers resubmitted to Round 2",
+				"Not using WACV template",
+				"Exceeding 8-page limit (excluding references)",
+				"Supplementary material guidelines violation",
+				"Anonymity violation in code",
+				"Round 1 rejects submitted as new Round 2 papers",
 				"Incomplete submission",
 				"Submission not meeting required criteria",
-				"Substantially same paper as Round 1 in Round 2",
+				"Substantially same Round 1 paper submitted to Round 2",
 				"Rebuttal exceeding one page",
-				"Rebuttal with significantly altered formatting",
-				"Citations of non-existent material",
+				"Altered rebuttal formatting",
+				"Citations to non-existent material",
 				"Obvious factual inaccuracies",
 				"Formatting issues",
 				"Anonymity violations",
-				"Conflicts of interest",
+				"Conflict of interest",
 				"Page limit exceeded (8 pages)",
-				"Overruling all three reviewers",
-				"Dual submission policy violation",
-				"Plagiarism policy violation",
-				"Author submitted highly irresponsible reviews",
-				"Author submitted late reviews",
-				"Violation of dual submission policy",
-				"Plagiarism",
+				"Author names in paper or supplemental",
+				"AC: Untimely/low-quality meta-reviews",
+				"Conflicts of interest",
+				"Author names on paper or supplemental materials",
+				"Dual submission violation",
+				"Plagiarism detected",
+				"Policy violation",
 				"Glaring ethics violations",
-				"No description of ethical principles",
-				"Non-anonymized code submission",
-				"Supplementary material guideline violation",
-				"Plagiarism or academic dishonesty"
+				"Out of scope",
+				"Plagiarism or academic dishonesty",
+				"Anonymity violation in code submission"
 			],
 			"notes": []
 		}
