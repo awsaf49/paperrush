@@ -1552,6 +1552,99 @@ body::before {
 }
 
 /* ============================================
+   SEO CONTENT (About / FAQ)
+   ============================================ */
+
+.seo-content {
+    padding: 56px 24px 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.seo-content-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.seo-content h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.seo-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 28px 0 10px;
+}
+
+.seo-content p {
+    margin-bottom: 12px;
+}
+
+.seo-content a {
+    color: var(--color-cv);
+    text-decoration: none;
+}
+
+.seo-content a:hover {
+    text-decoration: underline;
+}
+
+.seo-conf-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.seo-conf-list li {
+    padding: 10px 14px;
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+}
+
+.seo-conf-list strong,
+.seo-content p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.seo-faq details {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 12px 0;
+}
+
+.seo-faq summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-primary);
+    list-style: none;
+}
+
+.seo-faq summary::-webkit-details-marker {
+    display: none;
+}
+
+.seo-faq summary::before {
+    content: '+ ';
+    color: var(--text-tertiary);
+}
+
+.seo-faq details[open] summary::before {
+    content: '– ';
+}
+
+.seo-faq details p {
+    margin: 10px 0 0;
+    padding-left: 16px;
+}
+
+/* ============================================
    MOBILE TIMELINE
    ============================================ */
 
