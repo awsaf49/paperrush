@@ -431,7 +431,7 @@ const App = {
      * Update category count badges
      */
     updateCategoryCounts() {
-        const categories = ['all', 'ml', 'cv', 'nlp', 'speech', 'robotics', 'other'];
+        const categories = ['all', 'ml', 'cv', 'nlp', 'speech', 'robotics', 'swe', 'other'];
 
         categories.forEach(cat => {
             const countEl = document.getElementById(`count-${cat}`);
@@ -1007,6 +1007,13 @@ const App = {
                 radial-gradient(ellipse 80% 100% at 110% 70%, rgba(255, 105, 180, 0.5), transparent 50%),
                 radial-gradient(ellipse 120% 80% at 50% -30%, rgba(255, 182, 193, 0.4), transparent 50%),
                 linear-gradient(170deg, #fff0f5 0%, #ffe4ec 50%, #ffebf0 100%)
+            `,
+            // SWE - Bottom-up sunrise sweep, warm amber/golden feel
+            'swe': `
+                radial-gradient(ellipse 140% 100% at 50% 130%, rgba(234, 179, 8, 0.65), transparent 50%),
+                radial-gradient(ellipse 100% 120% at -10% 110%, rgba(253, 224, 71, 0.55), transparent 50%),
+                radial-gradient(ellipse 80% 70% at 110% -10%, rgba(254, 240, 138, 0.4), transparent 50%),
+                linear-gradient(0deg, #fef9c3 0%, #fefce8 60%, #ffffff 100%)
             `,
             // Other - Corner accents, creative/artistic feel
             'other': `
