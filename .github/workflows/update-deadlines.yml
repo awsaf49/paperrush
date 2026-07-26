@@ -24,7 +24,7 @@ on:
 
 env:
   # All conferences supported by the scraper
-  ALL_CONFERENCES: 'cvpr,iccv,eccv,icml,neurips,iclr,aaai,acl,emnlp,naacl,interspeech,icassp,wacv,icip,iros'
+  ALL_CONFERENCES: 'cvpr,iccv,eccv,wacv,icip,bmvc,3dv,miccai,icml,neurips,iclr,aaai,aistats,ijcai,mlsys,colt,kdd,acl,eacl,emnlp,naacl,interspeech,icassp,iros,icra,corl'
 
 # Grant write permissions to push commits
 permissions:
@@ -121,6 +121,11 @@ jobs:
 
       - name: Validate published conference data
         run: python scripts/validate_data.py js/data.js
+
+      # Re-run browser/data contract tests against the newly generated file,
+      # not only the pre-scrape checkout.
+      - name: Test generated browser data
+        run: node --test tests/*.test.js
 
       - name: Check for changes
         id: changes

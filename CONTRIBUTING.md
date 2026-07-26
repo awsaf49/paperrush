@@ -72,7 +72,7 @@ All conference data lives in `js/data.js`. Each conference follows this schema:
             date: "2026-01-22T23:59:00-12:00",
             endDate: null,              // Only for events with date ranges
             status: "upcoming",         // Auto-calculated, don't set manually
-            estimated: false            // true = uncertain date, shows "~" prefix
+            estimated: false            // true renders a clearly labeled Approx date
         }
     ],
 
@@ -82,6 +82,7 @@ All conference data lives in `js/data.js`. Each conference follows this schema:
         submission: "https://...",      // Submission portal
         template: "https://...",        // LaTeX template
         author: "https://..."           // Author guidelines
+        dates: "https://..."            // Official source for dates
     },
 
     info: {
@@ -113,7 +114,8 @@ All conference data lives in `js/data.js`. Each conference follows this schema:
 | `rebuttal` | Author rebuttal period | "Rebuttal Period" |
 | `notification` | Acceptance notification | "Notification" |
 | `camera` | Camera-ready deadline | "Camera Ready" |
-| `event` | Conference dates | "Main Conference" |
+| `conference` | Confirmed conference dates | "Main Conference" |
+| `event` | Other administrative milestones | "Registration Opens" |
 
 > **Tip:** For events spanning multiple days, use `endDate` to specify the range.
 
@@ -129,11 +131,11 @@ All conference data lives in `js/data.js`. Each conference follows this schema:
 // Date only (no time component) - good for notifications, events
 "2026-04-01"
 
-// Uncertain/estimated dates - add estimated: true
+// Uncertain dates remain visible as Approx but never receive a live countdown
 { type: "paper", date: "2026-01-15T23:59:00-12:00", estimated: true }
 ```
 
-> **Important:** Use `-12:00` (AoE) for submission deadlines unless the conference specifies otherwise. This ensures researchers worldwide don't miss the deadline.
+> **Important:** Never assume AoE. Use `-12:00` only when the official source specifies it; otherwise preserve a date-only value and link the official source.
 
 ---
 
@@ -183,13 +185,7 @@ Edit `scripts/conference_metadata.json`:
   "newconf": {
     "fullName": "New Conference on Something",
     "category": "ml",
-    "brandColor": "#1E3A5F",
-    "location": {
-      "city": "TBD",
-      "country": "TBD",
-      "flag": "🌍",
-      "venue": null
-    }
+    "brandColor": "#1E3A5F"
   }
 }
 ```
@@ -199,7 +195,7 @@ Edit `scripts/conference_metadata.json`:
 Edit `.github/workflows/update-deadlines.yml` (line 27):
 
 ```yaml
-ALL_CONFERENCES: 'cvpr,iccv,eccv,icml,neurips,iclr,aaai,acl,emnlp,naacl,interspeech,icassp,wacv,icip,iros,newconf'
+ALL_CONFERENCES: 'cvpr,iccv,eccv,wacv,icip,bmvc,3dv,miccai,icml,neurips,iclr,aaai,aistats,ijcai,mlsys,colt,kdd,acl,eacl,emnlp,naacl,interspeech,icassp,iros,icra,corl,newconf'
 ```
 
 ### 4. Test Locally
@@ -207,6 +203,11 @@ ALL_CONFERENCES: 'cvpr,iccv,eccv,icml,neurips,iclr,aaai,acl,emnlp,naacl,interspe
 ```bash
 # Install dependencies
 pip install requests openai playwright html2text
+
+# Run deterministic data and rollover checks
+python -m unittest discover -s tests -p 'test_*.py'
+node --test tests/*.test.js
+python scripts/validate_data.py js/data.js
 
 # Set API key
 export GEMINI_API_KEY="your-key-here"

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Deadline Tracker — AI, ML & CV Paper Deadlines | PaperRush</title>
-    <meta name="description" content="Free conference deadline tracker with live countdown timers for top AI, ML, computer vision & NLP conferences. Never miss a paper submission deadline — CVPR, NeurIPS, ICML, ICLR & more.">
+    <meta name="description" content="Track confirmed paper, abstract, and conference dates for top AI, ML, computer vision, and NLP venues. Filter the milestones you care about and avoid stale editions.">
     <meta name="keywords" content="conference deadline tracker, AI conference deadlines, ML conference deadlines, paper submission deadlines, CVPR deadline, NeurIPS deadline, ICML deadline, ICLR deadline, computer vision conferences, NLP conferences">
     <link rel="canonical" href="https://awsaf49.github.io/paperrush/">
 
@@ -73,7 +73,7 @@
         {
           "@type": "Question",
           "name": "Which AI/ML conference deadlines does it track?",
-          "acceptedAnswer": { "@type": "Answer", "text": "It tracks paper submission deadlines for NeurIPS, ICML, ICLR, AAAI, CVPR, ICCV, ECCV, WACV, ICIP, ACL, EMNLP, NAACL, COLING, ICASSP, INTERSPEECH, and IROS." }
+          "acceptedAnswer": { "@type": "Answer", "text": "It tracks paper submission deadlines for NeurIPS, ICML, ICLR, AAAI, IJCAI, AISTATS, MLSys, COLT, KDD, CVPR, ICCV, ECCV, WACV, ICIP, MICCAI, BMVC, 3DV, ACL, EACL, EMNLP, NAACL, COLING, ICASSP, INTERSPEECH, ICRA, IROS, and CoRL." }
         },
         {
           "@type": "Question",
@@ -83,12 +83,12 @@
         {
           "@type": "Question",
           "name": "How often are the deadlines updated?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Conference deadlines are refreshed automatically every week by an automated scraper, so the countdowns stay accurate." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Conference deadlines are refreshed weekly by an automated, LLM-assisted scraper and checked by validation rules. Because conference pages can change or be misread, verify the official source before relying on a deadline." }
         },
         {
           "@type": "Question",
           "name": "What timezone are the deadlines in?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Deadlines are shown in Anywhere-on-Earth (AoE, UTC-12:00), the standard convention for academic paper submissions." }
+          "acceptedAnswer": { "@type": "Answer", "text": "PaperRush preserves the timezone announced by the conference. AoE is used only when the official source specifies it; unknown times remain date-only." }
         }
       ]
     }
@@ -112,6 +112,27 @@
 
     <!-- Filter Bar -->
     <nav class="filter-bar">
+        <div class="deadline-focus-container" aria-label="Deadline type filter">
+            <span class="sr-only" id="deadline-filter-summary" role="status">3 conferences</span>
+            <div class="deadline-filter-group" id="deadline-filter-group" role="group" aria-label="Choose which dates to show">
+                <div class="deadline-filter-indicator" id="deadline-filter-indicator"></div>
+                <button class="deadline-filter-pill active" type="button" data-deadline-filter="submissions" aria-pressed="true">
+                    Paper + abstract
+                </button>
+                <button class="deadline-filter-pill" type="button" data-deadline-filter="paper" aria-pressed="false">
+                    Paper
+                </button>
+                <button class="deadline-filter-pill" type="button" data-deadline-filter="abstract" aria-pressed="false">
+                    Abstract
+                </button>
+                <button class="deadline-filter-pill" type="button" data-deadline-filter="conference" aria-pressed="false">
+                    Conference
+                </button>
+                <button class="deadline-filter-pill" type="button" data-deadline-filter="all" aria-pressed="false">
+                    All
+                </button>
+            </div>
+        </div>
         <div class="filter-container">
             <div class="filter-group" id="filter-group">
                 <div class="filter-indicator" id="filter-indicator"></div>
@@ -188,6 +209,15 @@
         </div>
     </nav>
 
+    <aside class="verification-note" role="note" aria-label="Deadline verification reminder">
+        <svg class="verification-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3 4.5 6v5.25c0 4.6 3.2 8.9 7.5 9.75 4.3-.85 7.5-5.15 7.5-9.75V6L12 3Z"></path>
+            <path d="M12 8.25v4.5"></path>
+            <path d="M12 16.25h.01"></path>
+        </svg>
+        <span><strong>LLM-assisted, automated data.</strong> Open a card and check the official conference page once before relying on a deadline.</span>
+    </aside>
+
     <!-- Timeline Container -->
     <main class="timeline-container">
         <!-- Timeline SVG (drawn dynamically) -->
@@ -236,16 +266,16 @@
                 artificial intelligence and machine learning researchers. It shows live countdown timers to every
                 <strong>paper submission deadline</strong> for top-tier AI, ML, computer vision, NLP, speech, and
                 robotics conferences, so you never miss a call for papers (CFP) or an abstract registration date.
-                Deadlines are shown in Anywhere-on-Earth (AoE) time and refreshed automatically every week.
+                Official timezones are preserved, uncertain submission dates are shown as TBA, and data is refreshed automatically every week.
             </p>
 
             <h3>Conferences we track</h3>
             <ul class="seo-conf-list">
-                <li><strong>Machine Learning:</strong> NeurIPS (Neural Information Processing Systems), ICML (International Conference on Machine Learning), ICLR (International Conference on Learning Representations), AAAI (AAAI Conference on Artificial Intelligence)</li>
-                <li><strong>Computer Vision:</strong> CVPR (Computer Vision and Pattern Recognition), ICCV (International Conference on Computer Vision), ECCV (European Conference on Computer Vision), WACV (Winter Conference on Applications of Computer Vision), ICIP (IEEE International Conference on Image Processing)</li>
-                <li><strong>Natural Language Processing:</strong> ACL (Association for Computational Linguistics), EMNLP (Empirical Methods in Natural Language Processing), NAACL (North American Chapter of the ACL), COLING (International Conference on Computational Linguistics)</li>
+                <li><strong>Machine Learning:</strong> NeurIPS, ICML, ICLR, AAAI, IJCAI, AISTATS, MLSys, COLT, and KDD</li>
+                <li><strong>Computer Vision:</strong> CVPR, ICCV, ECCV, WACV, ICIP, MICCAI, BMVC, and 3DV</li>
+                <li><strong>Natural Language Processing:</strong> ACL, EACL, EMNLP, NAACL, and COLING</li>
                 <li><strong>Speech &amp; Audio:</strong> ICASSP (IEEE International Conference on Acoustics, Speech and Signal Processing), INTERSPEECH</li>
-                <li><strong>Robotics:</strong> IROS (IEEE/RSJ International Conference on Intelligent Robots and Systems)</li>
+                <li><strong>Robotics:</strong> ICRA, IROS, and CoRL</li>
             </ul>
 
             <h3>Frequently asked questions</h3>
@@ -256,7 +286,7 @@
                 </details>
                 <details>
                     <summary>Which AI/ML conference deadlines does it track?</summary>
-                    <p>It tracks paper submission deadlines for NeurIPS, ICML, ICLR, AAAI, CVPR, ICCV, ECCV, WACV, ICIP, ACL, EMNLP, NAACL, COLING, ICASSP, INTERSPEECH, and IROS, with more added over time.</p>
+                    <p>It tracks paper submission deadlines for NeurIPS, ICML, ICLR, AAAI, IJCAI, AISTATS, MLSys, COLT, KDD, CVPR, ICCV, ECCV, WACV, ICIP, MICCAI, BMVC, 3DV, ACL, EACL, EMNLP, NAACL, COLING, ICASSP, INTERSPEECH, ICRA, IROS, and CoRL, with more added over time.</p>
                 </details>
                 <details>
                     <summary>Is PaperRush free?</summary>
@@ -264,11 +294,15 @@
                 </details>
                 <details>
                     <summary>How often are the deadlines updated?</summary>
-                    <p>Conference deadlines are refreshed automatically every week by an automated scraper, so the countdowns stay accurate.</p>
+                    <p>Deadlines are refreshed weekly by an automated, LLM-assisted scraper and checked by validation rules. Conference pages can change or be misread, so open a card and verify its official source before relying on a date.</p>
                 </details>
                 <details>
                     <summary>What timezone are the deadlines in?</summary>
-                    <p>Deadlines are shown in Anywhere-on-Earth (AoE, UTC−12:00), the standard convention for academic paper submissions, in their original announced timezone.</p>
+                    <p>PaperRush preserves the timezone published by each conference. AoE (UTC−12:00) is used only when the official source specifies it; unknown times remain date-only.</p>
+                </details>
+                <details>
+                    <summary>Can I hide deadlines I do not care about?</summary>
+                    <p>Yes. PaperRush defaults to paper and abstract milestones. Use the focus bar to show only papers, abstracts, confirmed conference dates, or every tracked date.</p>
                 </details>
             </div>
         </div>
@@ -280,6 +314,36 @@
             <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a><br>Updated <span id="update-date">—</span></p>
         </div>
     </footer>
+
+    <!-- Quick choices record a GA event; written notes are prefilled into GitHub. -->
+    <div class="feedback-widget">
+        <section class="feedback-panel hidden" id="feedback-panel" role="dialog" aria-labelledby="feedback-title">
+            <button class="feedback-close" id="feedback-close" type="button" aria-label="Close feedback">&times;</button>
+            <span class="feedback-kicker">One-tap feedback</span>
+            <h2 id="feedback-title">How can PaperRush improve?</h2>
+            <div class="feedback-options">
+                <button class="feedback-option" type="button" data-feedback="helpful">This is useful</button>
+                <button class="feedback-option" type="button" data-feedback="wrong-date">A date is wrong</button>
+                <button class="feedback-option" type="button" data-feedback="missing-conference">Missing conference</button>
+                <button class="feedback-option" type="button" data-feedback="feature-idea">I have an idea</button>
+            </div>
+            <div class="feedback-divider"><span>or write a note</span></div>
+            <form class="feedback-form" id="feedback-form">
+                <label class="sr-only" for="feedback-message">Feedback note</label>
+                <textarea class="feedback-message" id="feedback-message" name="message" rows="3" maxlength="500" placeholder="What should we fix or add?"></textarea>
+                <div class="feedback-form-footer">
+                    <span class="feedback-count" id="feedback-count">0 / 500</span>
+                    <button class="feedback-submit" type="submit">Review &amp; send</button>
+                </div>
+                <p class="feedback-handoff">Opens a prefilled GitHub issue so your note is not lost.</p>
+            </form>
+            <p class="feedback-status" id="feedback-status" role="status" aria-live="polite"></p>
+            <a class="feedback-details" href="https://github.com/awsaf49/paperrush/issues/new?template=feedback.yml" target="_blank" rel="noopener">Use the full report form</a>
+        </section>
+        <button class="feedback-trigger" id="feedback-trigger" type="button" aria-controls="feedback-panel" aria-expanded="false">
+            Feedback
+        </button>
+    </div>
 
     <!-- Card Template -->
     <template id="card-template">
@@ -331,21 +395,29 @@
                 <div class="modal-section modal-links-section">
                     <h3>📎 Quick Links</h3>
                     <div class="modal-links-grid">
-                        <a href="#" class="modal-link" id="modal-link-official" target="_blank">
+                        <a href="#" class="modal-link" id="modal-link-official" target="_blank" rel="noopener">
                             <span class="link-icon">🌐</span>
                             <span class="link-text">Official Website</span>
                         </a>
-                        <a href="#" class="modal-link" id="modal-link-cfp" target="_blank">
+                        <a href="#" class="modal-link" id="modal-link-cfp" target="_blank" rel="noopener">
                             <span class="link-icon">📄</span>
                             <span class="link-text">Call for Papers</span>
                         </a>
-                        <a href="#" class="modal-link" id="modal-link-template" target="_blank">
+                        <a href="#" class="modal-link" id="modal-link-template" target="_blank" rel="noopener">
                             <span class="link-icon">📝</span>
                             <span class="link-text">LaTeX Template</span>
                         </a>
-                        <a href="#" class="modal-link" id="modal-link-author" target="_blank">
+                        <a href="#" class="modal-link" id="modal-link-author" target="_blank" rel="noopener">
                             <span class="link-icon">📖</span>
                             <span class="link-text">Author Guidelines</span>
+                        </a>
+                        <a href="#" class="modal-link" id="modal-link-dates" target="_blank" rel="noopener">
+                            <span class="link-icon">✓</span>
+                            <span class="link-text">Official Dates Source</span>
+                        </a>
+                        <a href="#" class="modal-link modal-link-report" id="modal-link-report" target="_blank" rel="noopener">
+                            <span class="link-icon">!</span>
+                            <span class="link-text">Report This Date</span>
                         </a>
                     </div>
                 </div>
@@ -369,7 +441,7 @@
                 </div>
                 
                 <div class="modal-section modal-deadlines-section">
-                    <h3>📅 All Deadlines</h3>
+                    <h3>📅 <span id="modal-deadlines-title">Paper + abstract</span></h3>
                     <ul class="modal-deadlines-list" id="modal-deadlines-list"></ul>
                 </div>
                 
@@ -384,11 +456,14 @@
     <!-- Scripts -->
     <script>
         window.onerror = function(msg, url, line, col, error) {
-            document.getElementById('loading-state').innerHTML =
-                '<p style="color:red;padding:20px;">Error: ' + msg + '<br>at ' + url + ':' + line + '</p>';
+            var loadingState = document.getElementById('loading-state');
+            loadingState.textContent = 'PaperRush could not load. Please refresh or report this issue.';
+            loadingState.style.color = 'red';
+            loadingState.style.padding = '20px';
             return false;
         };
     </script>
+    <script src="js/deadline-utils.js"></script>
     <script src="js/data.js"></script>
     <script src="js/countdown.js"></script>
     <script src="js/timeline.js"></script>

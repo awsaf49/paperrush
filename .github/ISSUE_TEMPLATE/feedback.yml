@@ -1,0 +1,37 @@
+name: PaperRush feedback
+description: Report a deadline, request a conference, or suggest an improvement.
+title: "[Feedback] "
+labels:
+  - feedback
+body:
+  - type: dropdown
+    id: feedback_type
+    attributes:
+      label: What should we improve?
+      options:
+        - Incorrect deadline
+        - Missing conference
+        - Filter or interface issue
+        - Feature idea
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: conference
+    attributes:
+      label: Conference and edition
+      description: For example, AAAI 2027. Leave blank for general feedback.
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Include the correct date and an official source link when reporting deadline data.
+      placeholder: What happened, and what should PaperRush show instead?
+    validations:
+      required: true
+  - type: checkboxes
+    id: source_check
+    attributes:
+      label: Source check
+      options:
+        - label: I checked the conference's official website before reporting a date.

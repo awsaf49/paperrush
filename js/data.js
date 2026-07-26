@@ -2,12 +2,72 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-07-26T00:04:43Z
+ * Last updated: 2026-07-26T08:01:54Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-07-26T00:04:43Z",
+	"lastUpdated": "2026-07-26T08:01:54Z",
 	"conferences": [
+			{
+				"id": "3dv-2027",
+				"name": "3DV",
+				"fullName": "International Conference on 3D Vision",
+				"year": 2027,
+				"category": "cv",
+				"website": "https://3dvconf.github.io/2027/",
+				"brandColor": "#0E7490",
+				"location": {
+					"city": "Thessaloniki",
+					"country": "Greece",
+					"flag": "🇬🇷",
+					"venue": "Thessaloniki Concert Hall"
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2026-08-28T11:00:00-07:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "supplementary",
+						"label": "Supplementary Material",
+						"date": "2026-09-02T11:00:00-07:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Preliminary Notification",
+						"date": "2026-10-27T11:00:00-07:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Final Notification",
+						"date": "2026-12-02T11:00:00-08:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-04-06",
+						"endDate": "2027-04-09",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://3dvconf.github.io/2027/",
+					"dates": "https://3dvconf.github.io/2027/"
+				},
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
+			},
 			{
 				"id": "aaai-2027",
 				"name": "AAAI",
@@ -80,7 +140,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "event",
+						"type": "conference",
 						"label": "AAAI-27 Conference",
 						"date": "2027-02-16",
 						"endDate": "2027-02-23",
@@ -106,12 +166,12 @@ const CONFERENCES_DATA = {
 				"fullName": "Annual Meeting of the Association for Computational Linguistics",
 				"year": 2027,
 				"category": "nlp",
-				"website": "https://2027.aclweb.org",
+				"website": "https://2027.aclweb.org/",
 				"brandColor": "#228B22",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
+					"city": "Kyoto",
+					"country": "Japan",
+					"flag": "🇯🇵",
 					"venue": null
 				},
 				"deadlines": [
@@ -122,14 +182,106 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-08-17",
+						"endDate": "2027-08-22",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					}
+				],
+				"links": {
+					"official": "https://2027.aclweb.org/"
+				},
+				"info": {},
+				"notes": [],
+				"isEstimated": true
+			},
+			{
+				"id": "aistats-2027",
+				"name": "AISTATS",
+				"fullName": "International Conference on Artificial Intelligence and Statistics",
+				"year": 2027,
+				"category": "ml",
+				"website": "https://aistats.org/",
+				"brandColor": "#B45309",
+				"location": {
+					"city": "TBD",
+					"country": "TBD",
+					"flag": "🌍",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-09-25T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
+					},
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2026-10-02T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
 					}
 				],
 				"links": {},
-				"info": {
-					"submissionSystem": "ARR"
-				},
-				"notes": [],
+				"info": {},
+				"notes": [
+					"Approximate dates inferred from the AISTATS 2026 submission cycle."
+				],
 				"isEstimated": true
+			},
+			{
+				"id": "coling-2027",
+				"name": "COLING",
+				"fullName": "International Conference on Computational Linguistics",
+				"year": 2027,
+				"category": "nlp",
+				"website": "https://2027.coling-iccl.org/",
+				"brandColor": "#32CD32",
+				"location": {
+					"city": "Macau",
+					"country": "China",
+					"flag": "🇨🇳",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "ARR Paper Submission",
+						"date": "2026-10-12",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-05-09",
+						"endDate": "2027-05-14",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					}
+				],
+				"links": {
+					"official": "https://2027.coling-iccl.org/",
+					"dates": "https://www.aclweb.org/portal/content/32nd-international-conference-computational-linguistics-coling-2027"
+				},
+				"info": {
+					"pageLimit": "8 pages",
+					"reviewType": "Double-blind"
+				},
+				"isEstimated": false
 			},
 			{
 				"id": "cvpr-2027",
@@ -140,9 +292,9 @@ const CONFERENCES_DATA = {
 				"website": "https://cvpr.thecvf.com/Conferences/2027",
 				"brandColor": "#CC0000",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
+					"city": "Seattle",
+					"country": "USA",
+					"flag": "🇺🇸",
 					"venue": null
 				},
 				"deadlines": [
@@ -177,24 +329,99 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-06-20",
+						"endDate": "2027-06-24",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
-				"links": {},
-				"info": {
-					"pageLimit": "8 pages + including figures and tables, unlimited references",
-					"reviewType": "Double-blind",
-					"submissionFormat": "PDF",
-					"conferenceName": "The IEEE/CVF Conference on Computer Vision and Pattern Recognition 2026",
-					"computeReportingInitiative": "experimental compute reporting initiative for authors, with awards recognizing exceptional efficiency and transparency",
-					"findingsTrack": "new Findings Track for technically sound papers with solid experimental validation, even if their novelty is more incremental",
-					"promptInjectionPolicy": "Hidden text or instructions to influence reviewers/tools, is strictly prohibited and considered an ethics violation",
-					"openreviewProfileRequired": "An up-to-date OpenReview profile for all co-authors is required to submit a paper.",
-					"openreviewProfileModerationTime": "New profiles created without an institutional email will go through a moderation process which can take up to two weeks.",
-					"mandatoryReviewerService": "All authors commit to serve as reviewers, area chairs, or senior area chairs when invited by the program chairs.",
-					"publicDisclosurePolicy": "All accepted papers will be publicly released by the Computer Vision Foundation (CVF) two weeks before the conference. Paper's official public disclosure date is whichever occurs first: Two weeks before the conference, or When authors make the paper publicly available themselves."
+				"links": {
+					"official": "https://cvpr.thecvf.com/Conferences/2027",
+					"dates": "https://www.thecvf.com/?p=137"
 				},
+				"info": {},
 				"notes": [],
 				"isEstimated": true
+			},
+			{
+				"id": "eacl-2027",
+				"name": "EACL",
+				"fullName": "Conference of the European Chapter of the Association for Computational Linguistics",
+				"year": 2027,
+				"category": "nlp",
+				"website": "https://2027.eacl.org/",
+				"brandColor": "#0F766E",
+				"location": {
+					"city": "Athens",
+					"country": "Greece",
+					"flag": "🇬🇷",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "ARR Paper Submission",
+						"date": "2026-08-03T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Response Period",
+						"date": "2026-09-14",
+						"endDate": "2026-09-19",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "EACL Commitment Deadline",
+						"date": "2026-10-11T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Notification of Acceptance",
+						"date": "2026-11-12T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Paper Deadline",
+						"date": "2026-11-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-03-09",
+						"endDate": "2027-03-14",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					}
+				],
+				"links": {
+					"official": "https://2027.eacl.org/",
+					"author": "https://2027.eacl.org/calls/papers/",
+					"dates": "https://2027.eacl.org/calls/papers/"
+				},
+				"info": {},
+				"notes": [],
+				"isEstimated": false
 			},
 			{
 				"id": "iccv-2027",
@@ -205,14 +432,14 @@ const CONFERENCES_DATA = {
 				"website": "https://iccv.thecvf.com/Conferences/2027",
 				"brandColor": "#FF4500",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
-					"venue": "TBD"
+					"city": "Hong Kong",
+					"country": "China",
+					"flag": "🇭🇰",
+					"venue": null
 				},
 				"deadlines": [
 					{
-						"type": "paper",
+						"type": "abstract",
 						"label": "Paper Registration Deadline",
 						"date": "2027-03-03T23:59:00-12:00",
 						"endDate": null,
@@ -228,20 +455,20 @@ const CONFERENCES_DATA = {
 						"estimated": true
 					},
 					{
-						"type": "event",
+						"type": "conference",
 						"label": "Main Conference",
-						"date": "2027-10-10",
-						"endDate": "2027-10-16",
+						"date": "2027-10-02",
+						"endDate": "2027-10-08",
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
-				"links": {},
-				"info": {
-					"pageLimit": "8 pages + unlimited references",
-					"reviewType": "Double-blind",
-					"submissionFormat": "PDF"
+				"links": {
+					"official": "https://iccv.thecvf.com/Conferences/2027",
+					"dates": "https://www.thecvf.com/?p=137"
 				},
+				"info": {},
 				"notes": [],
 				"isEstimated": true
 			},
@@ -251,12 +478,12 @@ const CONFERENCES_DATA = {
 				"fullName": "IEEE International Conference on Image Processing",
 				"year": 2027,
 				"category": "cv",
-				"website": "https://2027.ieeeicip.org",
+				"website": "https://2027.ieeeicip.org/",
 				"brandColor": "#1E90FF",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
+					"city": "Singapore",
+					"country": "Singapore",
+					"flag": "🇸🇬",
 					"venue": null
 				},
 				"deadlines": [
@@ -291,23 +518,22 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-11-29",
+						"endDate": "2027-12-03",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
-				"links": {},
-				"info": {
-					"pageLimit": "8 pages + 1 page of only references",
-					"ieeeEventConductAndSafetyStatement": "IEEE is committed to providing a safe, productive, and welcoming environment to all participants with no tolerance for discrimination, harassment, or bullying.",
-					"ieeeSignalProcessingSocietyDiversityStatement": "Committed to equal opportunity regardless of ethnicity, race, nationality, disability, socioeconomic status, sexual orientation, religion, gender, age, and/or personal identity, promoting diversity and inclusion.",
-					"conflictsOfInterestPolicy": "Authors must disclose financial support and any financial/personal relationships that could create bias in the acknowledgments section.",
-					"nonPresentedPaperPolicy": "Accepted papers not presented at the conference will not be published by IEEE on IEEE Xplore®.",
-					"qualifiedProxyPolicy": "Presentation by substitutes is highly discouraged and requires permission from Technical Program Chair(s).",
-					"authorsWithTravelRestrictionsPolicy": "Authors with government-imposed travel restrictions are encouraged to submit; accommodations like remote presentation or pre-recorded video may be available.",
-					"humanAndOrAnimalSubjectsPolicy": "Formal review/approval by an institutional review board or ethics committee is required and must be stated in a 'Compliance with Ethical Standards' section.",
-					"ieeeXploreOpenPreviewDates": "August 13th through September 13th",
-					"ieeeXploreOpenPreviewDetails": "Freely accessible and downloadable by all in final format from August 13th through September 13th. Available via conference mobile app and on IEEE Xplore. After conference, access depends on subscription.",
-					"preprintPolicy": "Authors may post preprints on personal website, employer's website, arXiv.org, TechRxiv.org, Funder’s repository. Does not count as prior publication. IEEE copyright statement required if copyright transferred.",
-					"llmPolicy": "Authors take full responsibility for research and content. Unacceptable for any section to be entirely produced by LLM. Acceptable for improving language, accelerating code, research/ideation. Unacceptable for generating most of manuscript, direct use of LLM-generated code without verification, direct use of LLM-generated text without verification."
+				"links": {
+					"official": "https://2027.ieeeicip.org/",
+					"dates": "https://2027.ieeeicip.org/"
 				},
+				"info": {},
 				"notes": [],
 				"isEstimated": true
 			},
@@ -344,25 +570,10 @@ const CONFERENCES_DATA = {
 					}
 				],
 				"links": {},
-				"info": {
-					"pageLimit": "9 pages + unlimited references; unlimited appendices (reviewers not required to read); optional ethics statement (max 1 page) and reproducibility statement do not count towards page limit. Page limit increases to 10 for camera ready.",
-					"reviewType": "Double-blind",
-					"submissionFormat": "PDF",
-					"llmUsagePolicy": "https://blog.iclr.cc/2025/08/26/policies-on-large-language-model-usage-at-iclr-2026/",
-					"responseToSecurityIncident": "https://blog.iclr.cc/2025/12/03/iclr-2026-response-to-security-incident/",
-					"responseToLlmGeneratedPapersAndReviews": "https://blog.iclr.cc/2025/11/19/iclr-2026-response-to-llm-generated-papers-and-reviews/",
-					"reciprocalReviewingRequirement": "Authors on 3+ papers must serve as reviewer for 6+ papers.",
-					"authorChangesPolicy": "No new authors after abstract deadline. No author changes after submission deadline. Author order can be changed after abstract deadline up to full paper deadline.",
-					"titleChangesPolicy": "No title changes after submission deadline until end of discussion period.",
-					"abstractPolicy": "Abstracts must be genuine; placeholder/duplicate abstracts will be removed. Titles and abstracts may be edited before submission deadline.",
-					"openreviewProfileRequirement": "All authors must have an OpenReview profile with latest information.",
-					"submissionSiteOpenDate": "2025-09-13",
-					"conferencePostersMaxSize": "1.90m x 0.90m (76.4in x 37.4in) width/height",
-					"workshopPostersMaxSize": "61cm x 91cm (24in x 36in) width/height",
-					"workshopPostersFormat": "Portrait",
-					"posterTapeProvided": "Command strips and painters tape"
-				},
-				"notes": [],
+				"info": {},
+				"notes": [
+					"Approximate dates inferred from the ICLR 2026 submission cycle."
+				],
 				"isEstimated": true
 			},
 			{
@@ -398,23 +609,173 @@ const CONFERENCES_DATA = {
 					}
 				],
 				"links": {},
-				"info": {
-					"pageLimit": "8 pages + unlimited references and appendices; final version allowed one extra page",
-					"reviewType": "Double-blind",
-					"submissionFormat": "PDF (LaTeX only)",
-					"conferenceBreakdown": "July 6: Expo/Tutorial Day; July 7–9: Main Conference; July 10–11: Workshops",
-					"submissionPdfMaxSize": "50MB",
-					"cameraReadyPdfMaxSize": "20MB",
-					"supplementaryMaterialTypes": "supplementary manuscripts and code/data",
-					"codeSubmissionFormat": "zip file, pdf, or anonymous GitHub repositories",
-					"finalVersionExtraPage": "one extra page for the main paper",
-					"attendanceOptional": true,
-					"publicationOfSubmittedVersion": true,
-					"llmPolicyChange": true,
-					"reciprocalReviewerCap": true
-				},
+				"info": {},
 				"notes": [],
 				"isEstimated": true
+			},
+			{
+				"id": "icra-2027",
+				"name": "ICRA",
+				"fullName": "IEEE International Conference on Robotics and Automation",
+				"year": 2027,
+				"category": "robotics",
+				"website": "https://2027.ieee-icra.org/",
+				"brandColor": "#DB2777",
+				"location": {
+					"city": "Seoul",
+					"country": "South Korea",
+					"flag": "🇰🇷",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Contributed Paper Submission",
+						"date": "2026-09-15T23:59:00-08:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Notification of Decision",
+						"date": "2027-01-31",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-05-24",
+						"endDate": "2027-05-28",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					}
+				],
+				"links": {
+					"official": "https://2027.ieee-icra.org/",
+					"author": "https://2027.ieee-icra.org/announcements/call-for-technical-papers/",
+					"dates": "https://2027.ieee-icra.org/announcements/call-for-technical-papers/"
+				},
+				"info": {},
+				"notes": [],
+				"isEstimated": false
+			},
+			{
+				"id": "kdd-2027",
+				"name": "KDD",
+				"fullName": "ACM SIGKDD Conference on Knowledge Discovery and Data Mining",
+				"year": 2027,
+				"category": "ml",
+				"website": "https://kdd2027.kdd.org/",
+				"brandColor": "#0F766E",
+				"location": {
+					"city": "San Jose",
+					"country": "USA",
+					"flag": "🇺🇸",
+					"venue": "San Jose McEnery Convention Center"
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Research Track Abstract Deadline (Cycle 1)",
+						"date": "2026-07-19T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Research Track Paper Deadline (Cycle 1)",
+						"date": "2026-07-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Rebuttal Period",
+						"date": "2026-09-29",
+						"endDate": "2026-10-13",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "notification",
+						"label": "Paper Notification (Cycle 1)",
+						"date": "2026-11-14T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-08-01",
+						"endDate": "2027-08-05",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					}
+				],
+				"links": {
+					"official": "https://kdd2027.kdd.org/",
+					"author": "https://kdd2027.kdd.org/research-track-call-for-papers/",
+					"dates": "https://kdd2027.kdd.org/research-track-call-for-papers/"
+				},
+				"info": {},
+				"notes": [],
+				"isEstimated": false
+			},
+			{
+				"id": "miccai-2027",
+				"name": "MICCAI",
+				"fullName": "Medical Image Computing and Computer Assisted Intervention",
+				"year": 2027,
+				"category": "cv",
+				"website": "https://miccai.org/upcoming-conferences/",
+				"brandColor": "#FF2D55",
+				"location": {
+					"city": "Auckland",
+					"country": "New Zealand",
+					"flag": "🇳🇿",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Paper Registration / Intention-to-Submit",
+						"date": "2027-02-12T23:59:00-08:00",
+						"status": "upcoming",
+						"estimated": true
+					},
+					{
+						"type": "paper",
+						"label": "Full Manuscript Submission",
+						"date": "2027-02-26T23:59:00-08:00",
+						"status": "upcoming",
+						"estimated": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-09-26",
+						"endDate": "2027-10-01",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://miccai.org/upcoming-conferences/",
+					"dates": "https://miccai.org/upcoming-conferences/"
+				},
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
 			},
 			{
 				"id": "wacv-2027",
@@ -425,123 +786,88 @@ const CONFERENCES_DATA = {
 				"website": "https://wacv.thecvf.com/Conferences/2027",
 				"brandColor": "#4169E1",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
-					"venue": null
+					"city": "Lake Buena Vista",
+					"country": "USA",
+					"flag": "🇺🇸",
+					"venue": "Disney Springs"
 				},
 				"deadlines": [
 					{
-						"type": "paper",
-						"label": "Paper Enrollment (Round 1)",
-						"date": "2026-07-11T23:59:00-12:00",
+						"type": "abstract",
+						"label": "Round 1 Paper Enrollment",
+						"date": "2026-06-19T23:59:00-12:00",
 						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
+						"status": "passed",
+						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Round 1 Paper Registration Deadline",
-						"date": "2026-07-11T23:59:00-12:00",
+						"label": "Round 1 Paper Submission",
+						"date": "2026-06-26T23:59:00-12:00",
+						"endDate": null,
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "supplementary",
+						"label": "Round 1 Supplementary Material",
+						"date": "2026-06-28T23:59:00-12:00",
+						"endDate": null,
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "abstract",
+						"label": "Round 2 Paper Enrollment",
+						"date": "2026-08-21T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Paper Registration Deadline (Round 1)",
-						"date": "2026-07-11T23:59:00-12:00",
+						"label": "Round 2 Paper Submission",
+						"date": "2026-08-28T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Paper and Supplementary Submission",
-						"date": "2026-07-18T23:59:00-12:00",
+						"type": "supplementary",
+						"label": "Round 2 Supplementary Material",
+						"date": "2026-08-30T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Round 1 Paper Submission Deadline",
-						"date": "2026-07-18T23:59:00-12:00",
+						"type": "camera",
+						"label": "Camera-Ready Submission",
+						"date": "2026-11-02T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					},
 					{
-						"type": "paper",
-						"label": "Paper Enrollment (Round 2)",
-						"date": "2026-09-12T23:59:00-12:00",
-						"endDate": null,
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-01-04",
+						"endDate": "2027-01-08",
 						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Paper and Supplementary Submission (Round 2)",
-						"date": "2026-09-12T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Round 2 New Paper Registration",
-						"date": "2026-09-12T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Paper Registration Deadline (Round 2)",
-						"date": "2026-09-12T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Round 1 Revision Submission for Round 2",
-						"date": "2026-09-19T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Round 2 Paper Submissions",
-						"date": "2026-09-19T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Doctoral Consortium Submission Deadline",
-						"date": "2026-12-20T23:59:00-07:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					},
-					{
-						"type": "paper",
-						"label": "Doctoral Consortium Submission Deadline",
-						"date": "2026-12-21T06:59:00+00:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
-				"links": {},
+				"links": {
+					"official": "https://wacv.thecvf.com/Conferences/2027",
+					"author": "https://wacv.thecvf.com/Conferences/2027/CallForPapers",
+					"dates": "https://wacv.thecvf.com/Conferences/2027"
+				},
 				"info": {
 					"pageLimit": "8 pages + unlimited references",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF",
-					"conferenceName": "The IEEE/CVF Winter Conference on Applications of Computer Vision 2026",
+					"conferenceName": "The IEEE/CVF Winter Conference on Applications of Computer Vision 2027",
 					"reviewProcess": "two-round review process",
 					"tracks": "Applications and Algorithms tracks",
 					"paperTypes": [
@@ -588,46 +914,197 @@ const CONFERENCES_DATA = {
 					"specialIssueJournal": "Machine Vision and Applications (MVA)"
 				},
 				"notes": [],
-				"isEstimated": true
+				"isEstimated": false
 			},
 			{
-				"id": "coling-2026",
-				"name": "COLING",
-				"fullName": "International Conference on Computational Linguistics",
+				"id": "bmvc-2026",
+				"name": "BMVC",
+				"fullName": "British Machine Vision Conference",
 				"year": 2026,
-				"category": "nlp",
-				"website": "https://coling2026.org/",
-				"brandColor": "#32CD32",
+				"category": "cv",
+				"website": "https://bmvc2026.bmva.org/",
+				"brandColor": "#1D4ED8",
 				"location": {
-					"city": "Bangkok",
-					"country": "Thailand",
-					"flag": "🇹🇭",
-					"venue": "Queen Sirikit National Convention Center"
+					"city": "Lancaster",
+					"country": "UK",
+					"flag": "🇬🇧",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-05-22T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2026-05-29T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "supplementary",
+						"label": "Supplementary Material Submission",
+						"date": "2026-05-29T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Author Notification",
+						"date": "2026-08-07T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Paper Deadline",
+						"date": "2026-08-28T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-11-23",
+						"endDate": "2026-11-26",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://bmvc2026.bmva.org/",
+					"author": "https://bmvc2026.bmva.org/calls/call-for-papers/",
+					"dates": "https://bmvc2026.bmva.org/dates/"
+				},
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
+			},
+			{
+				"id": "colt-2026",
+				"name": "COLT",
+				"fullName": "Conference on Learning Theory",
+				"year": 2026,
+				"category": "ml",
+				"website": "https://learningtheory.org/colt2026/",
+				"brandColor": "#2563EB",
+				"location": {
+					"city": "San Diego",
+					"country": "USA",
+					"flag": "🇺🇸",
+					"venue": "Bahia Resort Hotel"
 				},
 				"deadlines": [
 					{
 						"type": "paper",
-						"label": "Paper Submission Deadline",
-						"date": "2026-04-01T23:59:00-12:00",
-						"status": "upcoming",
-						"estimated": true
+						"label": "Paper Submission",
+						"date": "2026-02-04T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
 					},
 					{
-						"type": "event",
+						"type": "notification",
+						"label": "Author Notification",
+						"date": "2026-05-04",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "conference",
 						"label": "Main Conference",
-						"date": "2026-08-16",
-						"endDate": "2026-08-21",
-						"status": "upcoming",
-						"estimated": true
+						"date": "2026-06-29",
+						"endDate": "2026-07-03",
+						"status": "passed",
+						"estimated": false
 					}
 				],
 				"links": {
-					"official": "https://coling2026.org/"
+					"official": "https://learningtheory.org/colt2026/",
+					"author": "https://learningtheory.org/colt2026/cfp.html"
 				},
-				"info": {
-					"pageLimit": "8 pages",
-					"reviewType": "Double-blind"
-				}
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
+			},
+			{
+				"id": "corl-2026",
+				"name": "CoRL",
+				"fullName": "Conference on Robot Learning",
+				"year": 2026,
+				"category": "robotics",
+				"website": "https://2026.corl.org/",
+				"brandColor": "#D97706",
+				"location": {
+					"city": "Austin",
+					"country": "USA",
+					"flag": "🇺🇸",
+					"venue": "JW Marriott Austin"
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-05-25T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Full Paper Submission",
+						"date": "2026-05-28T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "supplementary",
+						"label": "Supplementary Submission",
+						"date": "2026-06-04T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Rebuttal Period",
+						"date": "2026-08-04T23:59:00-12:00",
+						"endDate": "2026-08-11",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Acceptance Notification",
+						"date": "2026-09-04T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Submission",
+						"date": "2026-10-12T23:59:00-12:00",
+						"status": "upcoming",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-11-09",
+						"endDate": "2026-11-12",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://2026.corl.org/",
+					"author": "https://2026.corl.org/contributions/call-for-papers",
+					"authorGuide": "https://2026.corl.org/contributions/instruction-for-authors"
+				},
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
 			},
 			{
 				"id": "eccv-2026",
@@ -645,7 +1122,7 @@ const CONFERENCES_DATA = {
 				},
 				"deadlines": [
 					{
-						"type": "paper",
+						"type": "tutorial",
 						"label": "Tutorial Proposal Submission",
 						"date": "2026-02-15T23:59:00-12:00",
 						"endDate": null,
@@ -653,7 +1130,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "abstract",
 						"label": "Paper Registration Deadline",
 						"date": "2026-02-26T23:00:00+01:00",
 						"endDate": null,
@@ -661,7 +1138,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "workshop",
 						"label": "Workshop Proposal Submission",
 						"date": "2026-02-27T23:59:00-12:00",
 						"endDate": null,
@@ -685,7 +1162,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "supplementary",
 						"label": "Supplementary Materials Submission",
 						"date": "2026-03-12T23:00:00+01:00",
 						"endDate": null,
@@ -765,7 +1242,16 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "notification",
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-09-08",
+						"endDate": "2026-09-12",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
 						"label": "Careers Site Accepting Applications",
 						"date": "2026-09-12T00:00:00+02:00",
 						"endDate": null,
@@ -788,7 +1274,7 @@ const CONFERENCES_DATA = {
 					"authorGuide": "https://eccv.ecva.net/Conferences/2026/AuthorGuide",
 					"reviewerGuide": "https://eccv.ecva.net/Conferences/2026/ReviewerGuidelines",
 					"author": "https://eccv.ecva.net/Conferences/2026/CallForPapers",
-					"dates": "https://eccv.ecva.net/Conferences/2026/Dates",
+					"dates": "https://eccv.ecva.net/Conferences/2026",
 					"registration": "https://eccv.ecva.net/Conferences/2026/Registration",
 					"faq": "https://eccv.ecva.net/Conferences/2026/FAQs"
 				},
@@ -979,6 +1465,15 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-10-24",
+						"endDate": "2026-10-29",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
 				"links": {
@@ -986,7 +1481,8 @@ const CONFERENCES_DATA = {
 					"submission": "https://openreview.net/group?id=aclweb.org/ACL/ARR/2026/May",
 					"author": "https://2026.emnlp.org/calls/main_conference_papers/",
 					"registration": "https://2026.emnlp.org/registration",
-					"faq": "https://2026.emnlp.org/faq"
+					"faq": "https://2026.emnlp.org/faq",
+					"dates": "https://2026.emnlp.org/"
 				},
 				"info": {},
 				"notes": []
@@ -1063,7 +1559,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "art",
+						"type": "event",
 						"label": "Open Preview Start",
 						"date": "2026-04-07T23:59:00-12:00",
 						"endDate": null,
@@ -1193,6 +1689,82 @@ const CONFERENCES_DATA = {
 				"notes": []
 			},
 			{
+				"id": "ijcai-2026",
+				"name": "IJCAI",
+				"fullName": "International Joint Conference on Artificial Intelligence",
+				"year": 2026,
+				"category": "ml",
+				"website": "https://2026.ijcai.org/",
+				"brandColor": "#C41E3A",
+				"location": {
+					"city": "Bremen",
+					"country": "Germany",
+					"flag": "🇩🇪",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "abstract",
+						"label": "Abstract Submission",
+						"date": "2026-01-12T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "paper",
+						"label": "Full Paper Submission",
+						"date": "2026-01-19T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Phase I Notification",
+						"date": "2026-03-04T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Response Period",
+						"date": "2026-04-07",
+						"endDate": "2026-04-10",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Paper Notification",
+						"date": "2026-04-29T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Copy",
+						"date": "2026-05-20T23:59:00-12:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-08-15",
+						"endDate": "2026-08-21",
+						"status": "upcoming",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://2026.ijcai.org/",
+					"author": "https://2026.ijcai.org/ijcai-ecai-2026-call-for-papers-main-track/",
+					"dates": "https://2026.ijcai.org/important-dates/"
+				},
+				"info": {},
+				"deskRejectReasons": [],
+				"notes": []
+			},
+			{
 				"id": "interspeech-2026",
 				"name": "INTERSPEECH",
 				"fullName": "Annual Conference of the International Speech Communication Association",
@@ -1224,7 +1796,7 @@ const CONFERENCES_DATA = {
 						"estimated": true
 					},
 					{
-						"type": "art",
+						"type": "event",
 						"label": "Koala Competition Voting Starts",
 						"date": "2026-05-04T23:59:00-12:00",
 						"endDate": null,
@@ -1254,12 +1826,21 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": true
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-09-27",
+						"endDate": "2026-10-01",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
 				"links": {
 					"official": "https://interspeech2026.org",
 					"reviewerGuide": "https://www.isca-speech.org/Reviewing",
-					"dates": "https://interspeech2026.org/pages/important-dates"
+					"dates": "https://interspeech2026.org/en-AU"
 				},
 				"info": {},
 				"notes": [],
@@ -1305,7 +1886,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "supplementary",
 						"label": "Video Supplement Submission",
 						"date": "2026-03-07T23:59:00-12:00",
 						"endDate": null,
@@ -1345,7 +1926,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "notification",
 						"label": "Paper Acceptance Notification",
 						"date": "2026-06-16T23:59:00-12:00",
 						"endDate": null,
@@ -1369,7 +1950,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "camera",
 						"label": "Camera-Ready Submission",
 						"date": "2026-07-16T23:59:00-12:00",
 						"endDate": null,
@@ -1399,6 +1980,15 @@ const CONFERENCES_DATA = {
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-09-28",
+						"endDate": "2026-09-30",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
 				"links": {
@@ -1408,7 +1998,7 @@ const CONFERENCES_DATA = {
 					"authorGuide": "https://www.ieee-ras.org/publications/rules-for-the-double-anonymous-review-process",
 					"reviewerGuide": "https://www.ieee-ras.org/publications/rules-for-the-double-anonymous-review-process",
 					"author": "https://2026.ieee-iros.org/contribute/call-for-papers/",
-					"dates": "https://2026.ieee-iros.org/about/important-dates/",
+					"dates": "https://iros-pittsburgh.org/",
 					"registration": "https://2026.ieee-iros.org/attend/registration/"
 				},
 				"info": {
@@ -1426,6 +2016,53 @@ const CONFERENCES_DATA = {
 					"AI listed as author",
 					"Processing manuscript through AI system"
 				],
+				"notes": []
+			},
+			{
+				"id": "mlsys-2026",
+				"name": "MLSys",
+				"fullName": "Conference on Machine Learning and Systems",
+				"year": 2026,
+				"category": "ml",
+				"website": "https://mlsys.org/Conferences/2026",
+				"brandColor": "#34495E",
+				"location": {
+					"city": "Bellevue",
+					"country": "USA",
+					"flag": "🇺🇸",
+					"venue": "Hyatt Regency Bellevue"
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2025-10-30T13:00:00-07:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "notification",
+						"label": "Author Notification",
+						"date": "2026-01-26T13:00:00-08:00",
+						"status": "passed",
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-05-18",
+						"endDate": "2026-05-22",
+						"status": "passed",
+						"estimated": false
+					}
+				],
+				"links": {
+					"official": "https://mlsys.org/Conferences/2026",
+					"author": "https://mlsys.org/Conferences/2026/CallForPapers",
+					"dates": "https://mlsys.org/Conferences/2026/Dates"
+				},
+				"info": {},
+				"deskRejectReasons": [],
 				"notes": []
 			},
 			{
@@ -1451,7 +2088,7 @@ const CONFERENCES_DATA = {
 						"estimated": true
 					},
 					{
-						"type": "event",
+						"type": "conference",
 						"label": "Main Conference",
 						"date": "2026-05-03",
 						"endDate": "2026-05-08",
@@ -1462,10 +2099,7 @@ const CONFERENCES_DATA = {
 				"links": {
 					"official": "https://naacl.org/"
 				},
-				"info": {
-					"pageLimit": "8 pages",
-					"reviewType": "Double-blind"
-				},
+				"info": {},
 				"isEstimated": true
 			},
 			{
@@ -1556,7 +2190,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "art",
+						"type": "event",
 						"label": "Author + Reviewer + AC Discussion Starts",
 						"date": "2026-07-27T23:59:00-12:00",
 						"endDate": null,
@@ -1572,7 +2206,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "art",
+						"type": "event",
 						"label": "Reviewer + AC Discussion Starts",
 						"date": "2026-08-03T23:59:00-12:00",
 						"endDate": null,
@@ -1588,7 +2222,7 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "paper",
+						"type": "workshop",
 						"label": "Workshop Contributions Suggested Submission",
 						"date": "2026-08-29T23:59:00-12:00",
 						"endDate": null,
@@ -1676,7 +2310,16 @@ const CONFERENCES_DATA = {
 						"estimated": false
 					},
 					{
-						"type": "notification",
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2026-12-06",
+						"endDate": "2026-12-12",
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
 						"label": "Sponsor: Career Site Accepting Applications Until",
 						"date": "2026-12-08T23:59:00-12:00",
 						"endDate": null,
@@ -1699,7 +2342,7 @@ const CONFERENCES_DATA = {
 					"authorGuide": "https://neurips.cc/Conferences/2026/MainTrackHandbook",
 					"reviewerGuide": "https://neurips.cc/Conferences/2026/ReviewerGuidelines",
 					"author": "https://neurips.cc/Conferences/2026/CallForPapers",
-					"dates": "https://neurips.cc/Conferences/2026/Dates",
+					"dates": "https://neurips.cc/Conferences/2026",
 					"faq": "https://neurips.cc/FAQ"
 				},
 				"info": {},

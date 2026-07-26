@@ -17,6 +17,7 @@ Usage:
 """
 
 import json
+import calendar
 import os
 import shutil
 import sys
@@ -29,7 +30,11 @@ from typing import Dict, List, Optional
 script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 
-from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
+from scraper_to_datajs import (
+    convert_scraper_to_datajs,
+    load_metadata,
+    normalize_datajs_deadlines,
+)
 
 
 # =============================================================================
@@ -328,8 +333,14 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
 
             result[conf_id] = conf
 
-    # Keep only the newest edition across both existing and newly scraped data.
-    # A scrape of an old year must never reintroduce it beside a newer edition.
+    for conference in result.values():
+        conference["deadlines"] = normalize_datajs_deadlines(
+            conference.get("deadlines", [])
+        )
+
+    # Keep the newest submission edition plus any older edition whose physical
+    # conference is still upcoming. The browser can then advance submissions
+    # without making the Conference Dates filter lose a real event.
     latest_years = {}
     for conf in result.values():
         name = conf.get("name", "").lower()
@@ -341,7 +352,8 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
     for conf_id, conf in result.items():
         name = conf.get("name", "").lower()
         year = conf.get("year", 0)
-        if name in latest_years and year < latest_years[name]:
+        if (name in latest_years and year < latest_years[name] and
+                not has_upcoming_conference_event(conf)):
             stale_ids.append(conf_id)
 
     for stale_id in stale_ids:
@@ -400,7 +412,7 @@ def get_valid_target_year(conf_name: str, requested_year: int) -> int:
 
 
 def is_submission_deadline(deadline: Dict) -> bool:
-    """Return True for main-track, author-facing submission deadlines."""
+    """Return True for main-track paper and abstract milestones."""
     dtype = deadline.get("type", "").lower()
     label = deadline.get("label", "").lower()
     excluded_labels = [
@@ -408,13 +420,14 @@ def is_submission_deadline(deadline: Dict) -> bool:
         "position", "art ", "education", "industry", "doctoral",
         "student", "competition", "affinity", "show and tell", "social",
         "reviewer", "review", "bidding", "camera",
-        "notification", "decision", "rebuttal", "conference",
+        "notification", "decision", "rebuttal", "conference", "journal",
+        "presentation request", "one-page", "late breaking", "revision",
     ]
 
     if any(excluded in label for excluded in excluded_labels):
         return False
 
-    return dtype in {"abstract", "paper", "supplementary"}
+    return dtype in {"abstract", "paper"}
 
 
 def bump_year_in_url(url: str, existing_year: int, target_year: int) -> str:
@@ -427,6 +440,16 @@ def bump_year_in_url(url: str, existing_year: int, target_year: int) -> str:
     new_short_year = str(target_year)[-2:]
     updated = updated.replace(f"aaai-{old_short_year}", f"aaai-{new_short_year}")
     return updated
+
+
+def safe_rollover_website(url: str, existing_year: int) -> str:
+    """Keep stable homepages, but never publish an unverified edition URL."""
+    if not url:
+        return ""
+    short_year = str(existing_year)[-2:]
+    if str(existing_year) in url or f"-{short_year}" in url:
+        return ""
+    return url
 
 
 def parse_date_for_comparison(date_str: str) -> Optional[datetime]:
@@ -446,6 +469,33 @@ def parse_date_for_comparison(date_str: str) -> Optional[datetime]:
         return parsed.astimezone(timezone.utc)
     except ValueError:
         return None
+
+
+def has_upcoming_conference_event(conf_data: Dict, now=None) -> bool:
+    """Return whether an edition has a confirmed event that has not ended."""
+    now = now or datetime.now(timezone.utc)
+    for deadline in conf_data.get("deadlines", []):
+        if deadline.get("type") != "conference" or deadline.get("estimated"):
+            continue
+        event_end = parse_date_for_comparison(
+            deadline.get("endDate") or deadline.get("date")
+        )
+        if event_end and event_end > now:
+            return True
+    return False
+
+
+def shift_iso_year(value: Optional[str], year_delta: int) -> Optional[str]:
+    """Shift the leading ISO calendar date while preserving time and offset."""
+    if not value or len(value) < 10:
+        return value
+    try:
+        year, month, day = map(int, value[:10].split("-"))
+        target_year = year + year_delta
+        day = min(day, calendar.monthrange(target_year, month)[1])
+        return f"{target_year:04d}-{month:02d}-{day:02d}{value[10:]}"
+    except (ValueError, TypeError):
+        return value
 
 
 def all_deadlines_passed(conf_data: Dict, now: Optional[datetime] = None) -> bool:
@@ -483,7 +533,7 @@ def all_deadlines_passed(conf_data: Dict, now: Optional[datetime] = None) -> boo
 
 def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_offset: int = None) -> Optional[Dict]:
     """
-    Create a next-edition placeholder without inventing deadline dates.
+    Estimate a next edition by shifting prior main-track submission dates.
 
     Args:
         existing_conf: Existing conference data
@@ -491,13 +541,30 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_o
         year_offset: Retained for compatibility with existing callers
 
     Returns:
-        New conference dict with dates marked TBA, or None if invalid
+        New conference dict with dates marked estimated, or None if invalid
     """
     existing_year = existing_conf.get("year", 0)
     if not existing_year or existing_year >= target_year:
         return None
 
     conf_name = existing_conf.get("name", "")
+    year_delta = target_year - existing_year
+    estimated_deadlines = []
+    for deadline in existing_conf.get("deadlines", []):
+        if not is_submission_deadline(deadline):
+            continue
+        shifted = {
+            **deadline,
+            "date": shift_iso_year(deadline.get("date"), year_delta),
+            "status": "upcoming",
+            "estimated": True,
+        }
+        if deadline.get("endDate"):
+            shifted["endDate"] = shift_iso_year(deadline["endDate"], year_delta)
+        shifted.pop("sourceUrl", None)
+        shifted.pop("url", None)
+        if parse_date_for_comparison(shifted.get("date")):
+            estimated_deadlines.append(shifted)
 
     # Create new conference entry
     conf_name_lower = conf_name.lower()
@@ -507,17 +574,16 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_o
         "fullName": existing_conf.get("fullName"),
         "year": target_year,
         "category": existing_conf.get("category"),
-        "website": bump_year_in_url(
-            existing_conf.get("website", ""), existing_year, target_year
-        ),
+        "website": safe_rollover_website(existing_conf.get("website", ""), existing_year),
         "brandColor": existing_conf.get("brandColor"),
         "location": normalize_location(None),
-        "deadlines": [],
+        "deadlines": estimated_deadlines,
         "links": {},  # Don't copy old links - they'd be wrong
-        "info": existing_conf.get("info", {}),
-        "notes": [],
+        "info": {},  # Author instructions are edition-specific until verified
+        "notes": ([f"Approximate dates inferred from the {existing_year} submission cycle."]
+                  if estimated_deadlines else []),
         "isEstimated": True,
-        "datesTBD": True,
+        "datesTBD": not estimated_deadlines,
     }
 
     return new_conf
@@ -572,7 +638,7 @@ def try_create_fallback(
                 prev_data = json.load(f)
 
             if prev_data.get("deadlines"):
-                print(f"    ✅ Got {prev_year} data; publishing {target_year} with dates TBA")
+                print(f"    ✅ Got {prev_year} data; estimating {target_year} main-track dates")
 
                 # Convert to datajs format first
                 from scraper_to_datajs import convert_scraper_to_datajs, load_metadata
@@ -596,9 +662,6 @@ def try_create_fallback(
         existing = existing_by_id[target_id]
         if existing.get("deadlines"):
             print(f"    📦 Using existing {target_year} data as last resort fallback")
-            if existing.get("isEstimated"):
-                existing["deadlines"] = []
-                existing["datesTBD"] = True
             return existing
 
     return None
@@ -613,7 +676,7 @@ def try_roll_forward(
 
     Strategy:
     1. Try scraping next year
-    2. If next year doesn't exist, publish the edition with dates TBA
+    2. If next year doesn't exist, publish prior-cycle dates as approximate
 
     Args:
         conf_data: Current conference data (datajs format)

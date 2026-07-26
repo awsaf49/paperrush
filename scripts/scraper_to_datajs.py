@@ -13,8 +13,10 @@ Usage:
 import json
 import re
 import os
+from datetime import datetime
 from typing import Dict, List, Optional
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 
 # =============================================================================
@@ -23,23 +25,19 @@ from pathlib import Path
 
 TIMEZONE_OFFSETS = {
     # Standard offsets
-    "AoE": "-12:00",      # Anywhere on Earth
+    "AOE": "-12:00",      # Anywhere on Earth
     "UTC": "+00:00",
     "GMT": "+00:00",
 
     # US timezones
     "PST": "-08:00",      # Pacific Standard
     "PDT": "-07:00",      # Pacific Daylight
-    "PT": "-08:00",       # Pacific Time (default to standard)
     "MST": "-07:00",      # Mountain Standard
     "MDT": "-06:00",      # Mountain Daylight
-    "MT": "-07:00",       # Mountain Time
     "CST": "-06:00",      # Central Standard
     "CDT": "-05:00",      # Central Daylight
-    "CT": "-06:00",       # Central Time
     "EST": "-05:00",      # Eastern Standard
     "EDT": "-04:00",      # Eastern Daylight
-    "ET": "-05:00",       # Eastern Time
 
     # European timezones
     "CET": "+01:00",      # Central European
@@ -63,38 +61,41 @@ TIMEZONE_OFFSETS = {
 }
 
 
-def timezone_to_offset(tz: Optional[str]) -> str:
+GENERIC_TIMEZONES = {
+    "PT": "America/Los_Angeles",
+    "MT": "America/Denver",
+    "CT": "America/Chicago",
+    "ET": "America/New_York",
+}
+
+
+def timezone_to_offset(tz: Optional[str], date_str: Optional[str] = None) -> Optional[str]:
     """
     Convert timezone abbreviation to UTC offset.
-    Default to AoE (-12:00) which is common for academic deadlines.
+    Return None rather than inventing a timezone when it is unspecified.
     """
     if not tz:
-        return "-12:00"  # Default to AoE
+        return None
 
     tz_upper = tz.upper().strip()
-    return TIMEZONE_OFFSETS.get(tz_upper, "-12:00")
+    if tz_upper in TIMEZONE_OFFSETS:
+        return TIMEZONE_OFFSETS[tz_upper]
+
+    zone_name = GENERIC_TIMEZONES.get(tz_upper)
+    if zone_name and date_str:
+        try:
+            local_date = datetime.fromisoformat(date_str).replace(tzinfo=ZoneInfo(zone_name))
+            offset = local_date.strftime("%z")
+            return f"{offset[:3]}:{offset[3:]}"
+        except (ValueError, KeyError):
+            return None
+
+    return None
 
 
 # =============================================================================
 # DEADLINE TYPE INFERENCE
 # =============================================================================
-
-TYPE_PATTERNS = {
-    "abstract": ["abstract"],
-    "paper": ["paper", "submission", "full paper", "main paper"],
-    "supplementary": ["supplementary", "supplement", "supplemental"],
-    "rebuttal": ["rebuttal", "response", "author response", "reviews released", "review period"],
-    "notification": ["notification", "decision", "acceptance", "accept", "result"],
-    "camera": ["camera", "camera-ready", "camera ready", "final version", "final paper"],
-    "workshop": ["workshop"],
-    "tutorial": ["tutorial"],
-    "event": [
-        "conference", "main event", "registration", "early registration",
-        "cancellation", "enrollment", "profile", "expo", "meeting"
-    ],
-    "art": ["art"],
-}
-
 
 def infer_deadline_type(event_name: str) -> str:
     """
@@ -104,15 +105,31 @@ def infer_deadline_type(event_name: str) -> str:
     if not event_name:
         return "event"
 
-    event_lower = event_name.lower()
+    label = event_name.lower().strip()
 
-    # Check patterns in priority order
-    for dtype, patterns in TYPE_PATTERNS.items():
-        for pattern in patterns:
-            if pattern in event_lower:
-                return dtype
-
-    return "event"  # Default fallback
+    # Specific lifecycle stages must win over generic words such as "paper"
+    # and "submission" (for example, "Paper Acceptance Notification").
+    if re.search(r"camera[ -]?ready|final (version|manuscript)", label):
+        return "camera"
+    if re.search(r"notification|decision|acceptance|accepted|rejection|results? released", label):
+        return "notification"
+    if re.search(r"rebuttal|author response|author feedback|reviews released", label):
+        return "rebuttal"
+    if "workshop" in label:
+        return "workshop"
+    if "tutorial" in label:
+        return "tutorial"
+    if re.search(r"paper (and|&) supplement.*submission", label):
+        return "paper"
+    if re.search(r"supplement|video submission", label):
+        return "supplementary"
+    if "abstract" in label or re.search(r"paper (registration|enrollment)", label):
+        return "abstract"
+    if re.search(r"paper|submission", label):
+        return "paper"
+    if re.fullmatch(r"(main )?conference( dates?)?", label):
+        return "conference"
+    return "event"
 
 
 # =============================================================================
@@ -136,15 +153,16 @@ def convert_date_time(date_str: Optional[str], time_str: Optional[str],
     if not date_str:
         return None
 
-    # Default time to 23:59 (end of day) for deadlines
-    # This prevents timezone display bugs in browsers
+    # A date without a published time or timezone remains date-only. Guessing
+    # AoE creates a false twelve-hour precision window.
     if not time_str:
-        time_str = "23:59:00"
-    elif len(time_str) == 5:  # HH:MM
+        return date_str
+    if len(time_str) == 5:  # HH:MM
         time_str = f"{time_str}:00"
 
-    # Get timezone offset (defaults to AoE if not specified)
-    offset = timezone_to_offset(timezone_str)
+    offset = timezone_to_offset(timezone_str, date_str)
+    if not offset:
+        return date_str
 
     return f"{date_str}T{time_str}{offset}"
 
@@ -330,6 +348,75 @@ def extract_date_only(date_iso: str) -> str:
     return date_iso[:10]
 
 
+PRIMARY_EXCLUSIONS = (
+    "workshop", "tutorial", "demo", "dataset", "benchmark", "position",
+    "art ", "art submission", "education", "industry", "doctoral",
+    "student", "competition", "affinity", "show and tell", "social",
+    "reviewer", "review", "bidding", "camera", "notification", "decision",
+    "rebuttal", "conference", "journal", "presentation request", "one-page",
+    "late breaking", "revision",
+)
+
+
+def is_primary_submission_type(deadline: Dict) -> bool:
+    """Identify main-track paper and abstract milestones only."""
+    if deadline.get("type") not in {"paper", "abstract"}:
+        return False
+    label = deadline.get("label", "").lower()
+    return not any(term in label for term in PRIMARY_EXCLUSIONS)
+
+
+def canonical_instant(date_iso: str) -> str:
+    """Normalize equivalent timezone representations for deduplication."""
+    if not date_iso or "T" not in date_iso:
+        return date_iso or ""
+    try:
+        return datetime.fromisoformat(date_iso.replace("Z", "+00:00")).timestamp()
+    except ValueError:
+        return date_iso
+
+
+def deadline_quality(deadline: Dict) -> float:
+    """Prefer explicit, official-looking records when duplicates collide."""
+    score = 0 if deadline.get("estimated") else 4
+    if "T" in deadline.get("date", ""):
+        score += 4
+    if deadline.get("endDate"):
+        score += 1
+    return score - len(deadline.get("label", "")) / 1000
+
+
+def normalize_datajs_deadlines(deadlines: List[Dict]) -> List[Dict]:
+    """Reclassify and deduplicate existing data.js deadline records."""
+    best_by_key = {}
+    for original in deadlines or []:
+        deadline = original.copy()
+        label = deadline.get("label", "")
+        inferred = infer_deadline_type(label)
+        if deadline.get("type") == "conference" or (
+            deadline.get("type") == "event"
+            and deadline.get("endDate")
+            and re.search(r"conference|annual meeting|main event", label, re.I)
+        ):
+            inferred = "conference"
+        deadline["type"] = inferred
+
+        instant = canonical_instant(deadline.get("date", ""))
+        if not instant:
+            continue
+        semantic = (
+            inferred
+            if is_primary_submission_type(deadline)
+            else f"{inferred}:{normalize_label_for_dedup(label)}"
+        )
+        key = (semantic, instant)
+        existing = best_by_key.get(key)
+        if not existing or deadline_quality(deadline) > deadline_quality(existing):
+            best_by_key[key] = deadline
+
+    return sorted(best_by_key.values(), key=lambda item: item.get("date", ""))
+
+
 def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
     """
     Convert scraper deadlines to data.js format with deduplication.
@@ -378,43 +465,24 @@ def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
             "_normalized": normalize_label_for_dedup(event),
             "_date_only": extract_date_only(date_iso),
         }
+        if "T" not in date_iso:
+            converted["timeUnknown"] = True
 
         converted_list.append(converted)
 
-    # Second pass: deduplicate
-    # Group by type + normalized label
-    seen = {}  # key: (type, normalized_label, date_only) -> best deadline
-
-    for deadline in converted_list:
-        key = (deadline["type"], deadline["_normalized"], deadline["_date_only"])
-
-        if key not in seen:
-            seen[key] = deadline
-        else:
-            # Keep the one with more info (prefer one with time)
-            existing = seen[key]
-            if deadline["_has_time"] and not existing["_has_time"]:
-                seen[key] = deadline
-            # If both have same time status, keep shorter/cleaner label
-            elif deadline["_has_time"] == existing["_has_time"]:
-                if len(deadline["label"]) < len(existing["label"]):
-                    seen[key] = deadline
-
-    # Also dedupe by just type + date (for cases like "Author feedback window" appearing multiple times)
+    # Deduplicate equivalent labels and exact primary milestones, including the
+    # same instant represented once in local time and once in UTC.
     final_seen = {}
-    for deadline in seen.values():
-        # For event types, be more strict - only one per type+date
-        if deadline["type"] in ("event", "rebuttal"):
-            key = (deadline["type"], deadline["_date_only"])
-        else:
-            key = (deadline["type"], deadline["_normalized"], deadline["_date_only"])
-
-        if key not in final_seen:
+    for deadline in converted_list:
+        semantic = (
+            deadline["type"]
+            if is_primary_submission_type(deadline)
+            else f"{deadline['type']}:{deadline['_normalized']}"
+        )
+        key = (semantic, canonical_instant(deadline["date"]))
+        existing = final_seen.get(key)
+        if not existing or deadline_quality(deadline) > deadline_quality(existing):
             final_seen[key] = deadline
-        else:
-            existing = final_seen[key]
-            if deadline["_has_time"] and not existing["_has_time"]:
-                final_seen[key] = deadline
 
     # Clean up internal fields and sort by date
     result = []
@@ -426,6 +494,29 @@ def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
     result.sort(key=lambda x: x.get("date", ""))
 
     return result
+
+
+def convert_conference_event(scraper_data: Dict) -> Optional[Dict]:
+    """Convert explicitly structured conference dates into an event range."""
+    location = scraper_data.get("location") or {}
+    conference_dates = scraper_data.get("conference_dates") or {}
+    start_date = conference_dates.get("start_date") or location.get("start_date")
+    end_date = conference_dates.get("end_date") or location.get("end_date")
+
+    if not start_date or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(start_date)):
+        return None
+    if end_date and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(end_date)):
+        end_date = None
+
+    return {
+        "type": "conference",
+        "label": "Main Conference",
+        "date": start_date,
+        "endDate": end_date,
+        "status": "upcoming",
+        "estimated": False,
+        "timeUnknown": True,
+    }
 
 
 # =============================================================================
@@ -492,27 +583,16 @@ def country_to_flag(country: str) -> str:
 
 def build_location(scraper_data: Dict, meta: Dict) -> Dict:
     """
-    Build location object, preferring scraped data over metadata.
+    Build an edition-specific location from scraped official data only.
+
+    Conference series metadata is timeless; keeping a city there silently
+    carries an old venue into a new edition when scraping misses the field.
     """
     scraped_loc = scraper_data.get("location", {}) or {}
-    meta_loc = meta.get("location", {}) or {}
-
-    # Prefer scraped data, fall back to metadata
-    city = scraped_loc.get("city") or meta_loc.get("city") or "TBD"
-    country = scraped_loc.get("country") or meta_loc.get("country") or "TBD"
-    venue = scraped_loc.get("venue") or meta_loc.get("venue")
-
-    # If scraped country differs from metadata, derive flag from new country
-    # Otherwise use metadata flag
-    scraped_country = scraped_loc.get("country")
-    meta_country = meta_loc.get("country")
-
-    if scraped_country and scraped_country.lower() != (meta_country or "").lower():
-        # Country changed - derive new flag
-        flag = country_to_flag(scraped_country)
-    else:
-        # Use metadata flag or derive from country
-        flag = meta_loc.get("flag") or country_to_flag(country)
+    city = scraped_loc.get("city") or "TBD"
+    country = scraped_loc.get("country") or "TBD"
+    venue = scraped_loc.get("venue")
+    flag = country_to_flag(country)
 
     return {
         "city": city,
@@ -548,6 +628,14 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
                 meta = value
                 break
 
+    deadlines = convert_deadlines(scraper_data.get("deadlines", []))
+    conference_event = convert_conference_event(scraper_data)
+    if conference_event and not any(
+        deadline.get("type") == "conference" for deadline in deadlines
+    ):
+        deadlines.append(conference_event)
+        deadlines.sort(key=lambda item: item.get("date", ""))
+
     # Build result
     result = {
         "id": conf_id,
@@ -558,7 +646,7 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
         "website": extract_website(scraper_data),
         "brandColor": meta.get("brandColor", "#808080"),
         "location": build_location(scraper_data, meta),
-        "deadlines": convert_deadlines(scraper_data.get("deadlines", [])),
+        "deadlines": deadlines,
         "links": flatten_links(scraper_data.get("links", {})),
         "info": convert_info(scraper_data.get("info", {})),
     }

@@ -15,7 +15,9 @@ const CountdownTimer = {
      */
     calculateRemaining(dateString) {
         const now = new Date();
-        const deadline = new Date(dateString);
+        const deadline = dateString instanceof Date
+            ? dateString
+            : (globalThis.DeadlineRules?.parseDate(dateString, true) || new Date(dateString));
         const diff = deadline - now;
         
         if (diff <= 0) {
@@ -126,11 +128,14 @@ const CountdownTimer = {
      * Update a countdown display element
      * @param {HTMLElement} container - Container element
      * @param {string} dateString - ISO 8601 date string
+     * @param {Object} options - Display options
+     * @param {boolean} options.approximate - Mark the countdown as estimated
      */
-    updateDisplay(container, dateString) {
+    updateDisplay(container, dateString, options = {}) {
         const remaining = this.calculateRemaining(dateString);
         const formatted = this.formatDisplay(remaining);
         const status = this.getStatus(remaining);
+        const approximate = Boolean(options.approximate) && !remaining.isPassed;
         
         // Update status on card
         const card = container.closest('.conference-card');
@@ -139,14 +144,21 @@ const CountdownTimer = {
         }
         
         // Update the countdown container
-        container.className = 'countdown' + (formatted.isDetailed ? ' detailed' : '');
+        container.className = 'countdown'
+            + (formatted.isDetailed ? ' detailed' : '')
+            + (approximate ? ' approximate' : '');
+
+        const approximateMarker = approximate
+            ? '<span class="countdown-estimated" aria-hidden="true">~</span>'
+            : '';
+        let content;
         
         if (formatted.type === 'passed') {
-            container.innerHTML = `
+            content = `
                 <span class="countdown-value">Passed</span>
             `;
         } else if (formatted.isDetailed) {
-            container.innerHTML = `
+            content = `
                 <span class="countdown-value">${formatted.hours}</span>
                 <span class="countdown-unit">hrs</span>
                 <span class="countdown-separator">:</span>
@@ -157,18 +169,23 @@ const CountdownTimer = {
                 <span class="countdown-unit">sec</span>
             `;
         } else if (formatted.type === 'monthday') {
-            container.innerHTML = `
+            content = `
                 <span class="countdown-value">${formatted.months}</span>
                 <span class="countdown-unit">${formatted.monthUnit}</span>
                 <span class="countdown-value" style="margin-left: 8px;">${formatted.days}</span>
                 <span class="countdown-unit">${formatted.dayUnit}</span>
             `;
         } else {
-            container.innerHTML = `
+            content = `
                 <span class="countdown-value">${formatted.value}</span>
                 <span class="countdown-unit">${formatted.unit}</span>
             `;
         }
+
+        container.innerHTML = approximateMarker + content;
+        container.title = approximate
+            ? 'Approximate countdown based on the previous edition'
+            : '';
         
         return { remaining, formatted, status };
     },
@@ -179,18 +196,19 @@ const CountdownTimer = {
      * @param {HTMLElement} container - Container element
      * @param {string} dateString - ISO 8601 date string
      * @param {Function} onComplete - Callback when countdown completes
+     * @param {Object} options - Display options passed to updateDisplay
      */
-    startTimer(id, container, dateString, onComplete = null) {
+    startTimer(id, container, dateString, onComplete = null, options = {}) {
         // Clear existing timer if any
         this.stopTimer(id);
         
         // Initial update
-        const result = this.updateDisplay(container, dateString);
+        const result = this.updateDisplay(container, dateString, options);
         
         // Only start interval if countdown is still active and < 24 hours
         if (!result.remaining.isPassed) {
             const interval = setInterval(() => {
-                const newResult = this.updateDisplay(container, dateString);
+                const newResult = this.updateDisplay(container, dateString, options);
                 
                 if (newResult.remaining.isPassed) {
                     this.stopTimer(id);

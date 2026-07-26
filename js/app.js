@@ -3,10 +3,16 @@
  * Conference Deadline Tracker
  */
 
+const Rules = typeof globalThis !== 'undefined' && globalThis.DeadlineRules
+    ? globalThis.DeadlineRules
+    : require('./deadline-utils.js');
+
 const App = {
+    catalog: [],
     conferences: [],
     filteredConferences: [],
     activeFilter: 'all',
+    activeDeadlineFilter: 'submissions',
     searchQuery: '',
     hasAnimated: false,
     viewMode: 'card', // 'card' or 'calendar'
@@ -23,8 +29,10 @@ const App = {
 
             // Set up event listeners
             this.setupFilters();
+            this.setupDeadlineFilters();
             this.setupSearch();
             this.setupViewToggle();
+            this.setupFeedback();
 
             // Initialize modal
             this.initModal();
@@ -53,7 +61,8 @@ const App = {
             // Still hide loading and show error
             const loadingState = document.getElementById('loading-state');
             if (loadingState) {
-                loadingState.innerHTML = `<p style="color: red;">Error loading: ${error.message}</p>`;
+                loadingState.textContent = 'PaperRush could not load. Please refresh or report this issue.';
+                loadingState.style.color = 'red';
             }
         }
     },
@@ -62,64 +71,151 @@ const App = {
      * Load conference data
      */
     loadData() {
-        // Use the data from data.js
-        const resolvedConferences = CONFERENCES_DATA.conferences.map(conf => {
-            let resolvedConference = conf;
-            let rolloverCount = 0;
-            const currentYear = new Date().getUTCFullYear();
+        const now = new Date();
+        const normalized = CONFERENCES_DATA.conferences.map(conf => ({
+            ...conf,
+            deadlines: Rules.deduplicateDeadlines(conf.deadlines)
+        }));
 
-            // A conference edition stops being useful once its main author
-            // submission window closes, even if the conference occurs later.
-            while (rolloverCount < 5) {
-                const hasSubmissionDeadlines = resolvedConference.deadlines.some(deadline =>
-                    this.isSubmissionDeadline(deadline)
-                );
-                const shouldRoll = hasSubmissionDeadlines
-                    ? this.allDeadlinesPassed(resolvedConference.deadlines)
-                    : resolvedConference.year <= currentYear;
+        // Keep both views of each series. Submission mode can safely advance
+        // to the next edition while conference mode retains a still-upcoming
+        // event from the current edition.
+        const seriesByName = new Map();
+        normalized.forEach(source => {
+            const key = source.name.toLowerCase();
+            if (!seriesByName.has(key)) seriesByName.set(key, []);
+            seriesByName.get(key).push(source);
+        });
 
-                if (!shouldRoll) {
-                    break;
-                }
-
-                const rolledConference = this.createNextYearConference(resolvedConference);
-                resolvedConference = rolledConference;
-                rolloverCount += 1;
-
-                if (!rolledConference.deadlines.some(deadline => this.isSubmissionDeadline(deadline))) {
-                    break;
-                }
-            }
-            
-            // Find the next upcoming deadline
-            const activeDeadline = this.findActiveDeadline(resolvedConference.deadlines);
+        this.catalog = [...seriesByName.values()].map(editions => {
+            const source = this.chooseSubmissionSource(editions, now);
             return {
-                ...resolvedConference,
-                activeDeadline,
-                sortDate: activeDeadline ? new Date(activeDeadline.date) : new Date('2099-12-31')
+                source,
+                event: this.chooseEventSource(editions, now),
+                submission: this.resolveSubmissionEdition(source, now)
             };
         });
+        this.selectDeadlineFocus(this.activeDeadlineFilter, now);
+    },
 
-        // Defensive deduplication: a failed scrape of an older year must not
-        // render beside a newer edition already present in data.js.
-        const latestByName = new Map();
-        resolvedConferences.forEach(conf => {
-            const key = conf.name.toLowerCase();
-            const existing = latestByName.get(key);
-            const shouldReplace = !existing ||
-                conf.year > existing.year ||
-                (conf.year === existing.year && existing.isEstimated && !conf.isEstimated) ||
-                (conf.year === existing.year &&
-                    Boolean(existing.isEstimated) === Boolean(conf.isEstimated) &&
-                    conf.deadlines.length > existing.deadlines.length);
+    chooseSubmissionSource(editions, now = new Date()) {
+        const withActiveSubmission = editions.map(source => ({
+            source,
+            active: source.deadlines
+                .filter(deadline => this.isSubmissionDeadline(deadline) &&
+                    !deadline.estimated && !Rules.isPassed(deadline, now))
+                .sort((a, b) => Rules.countdownTarget(a) - Rules.countdownTarget(b))[0]
+        })).filter(candidate => candidate.active);
 
-            if (shouldReplace) {
-                latestByName.set(key, conf);
+        if (withActiveSubmission.length > 0) {
+            return withActiveSubmission.sort((a, b) =>
+                Rules.countdownTarget(a.active) - Rules.countdownTarget(b.active)
+            )[0].source;
+        }
+
+        return [...editions].sort((a, b) =>
+            b.year - a.year || Number(Boolean(a.isEstimated)) - Number(Boolean(b.isEstimated))
+        )[0];
+    },
+
+    chooseEventSource(editions, now = new Date()) {
+        const withUpcomingEvent = editions.map(source => ({
+            source,
+            active: source.deadlines
+                .filter(deadline => Rules.matchesFocus(deadline, 'conference') &&
+                    !deadline.estimated && !Rules.isPassed(deadline, now))
+                .sort((a, b) => Rules.countdownTarget(a) - Rules.countdownTarget(b))[0]
+        })).filter(candidate => candidate.active);
+
+        if (withUpcomingEvent.length > 0) {
+            return withUpcomingEvent.sort((a, b) =>
+                Rules.countdownTarget(a.active) - Rules.countdownTarget(b.active)
+            )[0].source;
+        }
+
+        return this.chooseSubmissionSource(editions, now);
+    },
+
+    shouldPreferConference(candidate, existing) {
+        return candidate.year > existing.year ||
+            (candidate.year === existing.year && existing.isEstimated && !candidate.isEstimated) ||
+            (candidate.year === existing.year &&
+                Boolean(existing.isEstimated) === Boolean(candidate.isEstimated) &&
+                candidate.deadlines.length > existing.deadlines.length);
+    },
+
+    resolveSubmissionEdition(conf, now = new Date()) {
+        const primaryDeadlines = conf.deadlines.filter(deadline =>
+            this.isSubmissionDeadline(deadline)
+        );
+        const hasPrimaryDeadlines = primaryDeadlines.length > 0;
+        if (hasPrimaryDeadlines && primaryDeadlines.every(deadline => deadline.estimated)) {
+            if (conf.year <= now.getUTCFullYear() &&
+                primaryDeadlines.every(deadline => Rules.isPassed(deadline, now))) {
+                return this.createNextYearConference(conf, now);
             }
+            return {
+                ...conf,
+                // An estimated submission cycle must not expose author rules
+                // copied from a previous edition.
+                info: {},
+                datesTBD: false,
+                isEstimated: true
+            };
+        }
+
+        const shouldRoll = hasPrimaryDeadlines
+            ? this.allDeadlinesPassed(conf.deadlines, now)
+            : conf.year <= now.getUTCFullYear();
+        return shouldRoll ? this.createNextYearConference(conf, now) : conf;
+    },
+
+    selectDeadlineFocus(focus, now = new Date()) {
+        this.activeDeadlineFilter = Rules.FOCUS_LABELS[focus] ? focus : 'submissions';
+        const selected = [];
+
+        this.catalog.forEach(({ source, event, submission }) => {
+            const base = this.activeDeadlineFilter === 'conference'
+                ? event || source
+                : this.activeDeadlineFilter === 'all' ? source : submission;
+            const visibleDeadlines = base.deadlines.filter(deadline =>
+                Rules.matchesFocus(deadline, this.activeDeadlineFilter)
+            );
+
+            if (this.activeDeadlineFilter === 'conference') {
+                const upcomingEvents = visibleDeadlines.filter(deadline =>
+                    !deadline.estimated && !Rules.isPassed(deadline, now)
+                );
+                if (upcomingEvents.length === 0) return;
+                visibleDeadlines.splice(0, visibleDeadlines.length, ...upcomingEvents);
+            } else if (['submissions', 'paper', 'abstract'].includes(this.activeDeadlineFilter) &&
+                !visibleDeadlines.some(deadline =>
+                    !Rules.isPassed(deadline, now)
+                )) {
+                return;
+            } else if (visibleDeadlines.length === 0) {
+                return;
+            }
+
+            const activeDeadline = this.findActiveDeadline(
+                visibleDeadlines,
+                now,
+                this.activeDeadlineFilter
+            );
+            selected.push({
+                ...base,
+                deadlines: visibleDeadlines,
+                allDeadlines: base.deadlines,
+                isEstimated: visibleDeadlines.length > 0 &&
+                    visibleDeadlines.every(deadline => deadline.estimated),
+                activeDeadline,
+                sortDate: activeDeadline
+                    ? Rules.countdownTarget(activeDeadline)
+                    : new Date('2099-12-31')
+            });
         });
-        this.conferences = [...latestByName.values()];
-        
-        // Sort by next deadline
+
+        this.conferences = selected;
         this.sortConferences();
         this.filteredConferences = [...this.conferences];
     },
@@ -132,11 +228,11 @@ const App = {
      */
     allDeadlinesPassed(deadlines, now = new Date()) {
         const submissionDeadlines = deadlines.filter(deadline =>
-            this.isSubmissionDeadline(deadline)
+            this.isSubmissionDeadline(deadline) && !deadline.estimated
         );
 
         return submissionDeadlines.length === 0 ||
-            submissionDeadlines.every(deadline => new Date(deadline.date) <= now);
+            submissionDeadlines.every(deadline => Rules.isPassed(deadline, now));
     },
 
     /**
@@ -145,39 +241,48 @@ const App = {
      * keep an obsolete edition on the site.
      */
     isSubmissionDeadline(deadline) {
-        const type = (deadline.type || '').toLowerCase();
-        const label = (deadline.label || '').toLowerCase();
-        const excludedLabels = [
-            'workshop', 'tutorial', 'demo', 'dataset', 'benchmark',
-            'position', 'art ', 'education', 'industry', 'doctoral',
-            'student', 'competition', 'affinity', 'show and tell', 'social',
-            'reviewer', 'review', 'bidding', 'camera',
-            'notification', 'decision', 'rebuttal', 'conference'
-        ];
-
-        if (excludedLabels.some(excluded => label.includes(excluded))) {
-            return false;
-        }
-
-        return type === 'abstract' || type === 'paper' || type === 'supplementary';
+        return Rules.isPrimarySubmissionDeadline(deadline);
     },
 
     /**
-     * Create the next edition as a dates-TBA placeholder
+     * Estimate the next edition by shifting main-track dates. Scraped dates
+     * replace these records as soon as the new edition is published.
      * @param {Object} conf - Original conference object
-     * @returns {Object} New conference with the correct year and no guessed dates
+     * @returns {Object} New conference with clearly marked approximate dates
      */
-    createNextYearConference(conf) {
+    createNextYearConference(conf, now = new Date()) {
         const yearOffset = ['ICCV', 'ECCV'].includes(conf.name.toUpperCase()) ? 2 : 1;
-        const nextYear = conf.year + yearOffset;
+        let nextYear = conf.year + yearOffset;
+        while (nextYear <= now.getUTCFullYear()) {
+            nextYear += yearOffset;
+        }
 
-        const newDeadlines = [];
+        const hasVersionedWebsite = new RegExp(`(?:${conf.year}|${String(conf.year).slice(-2)})(?:/|$)`).test(conf.website || '');
+        const yearDelta = nextYear - conf.year;
+        const estimatedDeadlines = conf.deadlines
+            .filter(deadline => this.isSubmissionDeadline(deadline))
+            .map(deadline => ({
+                ...deadline,
+                date: this.shiftDeadlineYear(deadline.date, yearDelta),
+                endDate: deadline.endDate
+                    ? this.shiftDeadlineYear(deadline.endDate, yearDelta)
+                    : deadline.endDate,
+                status: 'upcoming',
+                estimated: true,
+                sourceUrl: undefined,
+                url: undefined
+            }))
+            .filter(deadline => Rules.parseDate(deadline.date));
         
         return {
             ...conf,
             id: `${conf.id.split('-')[0]}-${nextYear}`,
             year: nextYear,
-            deadlines: newDeadlines,
+            website: hasVersionedWebsite ? '' : conf.website,
+            deadlines: estimatedDeadlines,
+            links: {},
+            info: {},
+            notes: [],
             location: {
                 ...conf.location,
                 city: 'TBD',
@@ -188,8 +293,27 @@ const App = {
             activeDeadline: null,
             sortDate: new Date('2099-12-31'),
             isEstimated: true,
-            datesTBD: true
+            datesTBD: estimatedDeadlines.length === 0
         };
+    },
+
+    shiftDeadlineYear(value, yearDelta) {
+        if (!value || !/^\d{4}-\d{2}-\d{2}/.test(value)) return value;
+        const targetYear = Number(value.slice(0, 4)) + yearDelta;
+        let monthDay = value.slice(4, 10);
+        if (monthDay === '-02-29' &&
+            new Date(Date.UTC(targetYear, 1, 29)).getUTCMonth() !== 1) {
+            monthDay = '-02-28';
+        }
+        return `${targetYear}${monthDay}${value.slice(10)}`;
+    },
+
+    formatApproximateDate(value) {
+        const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (!match) return String(value || '');
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${months[Number(match[2]) - 1]} ${match[3]} '${match[1].slice(2)}`;
     },
     
     /**
@@ -197,21 +321,18 @@ const App = {
      * @param {Array} deadlines - Array of deadline objects
      * @returns {Object|null} Active deadline or null
      */
-    findActiveDeadline(deadlines, now = new Date()) {
+    findActiveDeadline(deadlines, now = new Date(), focus = 'submissions') {
 
         // Sort all deadlines by date first
-        const sortedDeadlines = [...deadlines].sort((a, b) =>
-            new Date(a.date) - new Date(b.date)
-        );
-
-        const relevantDeadlines = sortedDeadlines.filter(deadline =>
-            this.isSubmissionDeadline(deadline)
+        const sortedDeadlines = deadlines.filter(deadline =>
+            Rules.matchesFocus(deadline, focus)
+        ).sort((a, b) =>
+            Rules.countdownTarget(a) - Rules.countdownTarget(b)
         );
 
         // Find first non-passed deadline
-        for (const deadline of relevantDeadlines) {
-            const deadlineDate = new Date(deadline.date);
-            if (deadlineDate > now) {
+        for (const deadline of sortedDeadlines) {
+            if (!Rules.isPassed(deadline, now)) {
                 return deadline;
             }
         }
@@ -250,6 +371,66 @@ const App = {
     },
 
     /**
+     * Set up the research-milestone filter. Paper + abstract is the default,
+     * while conference mode deliberately keeps upcoming event editions.
+     */
+    setupDeadlineFilters() {
+        const buttons = document.querySelectorAll('.deadline-filter-pill');
+        let requestedFocus = null;
+
+        try {
+            requestedFocus = new URLSearchParams(window.location.search).get('focus') ||
+                window.localStorage.getItem('paperrush-deadline-focus');
+        } catch (_error) {
+            // Storage can be disabled without affecting the filter.
+        }
+
+        if (Rules.FOCUS_LABELS[requestedFocus] && requestedFocus !== this.activeDeadlineFilter) {
+            this.selectDeadlineFocus(requestedFocus);
+            this.updateCategoryCounts();
+            this.applyFilter();
+        }
+
+        const updateUI = () => {
+            buttons.forEach(button => {
+                const active = button.dataset.deadlineFilter === this.activeDeadlineFilter;
+                button.classList.toggle('active', active);
+                button.setAttribute('aria-pressed', String(active));
+            });
+            const summary = document.getElementById('deadline-filter-summary');
+            if (summary) {
+                summary.textContent = `${this.conferences.length} conference${this.conferences.length === 1 ? '' : 's'}`;
+            }
+            requestAnimationFrame(() => this.updateDeadlineFilterIndicator());
+        };
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const focus = button.dataset.deadlineFilter;
+                if (!Rules.FOCUS_LABELS[focus]) return;
+
+                this.selectDeadlineFocus(focus);
+                this.updateCategoryCounts();
+                this.applyFilter();
+
+                try {
+                    window.localStorage.setItem('paperrush-deadline-focus', focus);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('focus', focus);
+                    window.history.replaceState({}, '', url);
+                } catch (_error) {
+                    // Filtering still works when URL or storage APIs are blocked.
+                }
+
+                updateUI();
+                this.trackEvent('deadline_filter_changed', { deadline_focus: focus });
+            });
+        });
+
+        updateUI();
+    },
+
+    /**
      * Update the sliding filter indicator position
      */
     updateFilterIndicator() {
@@ -278,6 +459,19 @@ const App = {
 
         indicator.style.width = `${width}px`;
         indicator.style.left = `${left}px`;
+        indicator.style.height = `${buttonRect.height}px`;
+    },
+
+    updateDeadlineFilterIndicator() {
+        const indicator = document.getElementById('deadline-filter-indicator');
+        const activeButton = document.querySelector('.deadline-filter-pill.active');
+        const filterGroup = document.getElementById('deadline-filter-group');
+        if (!indicator || !activeButton || !filterGroup) return;
+
+        const groupRect = filterGroup.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+        indicator.style.width = `${buttonRect.width}px`;
+        indicator.style.left = `${buttonRect.left - groupRect.left + filterGroup.scrollLeft}px`;
         indicator.style.height = `${buttonRect.height}px`;
     },
 
@@ -482,14 +676,13 @@ const App = {
         if (this.filteredConferences.length === 0) {
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
-            noResults.innerHTML = `
-                <div class="no-results-icon">🔍</div>
-                <h3>No conferences found</h3>
-                <p>${this.searchQuery
-                    ? `No results for "${this.searchQuery}". Try a different search term.`
-                    : 'No conferences in this category yet.'
-                }</p>
-            `;
+            const title = document.createElement('h3');
+            const message = document.createElement('p');
+            title.textContent = 'No conferences found';
+            message.textContent = this.searchQuery
+                ? `No results for "${this.searchQuery}". Try a different search term.`
+                : `No conferences have ${Rules.FOCUS_LABELS[this.activeDeadlineFilter].toLowerCase()} available yet.`;
+            noResults.append(title, message);
             grid.parentNode.insertBefore(noResults, grid.nextSibling);
             return;
         }
@@ -612,12 +805,19 @@ const App = {
         
         // Title (with estimated badge if needed)
         const confNameEl = card.querySelector('.conf-name');
+        confNameEl.textContent = `${conf.name} ${conf.year}`;
         if (conf.datesTBD) {
-            confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge" title="Official dates have not been announced">TBA</span>`;
+            const badge = document.createElement('span');
+            badge.className = 'estimated-badge';
+            badge.title = 'Official dates have not been announced';
+            badge.textContent = 'TBA';
+            confNameEl.append(' ', badge);
         } else if (conf.isEstimated) {
-            confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge" title="Dates are approximate based on previous year">Approx</span>`;
-        } else {
-            confNameEl.textContent = `${conf.name} ${conf.year}`;
+            const badge = document.createElement('span');
+            badge.className = 'estimated-badge';
+            badge.title = 'Dates are approximate and not yet official';
+            badge.textContent = 'Approx';
+            confNameEl.append(' ', badge);
         }
         card.querySelector('.conf-location').textContent = `${conf.location.city}, ${conf.location.country} ${conf.location.flag}`;
         
@@ -628,18 +828,33 @@ const App = {
         
         if (conf.activeDeadline) {
             deadlineLabel.textContent = conf.activeDeadline.label;
-            
-            // Start countdown
-            CountdownTimer.startTimer(
-                conf.id,
-                countdownContainer,
-                conf.activeDeadline.date,
-                () => {
-                    // On complete, refresh the card
-                    this.loadData();
-                    this.applyFilter();
-                }
-            );
+
+            if (conf.activeDeadline.estimated) {
+                deadlineLabel.textContent = `Estimated ${conf.activeDeadline.label}`;
+                CountdownTimer.startTimer(
+                    conf.id,
+                    countdownContainer,
+                    Rules.countdownTarget(conf.activeDeadline),
+                    () => {
+                        this.loadData();
+                        this.applyFilter();
+                    },
+                    { approximate: true }
+                );
+            } else if (Rules.isOngoing(conf.activeDeadline)) {
+                deadlineLabel.textContent = 'Conference in progress';
+                countdownContainer.innerHTML = '<span class="countdown-value countdown-live">Live now</span>';
+            } else {
+                CountdownTimer.startTimer(
+                    conf.id,
+                    countdownContainer,
+                    Rules.countdownTarget(conf.activeDeadline),
+                    () => {
+                        this.loadData();
+                        this.applyFilter();
+                    }
+                );
+            }
         } else if (conf.datesTBD) {
             deadlineLabel.textContent = 'Dates to be announced';
             countdownContainer.innerHTML = '<span class="countdown-value">TBA</span>';
@@ -655,7 +870,7 @@ const App = {
 
         // Sort deadlines by date before rendering
         const sortedDeadlines = [...conf.deadlines].sort((a, b) =>
-            new Date(a.date) - new Date(b.date)
+            Rules.countdownTarget(a) - Rules.countdownTarget(b)
         );
 
         const now = new Date();
@@ -663,7 +878,7 @@ const App = {
         // Find the first upcoming deadline index
         let activeIndex = -1;
         for (let i = 0; i < sortedDeadlines.length; i++) {
-            if (new Date(sortedDeadlines[i].date) > now) {
+            if (!Rules.isPassed(sortedDeadlines[i], now)) {
                 activeIndex = i;
                 break;
             }
@@ -672,8 +887,7 @@ const App = {
         // Render ALL deadlines
         sortedDeadlines.forEach((deadline, i) => {
             const li = document.createElement('li');
-            const deadlineDate = new Date(deadline.date);
-            const isPassed = deadlineDate <= now;
+            const isPassed = Rules.isPassed(deadline, now);
             const isActive = i === activeIndex;
 
             li.className = 'deadline-item ' + (isPassed ? 'passed' : (isActive ? 'active' : 'upcoming'));
@@ -684,15 +898,19 @@ const App = {
                 ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
                 : CountdownTimer.formatDate(deadline.date);
 
-            const estimatedMark = deadline.estimated
-                ? '<span class="approx-mark" title="Approximate date">~</span>'
-                : '';
-
-            li.innerHTML = `
-                <span class="status-icon">${statusIcon}</span>
-                <span class="deadline-type">${deadline.label}</span>
-                <span class="deadline-date ${deadline.estimated ? 'estimated' : ''}">${estimatedMark}${dateStr}</span>
-            `;
+            const icon = document.createElement('span');
+            const type = document.createElement('span');
+            const date = document.createElement('span');
+            icon.className = 'status-icon';
+            type.className = 'deadline-type';
+            date.className = `deadline-date${deadline.estimated ? ' estimated' : ''}`;
+            icon.textContent = statusIcon;
+            type.textContent = deadline.label;
+            date.textContent = deadline.estimated
+                ? `~${this.formatApproximateDate(deadline.date)}`
+                : dateStr;
+            if (deadline.estimated) date.title = 'Approximate date';
+            li.append(icon, type, date);
 
             deadlinesList.appendChild(li);
         });
@@ -783,15 +1001,34 @@ const App = {
         
         if (conf.activeDeadline) {
             countdownLabel.textContent = conf.activeDeadline.label;
-            const remaining = CountdownTimer.calculateRemaining(conf.activeDeadline.date);
-            const format = CountdownTimer.formatDisplay(remaining);
-
-            if (format.type === 'monthday') {
-                countdownValue.textContent = `${format.months} ${format.monthUnit} ${format.days} ${format.dayUnit}`;
-            } else if (format.type === 'detailed') {
-                countdownValue.textContent = `${format.hours} hrs : ${format.minutes} min : ${format.seconds} sec`;
+            if (Rules.isOngoing(conf.activeDeadline)) {
+                countdownLabel.textContent = 'Conference status';
+                countdownValue.textContent = 'Happening now';
+                countdownValue.title = '';
             } else {
-                countdownValue.textContent = `${format.value} ${format.unit}`;
+                const approximate = Boolean(conf.activeDeadline.estimated);
+                const prefix = approximate ? '~ ' : '';
+
+                if (approximate) {
+                    countdownLabel.textContent = `Estimated ${conf.activeDeadline.label}`;
+                }
+
+                const remaining = CountdownTimer.calculateRemaining(
+                    Rules.countdownTarget(conf.activeDeadline)
+                );
+                const format = CountdownTimer.formatDisplay(remaining);
+
+                if (format.type === 'monthday') {
+                    countdownValue.textContent = `${prefix}${format.months} ${format.monthUnit} ${format.days} ${format.dayUnit}`;
+                } else if (format.type === 'detailed') {
+                    countdownValue.textContent = `${prefix}${format.hours} hrs : ${format.minutes} min : ${format.seconds} sec`;
+                } else {
+                    countdownValue.textContent = `${prefix}${format.value} ${format.unit}`;
+                }
+
+                countdownValue.title = approximate
+                    ? 'Approximate countdown based on the previous edition'
+                    : '';
             }
         } else if (conf.datesTBD) {
             countdownLabel.textContent = 'Status';
@@ -806,34 +1043,30 @@ const App = {
         const cfpLink = document.getElementById('modal-link-cfp');
         const templateLink = document.getElementById('modal-link-template');
         const authorLink = document.getElementById('modal-link-author');
+        const datesLink = document.getElementById('modal-link-dates');
+        const reportLink = document.getElementById('modal-link-report');
+
+        const setExternalLink = (element, value) => {
+            const safeURL = Rules.safeURL(value);
+            if (safeURL) {
+                element.href = safeURL;
+                element.classList.remove('hidden');
+            } else {
+                element.removeAttribute('href');
+                element.classList.add('hidden');
+            }
+        };
         
-        if (conf.links.official || conf.website) {
-            officialLink.href = conf.links.official || conf.website;
-            officialLink.classList.remove('hidden');
-        } else {
-            officialLink.classList.add('hidden');
-        }
-        
-        if (conf.links.author || conf.links.cfp) {
-            cfpLink.href = conf.links.author || conf.links.cfp;
-            cfpLink.classList.remove('hidden');
-        } else {
-            cfpLink.classList.add('hidden');
-        }
-        
-        if (conf.links.template) {
-            templateLink.href = conf.links.template;
-            templateLink.classList.remove('hidden');
-        } else {
-            templateLink.classList.add('hidden');
-        }
-        
-        if (conf.links.authorGuide) {
-            authorLink.href = conf.links.authorGuide;
-            authorLink.classList.remove('hidden');
-        } else {
-            authorLink.classList.add('hidden');
-        }
+        setExternalLink(officialLink, conf.links?.official || conf.website);
+        setExternalLink(cfpLink, conf.links?.author || conf.links?.cfp);
+        setExternalLink(templateLink, conf.links?.template);
+        setExternalLink(authorLink, conf.links?.authorGuide);
+        setExternalLink(datesLink, conf.links?.dates);
+
+        const reportURL = new URL('https://github.com/awsaf49/paperrush/issues/new');
+        reportURL.searchParams.set('template', 'feedback.yml');
+        reportURL.searchParams.set('title', `[Deadline] ${conf.name} ${conf.year}`);
+        reportLink.href = reportURL.href;
         
         // Set info
         document.getElementById('modal-page-limit').textContent = conf.info?.pageLimit || '—';
@@ -842,18 +1075,19 @@ const App = {
         
         // Set deadlines list
         const deadlinesList = document.getElementById('modal-deadlines-list');
+        const deadlinesTitle = document.getElementById('modal-deadlines-title');
+        deadlinesTitle.textContent = Rules.FOCUS_LABELS[this.activeDeadlineFilter];
         deadlinesList.innerHTML = '';
         const now = new Date();
 
         // Sort deadlines by date before rendering
         const sortedDeadlines = [...conf.deadlines].sort((a, b) =>
-            new Date(a.date) - new Date(b.date)
+            Rules.countdownTarget(a) - Rules.countdownTarget(b)
         );
 
         sortedDeadlines.forEach((deadline, i) => {
             const li = document.createElement('li');
-            const deadlineDate = new Date(deadline.date);
-            const isPassed = deadlineDate <= now;
+            const isPassed = Rules.isPassed(deadline, now);
             const isActive = !isPassed && conf.activeDeadline && deadline.label === conf.activeDeadline.label;
             
             li.className = isPassed ? 'passed' : (isActive ? 'active' : '');
@@ -863,15 +1097,19 @@ const App = {
                 ? CountdownTimer.formatDate(deadline.date, deadline.endDate)
                 : CountdownTimer.formatDate(deadline.date);
             
-            const modalEstimatedMark = deadline.estimated
-                ? '<span class="approx-mark" title="Approximate date">~</span>'
-                : '';
-
-            li.innerHTML = `
-                <span class="status-icon">${statusIcon}</span>
-                <span class="deadline-type">${deadline.label}</span>
-                <span class="deadline-date">${modalEstimatedMark}${dateStr}</span>
-            `;
+            const icon = document.createElement('span');
+            const type = document.createElement('span');
+            const date = document.createElement('span');
+            icon.className = 'status-icon';
+            type.className = 'deadline-type';
+            date.className = 'deadline-date';
+            icon.textContent = statusIcon;
+            type.textContent = deadline.label;
+            date.textContent = deadline.estimated
+                ? `~${this.formatApproximateDate(deadline.date)}`
+                : dateStr;
+            if (deadline.estimated) date.title = 'Approximate date';
+            li.append(icon, type, date);
             deadlinesList.appendChild(li);
         });
         
@@ -883,7 +1121,7 @@ const App = {
             'Check official website for latest updates',
             'All deadlines are in AoE (Anywhere on Earth) timezone'
         ];
-        const notes = conf.notes || defaultNotes;
+        const notes = conf.notes?.length ? conf.notes : defaultNotes;
         
         // Add desk reject reasons if available
         if (conf.deskRejectReasons) {
@@ -982,6 +1220,121 @@ const App = {
                 this.closeModal();
             }
         });
+    },
+
+    setupFeedback() {
+        const trigger = document.getElementById('feedback-trigger');
+        const panel = document.getElementById('feedback-panel');
+        const close = document.getElementById('feedback-close');
+        const status = document.getElementById('feedback-status');
+        const form = document.getElementById('feedback-form');
+        const message = document.getElementById('feedback-message');
+        const count = document.getElementById('feedback-count');
+        if (!trigger || !panel) return;
+
+        const setStatus = (text, state = 'success') => {
+            if (!status) return;
+            status.textContent = text;
+            status.dataset.state = state;
+        };
+
+        const setOpen = open => {
+            panel.classList.toggle('hidden', !open);
+            trigger.setAttribute('aria-expanded', String(open));
+            if (open) panel.querySelector('.feedback-option')?.focus();
+        };
+
+        trigger.addEventListener('click', () => setOpen(panel.classList.contains('hidden')));
+        close?.addEventListener('click', () => setOpen(false));
+
+        document.querySelectorAll('.feedback-option').forEach(button => {
+            button.addEventListener('click', () => {
+                const feedbackType = button.dataset.feedback;
+                const recorded = this.trackEvent('quick_feedback', {
+                    feedback_type: feedbackType,
+                    deadline_focus: this.activeDeadlineFilter
+                });
+                setStatus(
+                    recorded ? 'Thanks - feedback recorded.' : 'Analytics is blocked; use the note or report form.',
+                    recorded ? 'success' : 'error'
+                );
+                panel.classList.add('submitted');
+                if (recorded) {
+                    setTimeout(() => {
+                        setOpen(false);
+                        panel.classList.remove('submitted');
+                        setStatus('');
+                    }, 1400);
+                } else {
+                    panel.classList.remove('submitted');
+                }
+            });
+        });
+
+        message?.addEventListener('input', () => {
+            if (count) count.textContent = `${message.value.length} / 500`;
+        });
+
+        form?.addEventListener('submit', event => {
+            event.preventDefault();
+            const note = message?.value.trim() || '';
+            if (!note) {
+                setStatus('Write a short note first.', 'error');
+                message?.focus();
+                return;
+            }
+
+            const issueURL = this.buildFeedbackIssueURL(note, {
+                deadlineFocus: this.activeDeadlineFilter,
+                pageURL: window.location.href
+            });
+            window.open(issueURL, '_blank', 'noopener,noreferrer');
+            this.trackEvent('text_feedback_opened', {
+                feedback_length: note.length,
+                deadline_focus: this.activeDeadlineFilter
+            });
+            setStatus('Your note is ready on GitHub. Review it, then submit the issue.');
+        });
+
+        document.addEventListener('click', event => {
+            if (!panel.classList.contains('hidden') &&
+                !panel.contains(event.target) && event.target !== trigger) {
+                setOpen(false);
+            }
+        });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !panel.classList.contains('hidden')) {
+                setOpen(false);
+                trigger.focus();
+            }
+        });
+    },
+
+    buildFeedbackIssueURL(message, context = {}) {
+        const issueURL = new URL('https://github.com/awsaf49/paperrush/issues/new');
+        const pageURL = context.pageURL || '';
+        const body = [
+            message.trim(),
+            '',
+            '---',
+            'PaperRush context',
+            `- Deadline view: ${context.deadlineFocus || 'unknown'}`,
+            pageURL ? `- Page: ${pageURL}` : ''
+        ].filter(Boolean).join('\n');
+
+        issueURL.searchParams.set('title', '[Feedback] PaperRush note');
+        issueURL.searchParams.set('body', body);
+        issueURL.searchParams.set('labels', 'feedback');
+        return issueURL.toString();
+    },
+
+    trackEvent(name, parameters = {}) {
+        if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+            window.gtag('event', name, parameters);
+            return true;
+        }
+        return false;
     },
     
     /**
@@ -1116,6 +1469,7 @@ if (typeof window !== 'undefined') {
             App.render();
             TimelineDrawer.redraw();
             App.updateFilterIndicator();
+            App.updateDeadlineFilterIndicator();
         }, 150);
     });
 }

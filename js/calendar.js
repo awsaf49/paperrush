@@ -3,11 +3,16 @@
  * Provides day, week, month, and year views for conference deadlines
  */
 
+const CalendarRules = typeof globalThis !== 'undefined' && globalThis.DeadlineRules
+    ? globalThis.DeadlineRules
+    : require('./deadline-utils.js');
+
 const Calendar = {
     // State
     currentDate: new Date(),
     viewMode: 'month', // day, week, month, year
     conferences: [],
+    initialized: false,
 
     // Day names
     dayNames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -22,7 +27,10 @@ const Calendar = {
      */
     init(conferences) {
         this.conferences = conferences || [];
-        this.setupEventListeners();
+        if (!this.initialized) {
+            this.setupEventListeners();
+            this.initialized = true;
+        }
         this.render();
     },
 
@@ -219,17 +227,17 @@ const Calendar = {
      * @returns {Array} Array of {conference, deadline} objects
      */
     getDeadlinesForDate(date) {
-        const dateStr = date.toISOString().split('T')[0];
+        const dateStr = this.dateKey(date);
         const results = [];
-        const seen = new Set(); // Track conf-id to show only one per conference per day
 
         this.conferences.forEach(conf => {
             conf.deadlines.forEach(deadline => {
-                const deadlineDate = new Date(deadline.date);
-                const deadlineDateStr = deadlineDate.toISOString().split('T')[0];
+                const deadlineDateStr = String(deadline.date || '').slice(0, 10);
+                const eventEndDateStr = String(deadline.endDate || deadline.date || '').slice(0, 10);
+                const isConferenceDay = CalendarRules.canonicalType(deadline) === 'conference' &&
+                    deadlineDateStr <= dateStr && dateStr <= eventEndDateStr;
 
-                if (deadlineDateStr === dateStr && !seen.has(conf.id)) {
-                    seen.add(conf.id);
+                if (deadlineDateStr === dateStr || isConferenceDay) {
                     results.push({ conference: conf, deadline });
                 }
             });
@@ -249,15 +257,22 @@ const Calendar = {
 
         this.conferences.forEach(conf => {
             conf.deadlines.forEach(deadline => {
-                const deadlineDate = new Date(deadline.date);
-                // Use UTC to avoid timezone issues with date-only strings
-                if (deadlineDate.getUTCFullYear() === year && deadlineDate.getUTCMonth() === month) {
+                const dateKey = String(deadline.date || '').slice(0, 10);
+                const [deadlineYear, deadlineMonth] = dateKey.split('-').map(Number);
+                if (deadlineYear === year && deadlineMonth === month + 1) {
                     results.push({ conference: conf, deadline });
                 }
             });
         });
 
         return results;
+    },
+
+    dateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     },
 
     /**
@@ -297,14 +312,14 @@ const Calendar = {
         // Shorten deadline label for display
         const shortLabel = this.shortenDeadlineLabel(deadline.label);
         return `
-            <div class="cal-chip category-${conference.category} ${pastClass}"
-                 data-conf-id="${conference.id}"
-                 title="${conference.name} ${conference.year} - ${deadline.label}">
+            <div class="cal-chip category-${CalendarRules.escapeHTML(conference.category)} ${pastClass}"
+                 data-conf-id="${CalendarRules.escapeHTML(conference.id)}"
+                 title="${CalendarRules.escapeHTML(conference.name)} ${conference.year} - ${CalendarRules.escapeHTML(deadline.label)}">
                 <span class="chip-dot"></span>
                 <span class="chip-text">
-                    <span class="chip-name">${conference.name}</span>
+                    <span class="chip-name">${CalendarRules.escapeHTML(conference.name)}</span>
                     <span class="chip-separator">·</span>
-                    <span class="chip-label">${shortLabel}</span>
+                    <span class="chip-label">${CalendarRules.escapeHTML(shortLabel)}</span>
                 </span>
             </div>
         `;
@@ -375,7 +390,7 @@ const Calendar = {
             // Get deadlines for this date
             const deadlines = isCurrentMonth ? this.getDeadlinesForDate(cellDate) : [];
 
-            html += `<div class="${classes.join(' ')}" data-date="${cellDate.toISOString().split('T')[0]}">`;
+            html += `<div class="${classes.join(' ')}" data-date="${this.dateKey(cellDate)}">`;
             if (isCurrentMonth) {
                 html += `<div class="cal-day-number">${dayNum}</div>`;
                 html += '<div class="cal-chips-container">';
@@ -444,10 +459,10 @@ const Calendar = {
     createWeekChip(conference, deadline, isPast = false) {
         const pastClass = isPast ? 'past' : '';
         return `
-            <div class="cal-week-chip category-${conference.category} ${pastClass}"
-                 data-conf-id="${conference.id}">
-                <span class="cal-week-chip-name">${conference.name} ${conference.year}</span>
-                <span class="cal-week-chip-type">${deadline.label}</span>
+            <div class="cal-week-chip category-${CalendarRules.escapeHTML(conference.category)} ${pastClass}"
+                 data-conf-id="${CalendarRules.escapeHTML(conference.id)}">
+                <span class="cal-week-chip-name">${CalendarRules.escapeHTML(conference.name)} ${conference.year}</span>
+                <span class="cal-week-chip-type">${CalendarRules.escapeHTML(deadline.label)}</span>
             </div>
         `;
     },
@@ -494,13 +509,13 @@ const Calendar = {
         const time = this.formatDeadlineTime(deadline.date);
 
         return `
-            <div class="cal-day-card category-${conference.category} ${pastClass}"
-                 data-conf-id="${conference.id}">
+            <div class="cal-day-card category-${CalendarRules.escapeHTML(conference.category)} ${pastClass}"
+                 data-conf-id="${CalendarRules.escapeHTML(conference.id)}">
                 <div class="cal-day-card-dot"></div>
                 <div class="cal-day-card-content">
-                    <div class="cal-day-card-name">${conference.name} ${conference.year}</div>
-                    <div class="cal-day-card-type">${deadline.label}</div>
-                    <div class="cal-day-card-time">${time}</div>
+                    <div class="cal-day-card-name">${CalendarRules.escapeHTML(conference.name)} ${conference.year}</div>
+                    <div class="cal-day-card-type">${CalendarRules.escapeHTML(deadline.label)}</div>
+                    <div class="cal-day-card-time">${CalendarRules.escapeHTML(time)}</div>
                 </div>
             </div>
         `;
@@ -512,6 +527,7 @@ const Calendar = {
      * @returns {string}
      */
     formatDeadlineTime(dateStr) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return 'All day';
         const date = new Date(dateStr);
 
         // Check if time is set (not midnight)
@@ -521,7 +537,13 @@ const Calendar = {
 
         // Check for AoE timezone (-12:00)
         if (dateStr.includes('-12:00')) {
-            return '11:59 PM AoE';
+            const time = dateStr.match(/T(\d{2}):(\d{2})/);
+            if (time) {
+                const hours = Number(time[1]);
+                const minutes = time[2];
+                const hour12 = hours % 12 || 12;
+                return `${hour12}:${minutes} ${hours >= 12 ? 'PM' : 'AM'} AoE`;
+            }
         }
 
         const options = { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' };
@@ -593,9 +615,9 @@ const Calendar = {
                         // Show abbreviation chips stacked vertically
                         html += '<div class="cal-mini-day-chips">';
                         deadlines.forEach(({ conference }) => {
-                            html += `<span class="cal-mini-chip category-${conference.category}"
-                                          data-conf-id="${conference.id}"
-                                          title="${conference.name}">${conference.name}</span>`;
+                            html += `<span class="cal-mini-chip category-${CalendarRules.escapeHTML(conference.category)}"
+                                          data-conf-id="${CalendarRules.escapeHTML(conference.id)}"
+                                          title="${CalendarRules.escapeHTML(conference.name)}">${CalendarRules.escapeHTML(conference.name)}</span>`;
                         });
                         html += '</div>';
                     }
@@ -653,7 +675,7 @@ const Calendar = {
 
                 const dateStr = cell.dataset.date;
                 if (dateStr) {
-                    this.currentDate = new Date(dateStr);
+                    this.currentDate = new Date(`${dateStr}T12:00:00`);
                     this.setView('day');
                 }
             });

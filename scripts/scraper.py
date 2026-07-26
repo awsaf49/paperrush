@@ -253,6 +253,84 @@ CONFERENCES = {
             "contribute/call-for-tutorials",
         ],
     },
+    "aistats": {
+        "name": "AISTATS",
+        "base": "https://virtual.aistats.org/Conferences/{year}",
+        "seeds": ["", "Dates", "CallForPapers"],
+        "link_only": ["ReviewerGuidelines", "SubmissionFAQ"],
+    },
+    "ijcai": {
+        "name": "IJCAI",
+        "base": "https://{year}.ijcai.org",
+        "seeds": [
+            "",
+            "important-dates",
+            "ijcai-ecai-{year}-call-for-papers-main-track",
+        ],
+        "link_only": ["submission-faq", "author-response-faq"],
+    },
+    "mlsys": {
+        "name": "MLSys",
+        "base": "https://mlsys.org/Conferences/{year}",
+        "seeds": ["", "Dates", "CallForPapers"],
+        "link_only": ["CallForAEs", "CallForIndustrialTrackPapers"],
+    },
+    "colt": {
+        "name": "COLT",
+        "base": "https://learningtheory.org/colt{year}",
+        "seeds": ["", "cfp.html"],
+        "link_only": [],
+    },
+    "kdd": {
+        "name": "KDD",
+        "base": "https://kdd{year}.kdd.org",
+        "seeds": ["", "research-track-call-for-papers"],
+        "link_only": [
+            "applied-data-science-ads-track-call-for-papers",
+            "datasets-and-benchmarks-track-call-for-papers",
+        ],
+    },
+    "eacl": {
+        "name": "EACL",
+        "base": "https://{year}.eacl.org",
+        "seeds": ["", "calls/papers"],
+        "link_only": ["calls/industry", "calls/workshops"],
+        "known_template": "https://github.com/acl-org/acl-style-files",
+    },
+    "icra": {
+        "name": "ICRA",
+        "base": "https://{year}.ieee-icra.org",
+        "seeds": ["", "announcements/call-for-technical-papers"],
+        "link_only": ["announcements/call-for-workshops-tutorials"],
+    },
+    "corl": {
+        "name": "CoRL",
+        "base": "https://{year}.corl.org",
+        "seeds": [
+            "",
+            "contributions/call-for-papers",
+            "contributions/instruction-for-authors",
+        ],
+        "link_only": ["contributions/call-for-workshops"],
+    },
+    "miccai": {
+        "name": "MICCAI",
+        "base": "https://conferences.miccai.org/{year}",
+        "seeds": ["", "en/PAPER-SUBMISSION-GUIDELINES.html"],
+        "link_only": ["en/PAPER-SUBMISSION-FAQ.html"],
+    },
+    "bmvc": {
+        "name": "BMVC",
+        "base": "https://bmvc{year}.bmva.org",
+        "seeds": ["", "dates", "calls/call-for-papers"],
+        "link_only": ["authors/author-guidelines"],
+    },
+    "3dv": {
+        "name": "3DV",
+        "base": "https://3dvconf.github.io/{year}",
+        "seeds": [""],
+        "link_only": [],
+    },
 }
 
 
@@ -261,7 +339,7 @@ CONFERENCES = {
 # =============================================================================
 
 # Sites that require JavaScript rendering
-JS_RENDERED_SITES = {"interspeech"}
+JS_RENDERED_SITES = {"interspeech", "aistats"}
 
 
 def fetch_with_playwright(url: str, timeout: int = 30000) -> Optional[str]:
@@ -707,7 +785,8 @@ Return a JSON object with these fields:
     "city": "City name if stated on page or null",
     "country": "Country name if stated (e.g., 'USA', 'Finland') or null",
     "venue": "Venue/convention center name if stated or null",
-    "dates": "Conference event dates if stated (e.g., 'September 27 - October 1, 2026') or null"
+    "start_date": "Conference start date as YYYY-MM-DD if explicitly stated, or null",
+    "end_date": "Conference end date as YYYY-MM-DD if explicitly stated, or null"
   }},
 
   "info": {{
@@ -767,6 +846,8 @@ Return a JSON object with these fields:
 
    NOTE: The format "Mon DD 'YY" (e.g., "Feb 15 '26") is VERY COMMON on conference sites!
    The 'YY means 20YY, so '25 = 2025 and '26 = 2026.
+   Use location.start_date and location.end_date for the actual conference event;
+   do not mix conference dates into author deadlines.
 
 3. **time**: Return in 24-hour format HH:MM (e.g., "23:59"), or null if not specified
    - "11:59 PM" → "23:59"
@@ -1334,7 +1415,8 @@ class ConferenceScraper:
                 "city": None,
                 "country": None,
                 "venue": None,
-                "dates": None,
+                "start_date": None,
+                "end_date": None,
             },
 
             "info": {

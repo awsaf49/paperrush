@@ -30,21 +30,23 @@
 |---------|-------------|
 | 🎨 **Beautiful UI** | OpenAI-inspired gradients, Apple-like animations, glassmorphism |
 | 📅 **Calendar View** | Day/Week/Month/Year views with deadline chips |
+| 🎯 **Deadline Focus** | Default to paper + abstract, or filter paper, abstract, conference, and all dates |
 | ⏱️ **Live Countdown** | Real-time timers with smart formatting |
 | 🔄 **Auto-Updates** | LLM-powered scraper keeps deadlines current |
-| 🛡️ **Safe Rollover** | Closed editions advance with dates marked TBA until officially confirmed |
+| 🛡️ **Safe Rollover** | Prior-cycle dates appear as `Approx` and are replaced by verified scrape results |
 | 🔍 **Smart Search** | Filter by category, search with `⌘K` |
+| 💬 **One-Tap Feedback** | Record quick feedback or open a prefilled detailed report |
 | 📱 **Responsive** | Works on desktop, tablet, and mobile |
 
 ### Conferences Tracked
 
 | Category | Conferences |
 |----------|-------------|
-| **ML** | ICML, NeurIPS, ICLR, AAAI |
-| **Vision** | CVPR, ICCV, ECCV, WACV, ICIP |
-| **NLP** | ACL, EMNLP, NAACL |
+| **ML** | ICML, NeurIPS, ICLR, AAAI, IJCAI, AISTATS, MLSys, COLT, KDD |
+| **Vision** | CVPR, ICCV, ECCV, WACV, ICIP, MICCAI, BMVC, 3DV |
+| **NLP** | ACL, EACL, EMNLP, NAACL, COLING |
 | **Speech** | Interspeech, ICASSP |
-| **Robotics** | IROS |
+| **Robotics** | ICRA, IROS, CoRL |
 
 ---
 
@@ -119,13 +121,13 @@ We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the c
     deadlines: [
         { type: "paper", label: "Paper Submission", date: "2026-01-22T23:59:00-12:00" },
         { type: "notification", label: "Notification", date: "2026-04-01" },
-        { type: "event", label: "Conference", date: "2026-06-15", endDate: "2026-06-20" }
+        { type: "conference", label: "Main Conference", date: "2026-06-15", endDate: "2026-06-20" }
     ],
     links: { official: "https://conf.cc/2026" }
 }
 ```
 
-> **Tip:** Use `-12:00` timezone for AoE (Anywhere on Earth) deadlines.
+> **Tip:** Use `-12:00` only when the official source explicitly says AoE. Keep a date date-only when its time or timezone is unknown.
 
 **No build tools needed** — just edit and refresh! See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding conferences to the scraper, creating new categories, and more
 
@@ -143,7 +145,8 @@ We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the c
 | `rebuttal` | Author rebuttal period |
 | `notification` | Acceptance notification |
 | `camera` | Camera-ready deadline |
-| `event` | Conference dates (use `endDate` for range) |
+| `conference` | Confirmed conference dates (use `endDate` for range) |
+| `event` | Other administrative or program milestones |
 
 </details>
 
@@ -152,11 +155,11 @@ We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the c
 
 | Category | Color | Conferences |
 |----------|-------|-------------|
-| `ml` | Purple | ICML, NeurIPS, ICLR, AAAI |
+| `ml` | Purple | ICML, NeurIPS, ICLR, AAAI, AISTATS, KDD |
 | `cv` | Blue | CVPR, ICCV, ECCV, WACV, ICIP |
-| `nlp` | Green | ACL, EMNLP, NAACL |
+| `nlp` | Green | ACL, EACL, EMNLP, NAACL, COLING |
 | `speech` | Orange | Interspeech, ICASSP |
-| `robotics` | Hot Pink | IROS |
+| `robotics` | Hot Pink | ICRA, IROS |
 | `other` | Gray | Others |
 
 </details>

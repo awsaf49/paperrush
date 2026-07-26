@@ -67,7 +67,7 @@ def html_to_text(html: str) -> str:
 
 # ============================================
 # CONFERENCE CONFIGURATION
-# All 19 conferences with their URL patterns
+# Fallback updater conference URL patterns
 # ============================================
 CONFERENCES_CONFIG = [
     # ----- MACHINE LEARNING -----
@@ -137,13 +137,39 @@ CONFERENCES_CONFIG = [
     {
         "id": "ijcai",
         "name": "IJCAI",
-        "fullName": "International Joint Conference on AI",
+        "fullName": "International Joint Conference on Artificial Intelligence",
         "category": "ml",
         "website": "https://ijcai.org/",
         "brandColor": "#C41E3A",
         "urls": [
-            "https://ijcai-{short_year}.org/",
-            "https://ijcai-{short_year}.org/call-for-papers/"
+            "https://{year}.ijcai.org/",
+            "https://{year}.ijcai.org/important-dates/",
+            "https://{year}.ijcai.org/ijcai-ecai-{year}-call-for-papers-main-track/"
+        ]
+    },
+    {
+        "id": "mlsys",
+        "name": "MLSys",
+        "fullName": "Conference on Machine Learning and Systems",
+        "category": "ml",
+        "website": "https://mlsys.org/",
+        "brandColor": "#34495E",
+        "urls": [
+            "https://mlsys.org/Conferences/{year}",
+            "https://mlsys.org/Conferences/{year}/Dates",
+            "https://mlsys.org/Conferences/{year}/CallForPapers"
+        ]
+    },
+    {
+        "id": "colt",
+        "name": "COLT",
+        "fullName": "Conference on Learning Theory",
+        "category": "ml",
+        "website": "https://learningtheory.org/",
+        "brandColor": "#2563EB",
+        "urls": [
+            "https://learningtheory.org/colt{year}/",
+            "https://learningtheory.org/colt{year}/cfp.html"
         ]
     },
 
@@ -194,6 +220,43 @@ CONFERENCES_CONFIG = [
         "brandColor": "#4A90A4",
         "urls": [
             "https://wacv{year}.thecvf.com/"
+        ]
+    },
+    {
+        "id": "bmvc",
+        "name": "BMVC",
+        "fullName": "British Machine Vision Conference",
+        "category": "cv",
+        "website": "https://www.bmva.org/bmvc",
+        "brandColor": "#1D4ED8",
+        "urls": [
+            "https://bmvc{year}.bmva.org/",
+            "https://bmvc{year}.bmva.org/dates/",
+            "https://bmvc{year}.bmva.org/calls/call-for-papers/"
+        ]
+    },
+    {
+        "id": "3dv",
+        "name": "3DV",
+        "fullName": "International Conference on 3D Vision",
+        "category": "cv",
+        "website": "https://3dvconf.github.io/",
+        "brandColor": "#0E7490",
+        "urls": [
+            "https://3dvconf.github.io/{year}/"
+        ]
+    },
+    {
+        "id": "miccai",
+        "name": "MICCAI",
+        "fullName": "Medical Image Computing and Computer Assisted Intervention",
+        "category": "cv",
+        "website": "https://miccai.org/",
+        "brandColor": "#FF2D55",
+        "urls": [
+            "https://conferences.miccai.org/{year}/",
+            "https://conferences.miccai.org/{year}/en/PAPER-SUBMISSION-GUIDELINES.html",
+            "https://miccai.org/upcoming-conferences/"
         ]
     },
 
@@ -261,12 +324,27 @@ CONFERENCES_CONFIG = [
         ]
     },
 
+    # ----- ROBOTICS -----
+    {
+        "id": "corl",
+        "name": "CoRL",
+        "fullName": "Conference on Robot Learning",
+        "category": "robotics",
+        "website": "https://www.corl.org/",
+        "brandColor": "#D97706",
+        "urls": [
+            "https://{year}.corl.org/",
+            "https://{year}.corl.org/contributions/call-for-papers",
+            "https://{year}.corl.org/contributions/instruction-for-authors"
+        ]
+    },
+
     # ----- OTHER -----
     {
         "id": "kdd",
         "name": "KDD",
         "fullName": "Knowledge Discovery and Data Mining",
-        "category": "other",
+        "category": "ml",
         "website": "https://kdd.org/",
         "brandColor": "#CC0066",
         "urls": [
@@ -284,30 +362,6 @@ CONFERENCES_CONFIG = [
         "urls": [
             "https://s{year}.siggraph.org/",
             "https://www.siggraph.org/siggraph-{year}/"
-        ]
-    },
-    {
-        "id": "miccai",
-        "name": "MICCAI",
-        "fullName": "Medical Image Computing and Computer Assisted Intervention",
-        "category": "other",
-        "website": "https://miccai.org/",
-        "brandColor": "#FF2D55",
-        "urls": [
-            "https://conferences.miccai.org/{year}/",
-            "https://miccai{year}.org/"
-        ]
-    },
-    {
-        "id": "mlsys",
-        "name": "MLSys",
-        "fullName": "Conference on Machine Learning and Systems",
-        "category": "other",
-        "website": "https://mlsys.org/",
-        "brandColor": "#34495E",
-        "urls": [
-            "https://mlsys.org/Conferences/{year}",
-            "https://mlsys.org/"
         ]
     }
 ]
@@ -608,32 +662,31 @@ class ConferenceUpdater:
         return result
 
     def _estimate_next_year(self, conf_data: Dict, next_year: int) -> Dict:
-        """Estimate next year's data by adding 1 year to all dates"""
+        """Estimate main submission dates from the previous edition."""
         estimated = conf_data.copy()
         estimated["id"] = f"{conf_data['id'].rsplit('-', 1)[0]}-{next_year}"
         estimated["year"] = next_year
         estimated["isEstimated"] = True
-
-        # Bump all deadline dates by 1 year
-        new_deadlines = []
-        for d in conf_data.get("deadlines", []):
-            new_d = d.copy()
-            try:
-                old_date = datetime.fromisoformat(d["date"].replace("Z", "+00:00"))
-                new_date = old_date.replace(year=old_date.year + 1)
-                new_d["date"] = new_date.isoformat()
-                new_d["estimated"] = True
-                new_d["status"] = "upcoming"
-
-                if d.get("endDate"):
-                    old_end = datetime.fromisoformat(d["endDate"])
-                    new_end = old_end.replace(year=old_end.year + 1)
-                    new_d["endDate"] = new_end.strftime("%Y-%m-%d")
-            except:
-                pass
-            new_deadlines.append(new_d)
-
-        estimated["deadlines"] = new_deadlines
+        year_delta = next_year - conf_data.get("year", next_year - 1)
+        estimated_deadlines = []
+        for deadline in conf_data.get("deadlines", []):
+            if deadline.get("type") not in {"paper", "abstract"}:
+                continue
+            shifted = deadline.copy()
+            match = re.match(r"^(\d{4})(-\d{2}-\d{2}.*)$", deadline.get("date", ""))
+            if not match:
+                continue
+            shifted["date"] = f"{int(match.group(1)) + year_delta}{match.group(2)}"
+            shifted["estimated"] = True
+            shifted["status"] = "upcoming"
+            shifted.pop("sourceUrl", None)
+            shifted.pop("url", None)
+            estimated_deadlines.append(shifted)
+        estimated["deadlines"] = estimated_deadlines
+        estimated["datesTBD"] = not estimated_deadlines
+        estimated["links"] = {}
+        estimated["info"] = {}
+        estimated["notes"] = []
         estimated["location"] = {"city": "TBD", "country": "TBD", "flag": "🌍", "venue": "TBD"}
 
         return estimated
@@ -723,6 +776,7 @@ const CATEGORIES = {{
     cv: {{ name: "Computer Vision", color: "#007AFF" }},
     nlp: {{ name: "NLP", color: "#34C759" }},
     speech: {{ name: "Speech & Audio", color: "#FF9500" }},
+    robotics: {{ name: "Robotics", color: "#FF1493" }},
     other: {{ name: "Other", color: "#8E8E93" }}
 }};
 
