@@ -122,6 +122,9 @@ jobs:
       - name: Validate published conference data
         run: python scripts/validate_data.py js/data.js
 
+      - name: Generate crawlable conference pages
+        run: node scripts/generate_conference_pages.js
+
       # Re-run browser/data contract tests against the newly generated file,
       # not only the pre-scrape checkout.
       - name: Test generated browser data
@@ -130,13 +133,13 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet js/data.js; then
-            echo "No changes to data.js"
+          if [ -z "$(git status --porcelain -- js/data.js conferences sitemap.xml)" ]; then
+            echo "No published data or page changes"
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
-            echo "Changes detected in data.js"
+            echo "Published data or generated pages changed"
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            git diff --stat js/data.js
+            git status --short -- js/data.js conferences sitemap.xml
           fi
 
       - name: Commit and push changes
@@ -145,7 +148,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add js/data.js
+          git add js/data.js conferences sitemap.xml
           git commit -m "chore: update conference deadlines [automated]
 
           Updated conferences: ${{ steps.config.outputs.conferences }}

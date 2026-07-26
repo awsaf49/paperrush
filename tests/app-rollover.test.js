@@ -271,3 +271,86 @@ test('written feedback is prefilled into GitHub without sending its text to anal
     assert.match(url.searchParams.get('body'), /awsaf49\.github\.io\/paperrush/);
     assert.equal(url.searchParams.get('labels'), 'feedback');
 });
+
+test('conference share URLs preserve the selected deadline focus', () => {
+    App.activeDeadlineFilter = 'abstract';
+    const url = new URL(App.buildConferenceURL(
+        { id: 'iclr-2027' },
+        'https://awsaf49.github.io/paperrush/?utm_source=test'
+    ));
+
+    assert.equal(url.searchParams.get('conference'), 'iclr-2027');
+    assert.equal(url.searchParams.get('focus'), 'abstract');
+    assert.equal(url.searchParams.get('utm_source'), 'test');
+});
+
+test('Rush Radar finds the closest pair without overstating estimated dates', () => {
+    const now = new Date('2026-07-26T12:00:00Z');
+    const conferences = [
+        {
+            id: 'iclr-2027', name: 'ICLR', year: 2027,
+            activeDeadline: { type: 'abstract', label: 'Abstract', date: '2026-09-19T23:59:00-12:00', estimated: true }
+        },
+        {
+            id: 'aistats-2027', name: 'AISTATS', year: 2027,
+            activeDeadline: { type: 'abstract', label: 'Abstract', date: '2026-09-25T23:59:00-12:00', estimated: true }
+        },
+        {
+            id: 'icml-2027', name: 'ICML', year: 2027,
+            activeDeadline: { type: 'paper', label: 'Paper', date: '2027-01-28T23:59:00-12:00', estimated: false }
+        }
+    ];
+
+    const analysis = App.analyzeRush(conferences, now);
+
+    assert.equal(analysis.state, 'tight');
+    assert.equal(analysis.gapDays, 6);
+    assert.deepEqual(analysis.pair.map(conference => conference.name), ['ICLR', 'AISTATS']);
+    assert.match(analysis.summary, /At least one of these dates is estimated\./);
+});
+
+test('My Rush share links are stable, focused, and do not retain an open card', () => {
+    const url = new URL(App.buildRushURL([
+        { id: 'iclr-2027', name: 'ICLR' },
+        { id: 'aaai-2027', name: 'AAAI' },
+        { id: 'iclr-2027', name: 'ICLR' }
+    ], 'https://awsaf49.github.io/paperrush/?conference=kdd-2027&utm_source=test'));
+
+    assert.equal(url.searchParams.get('rush'), 'aaai,iclr');
+    assert.equal(url.searchParams.get('focus'), 'submissions');
+    assert.equal(url.searchParams.get('ref'), 'rush-share');
+    assert.equal(url.searchParams.get('conference'), null);
+    assert.equal(url.searchParams.get('utm_source'), 'test');
+});
+
+test('calendar links preserve deadline instants and date-only event ranges', () => {
+    const conference = {
+        id: 'sample-2027',
+        name: 'SAMPLE',
+        year: 2027,
+        website: 'https://example.com/2027',
+        location: { city: 'Montréal', country: 'Canada' },
+        links: {}
+    };
+    const paper = {
+        type: 'paper',
+        label: 'Paper Submission',
+        date: '2026-09-24T23:59:00-12:00',
+        estimated: true
+    };
+    const event = {
+        type: 'conference',
+        label: 'Main Conference',
+        date: '2027-04-26',
+        endDate: '2027-04-30'
+    };
+
+    const google = new URL(App.buildGoogleCalendarURL(conference, paper));
+    assert.equal(google.searchParams.get('dates'), '20260925T115900Z/20260925T122900Z');
+    assert.match(google.searchParams.get('text'), /^\[Estimated\]/);
+
+    const ics = App.buildICS(conference, event, new Date('2026-07-26T12:00:00Z'));
+    assert.match(ics, /DTSTART;VALUE=DATE:20270426/);
+    assert.match(ics, /DTEND;VALUE=DATE:20270501/);
+    assert.match(ics, /URL:https:\/\/example\.com\/2027/);
+});

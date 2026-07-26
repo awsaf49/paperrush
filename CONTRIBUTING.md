@@ -208,6 +208,7 @@ pip install requests openai playwright html2text
 python -m unittest discover -s tests -p 'test_*.py'
 node --test tests/*.test.js
 python scripts/validate_data.py js/data.js
+node scripts/generate_conference_pages.js
 
 # Set API key
 export GEMINI_API_KEY="your-key-here"
@@ -281,7 +282,7 @@ Edit `index.html` (around line 67):
 <button class="filter-pill" data-category="hci">
     <span class="filter-dot" style="--dot-color: #9B59B6"></span>
     <span>HCI</span>
-    <span class="filter-count" id="count-hci">—</span>
+    <span class="filter-count" id="count-hci">-</span>
 </button>
 ```
 
@@ -326,6 +327,8 @@ python -m http.server 8000
 - [ ] Search and filters work as expected
 - [ ] Modal opens/closes properly
 - [ ] Calendar view displays correctly
+- [ ] My Rush, Rush Radar, shared-list import, generated images, and calendar actions work
+- [ ] Generated conference pages have canonical and social metadata
 - [ ] Mobile layout (< 768px) looks good
 
 ### Scraper Dependencies

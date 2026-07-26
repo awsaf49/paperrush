@@ -4,11 +4,11 @@
   <img src="https://img.shields.io/github/stars/awsaf49/paperrush?style=social" alt="Stars">
 </p>
 
-<h1 align="center">⏱️ Conference Deadline Tracker</h1>
+<h1 align="center">⏱️ PaperRush</h1>
 
 <p align="center">
-  <strong>Never miss a paper deadline again!</strong><br>
-  A beautiful conference deadline tracker for AI/ML researchers
+  <strong>A clear planning aid for AI conference deadlines.</strong><br>
+  Paper, abstract, and conference dates with estimates marked and official sources linked
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-<img width="700" height="606" alt="image" align="center" src="https://github.com/user-attachments/assets/31b2f33f-8c2d-47d4-8407-4b74028d0b32" />
+<img width="700" alt="PaperRush social preview" align="center" src="assets/paperrush-social.png" />
 </p>
 
 ---
@@ -28,13 +28,17 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🎨 **Beautiful UI** | OpenAI-inspired gradients, Apple-like animations, glassmorphism |
+| 🎨 **Focused UI** | Deadline-race visual system with responsive liquid-glass controls |
 | 📅 **Calendar View** | Day/Week/Month/Year views with deadline chips |
 | 🎯 **Deadline Focus** | Default to paper + abstract, or filter paper, abstract, conference, and all dates |
 | ⏱️ **Live Countdown** | Real-time timers with smart formatting |
-| 🔄 **Auto-Updates** | LLM-powered scraper keeps deadlines current |
+| 🔄 **Auto-Updates** | Automated, LLM-assisted extraction backed by validation rules |
 | 🛡️ **Safe Rollover** | Prior-cycle dates appear as `Approx` and are replaced by verified scrape results |
 | 🔍 **Smart Search** | Filter by category, search with `⌘K` |
+| 🔖 **My Rush** | Save conference series locally across annual editions |
+| 📡 **Rush Radar** | Compare the spacing between saved deadlines without overstating estimates |
+| 📤 **Calendar & Share** | Export calendars, share a watchlist link, or generate a social image |
+| 🌐 **Searchable Pages** | Crawlable, share-ready pages are generated for every active conference series |
 | 💬 **One-Tap Feedback** | Record quick feedback or open a prefilled detailed report |
 | 📱 **Responsive** | Works on desktop, tablet, and mobile |
 
@@ -53,7 +57,7 @@
 ## 🚀 Quick Start
 
 ### Option 1: Use Directly
-Visit **[https://awsaf49.github.io/paperrush/](https://awsaf49.github.io/paperrush/)** — no installation needed!
+Visit **[https://awsaf49.github.io/paperrush/](https://awsaf49.github.io/paperrush/)** - no installation needed!
 
 ### Option 2: Self-Host
 
@@ -97,7 +101,7 @@ To enable auto-updates on your fork:
 ### System Architecture
 
 ```
-🌐 Conference Websites → 🤖 Gemini LLM → 📄 JSON → 📦 data.js → 🌍 GitHub Pages → 🖥️ Browser
+🌐 Conference Websites → 🤖 Gemini LLM → 📄 JSON → 📦 data.js → 🔎 Conference Pages + Sitemap → 🌍 GitHub Pages
 ```
 
 📊 **See full interactive workflow diagrams**: [`docs/workflow.html`](docs/workflow.html)
@@ -129,7 +133,7 @@ We welcome contributions! See **[`CONTRIBUTING.md`](CONTRIBUTING.md)** for the c
 
 > **Tip:** Use `-12:00` only when the official source explicitly says AoE. Keep a date date-only when its time or timezone is unknown.
 
-**No build tools needed** — just edit and refresh! See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding conferences to the scraper, creating new categories, and more
+**No build tools needed** - just edit and refresh! See [`CONTRIBUTING.md`](CONTRIBUTING.md) for adding conferences to the scraper, creating new categories, and more
 
 ---
 
@@ -234,7 +238,7 @@ See [Issues](https://github.com/awsaf49/paperrush/issues) for detailed tasks.
 
 ## 📄 License
 
-Apache 2.0 License — free to use, modify, and distribute.
+Apache 2.0 License - free to use, modify, and distribute.
 
 ---
 

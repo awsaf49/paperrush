@@ -3,173 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conference Deadline Tracker — AI, ML & CV Paper Deadlines | PaperRush</title>
+    <title>Conference Deadline Tracker - AI, ML & CV Paper Deadlines | PaperRush</title>
     <meta name="description" content="Track confirmed paper, abstract, and conference dates for top AI, ML, computer vision, and NLP venues. Filter the milestones you care about and avoid stale editions.">
-    <meta name="keywords" content="conference deadline tracker, AI conference deadlines, ML conference deadlines, paper submission deadlines, CVPR deadline, NeurIPS deadline, ICML deadline, ICLR deadline, computer vision conferences, NLP conferences">
     <link rel="canonical" href="https://awsaf49.github.io/paperrush/">
+    <script>
+      try {
+        var sharedRush = new URLSearchParams(window.location.search).get('rush') || '';
+        var savedRush = JSON.parse(window.localStorage.getItem('paperrush-saved') || '[]');
+        var hasSharedRush = sharedRush.split(',').some(function (slug) {
+          return /^[a-z0-9-]+$/i.test(slug.trim());
+        });
+        if (hasSharedRush || (Array.isArray(savedRush) && savedRush.length > 0)) {
+          document.documentElement.classList.add('has-rush');
+        }
+      } catch (_error) {
+        // Personalization is optional and must never block the tracker.
+      }
+    </script>
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://awsaf49.github.io/paperrush/">
     <meta property="og:site_name" content="PaperRush">
-    <meta property="og:title" content="Conference Deadline Tracker — AI, ML & CV Paper Deadlines">
-    <meta property="og:description" content="Free conference deadline tracker with live countdown timers for top AI, ML, computer vision & NLP conferences. Never miss a paper submission deadline — CVPR, NeurIPS, ICML, ICLR & more.">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Conference Deadline Tracker — AI, ML & CV Paper Deadlines">
-    <meta name="twitter:description" content="Free conference deadline tracker with live countdown timers for top AI, ML, computer vision & NLP conferences. Never miss a paper submission deadline — CVPR, NeurIPS, ICML, ICLR & more.">
+    <meta property="og:title" content="PaperRush - AI Conference Paper & Abstract Deadlines">
+    <meta property="og:description" content="Plan around paper, abstract, and event dates for 27 AI conference series. Estimates are marked and official sources remain one click away.">
+    <meta property="og:image" content="https://awsaf49.github.io/paperrush/assets/paperrush-social.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="PaperRush AI conference deadline tracker">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PaperRush - AI Conference Paper & Abstract Deadlines">
+    <meta name="twitter:description" content="Plan around paper, abstract, and event dates for 27 AI conference series. Estimates are marked and official sources remain one click away.">
+    <meta name="twitter:image" content="https://awsaf49.github.io/paperrush/assets/paperrush-social.png">
 
     <!-- Structured data: helps Google understand what this page is -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "PaperRush — Conference Deadline Tracker",
-      "alternateName": "Conference Deadline Tracker",
-      "url": "https://awsaf49.github.io/paperrush/",
-      "description": "Free conference deadline tracker with live countdown timers for top AI, ML, computer vision and NLP conferences. Never miss a paper submission deadline.",
-      "applicationCategory": "EducationalApplication",
-      "operatingSystem": "Any (web browser)",
-      "browserRequirements": "Requires JavaScript",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "PaperRush",
+          "alternateName": "PaperRush Conference Deadline Tracker",
+          "url": "https://awsaf49.github.io/paperrush/"
+        },
+        {
+          "@type": "WebApplication",
+          "name": "PaperRush - Conference Deadline Tracker",
+          "url": "https://awsaf49.github.io/paperrush/",
+          "description": "A free planning aid for paper, abstract, and conference dates across major AI research venues, with estimates clearly marked and official sources linked.",
+          "applicationCategory": "EducationalApplication",
+          "image": "https://awsaf49.github.io/paperrush/assets/paperrush-social.png",
+          "operatingSystem": "Any web browser",
+          "browserRequirements": "Requires JavaScript",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        }
+      ]
     }
     </script>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Self-hosted variable fonts avoid a render-blocking third-party request. -->
+    <link rel="preload" href="assets/fonts/outfit-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/jetbrains-mono-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/calendar.css">
     
-    <!-- Favicon - Stopwatch -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='55' r='40' fill='%23f8f8f8' stroke='%231a1a2e' stroke-width='5'/><rect x='45' y='8' width='10' height='12' rx='2' fill='%231a1a2e'/><rect x='48' y='2' width='4' height='8' fill='%231a1a2e'/><line x1='75' y1='25' x2='82' y2='18' stroke='%231a1a2e' stroke-width='4' stroke-linecap='round'/><circle cx='50' cy='55' r='4' fill='%231a1a2e'/><line x1='50' y1='55' x2='50' y2='30' stroke='%231a1a2e' stroke-width='4' stroke-linecap='round'/><line x1='50' y1='55' x2='70' y2='55' stroke='%23e74c3c' stroke-width='3' stroke-linecap='round'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DN6BSW1N8X"></script>
+    <!-- Queue analytics immediately, but keep its network bundle off the critical path. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-DN6BSW1N8X');
+      var analyticsLoaded = false;
+      var loadAnalytics = function () {
+        if (analyticsLoaded) return;
+        analyticsLoaded = true;
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-DN6BSW1N8X';
+        document.head.appendChild(script);
+      };
+      ['pointerdown', 'keydown'].forEach(function (eventName) {
+        window.addEventListener(eventName, loadAnalytics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () {
+        setTimeout(loadAnalytics, 3500);
+      }, { once: true });
     </script>
 
-    <!-- FAQ structured data: can earn expanded FAQ results in Google -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is PaperRush?",
-          "acceptedAnswer": { "@type": "Answer", "text": "PaperRush is a free conference deadline tracker with live countdown timers for the top AI, machine learning, computer vision, NLP, speech, and robotics conferences. It helps researchers plan submissions and never miss a paper deadline." }
-        },
-        {
-          "@type": "Question",
-          "name": "Which AI/ML conference deadlines does it track?",
-          "acceptedAnswer": { "@type": "Answer", "text": "It tracks paper submission deadlines for NeurIPS, ICML, ICLR, AAAI, IJCAI, AISTATS, MLSys, COLT, KDD, CVPR, ICCV, ECCV, WACV, ICIP, MICCAI, BMVC, 3DV, ACL, EACL, EMNLP, NAACL, COLING, ICASSP, INTERSPEECH, ICRA, IROS, and CoRL." }
-        },
-        {
-          "@type": "Question",
-          "name": "Is PaperRush free?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. PaperRush is completely free and open source, with the code available on GitHub." }
-        },
-        {
-          "@type": "Question",
-          "name": "How often are the deadlines updated?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Conference deadlines are refreshed weekly by an automated, LLM-assisted scraper and checked by validation rules. Because conference pages can change or be misread, verify the official source before relying on a deadline." }
-        },
-        {
-          "@type": "Question",
-          "name": "What timezone are the deadlines in?",
-          "acceptedAnswer": { "@type": "Answer", "text": "PaperRush preserves the timezone announced by the conference. AoE is used only when the official source specifies it; unknown times remain date-only." }
+    <script>
+      window.onerror = function () {
+        var loadingState = document.getElementById('loading-state');
+        if (loadingState) {
+          loadingState.textContent = 'PaperRush could not load. Please refresh or report this issue.';
+          loadingState.style.color = '#b42318';
+          loadingState.style.padding = '20px';
         }
-      ]
-    }
+        return false;
+      };
     </script>
+    <script defer src="js/deadline-utils.js"></script>
+    <script defer src="js/data.js"></script>
+    <script defer src="js/countdown.js"></script>
+    <script defer src="js/timeline.js"></script>
+    <script defer src="js/app.js"></script>
 </head>
 <body>
     <!-- Gradient Background -->
     <div class="bg-gradient"></div>
     
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <h1 class="site-title">
-                <span>C</span><span class="letter-stopwatch"></span><span>nference</span>
-                <span class="letter-racing">D</span><span>eadline</span>
-                <span>Tr</span><span class="letter-pin">a</span><span>cker</span>
-            </h1>
-            <p class="site-subtitle">Gotta Catch 'Em All</p>
+    <!-- Compact brand hero: the next deadline is visible before the catalog. -->
+    <header class="hero" id="top">
+        <div class="hero-shell">
+            <div class="hero-copy">
+                <a class="hero-brand" href="./" aria-label="PaperRush home">
+                    <span class="hero-brand-mark" aria-hidden="true">
+                        <span class="hero-brand-hand"></span>
+                    </span>
+                    <span>Paper</span><strong>Rush</strong>
+                </a>
+                <p class="hero-kicker">AI conference deadline tracker</p>
+                <h1 class="hero-title">Catch the deadline.<br><em>Skip the panic.</em></h1>
+                <p class="hero-description">Paper, abstract, and conference dates-kept current, clearly estimated, and linked back to official sources.</p>
+                <div class="hero-facts" aria-label="PaperRush coverage">
+                    <span><strong id="hero-series-count">27</strong> conference series</span>
+                    <span><strong>Weekly</strong> source refresh</span>
+                    <span><strong>Free</strong> and open source</span>
+                </div>
+            </div>
+            <button class="hero-next" id="hero-next" type="button" aria-label="Open the next conference deadline">
+                <span class="hero-next-topline">
+                    <span class="hero-next-eyebrow"><i></i> Next on the grid</span>
+                    <span class="hero-next-category" id="hero-next-category">Loading</span>
+                </span>
+                <span class="hero-next-main">
+                    <span>
+                        <strong class="hero-next-name" id="hero-next-name">Finding the next deadline…</strong>
+                        <span class="hero-next-label" id="hero-next-label">Paper + abstract</span>
+                    </span>
+                    <span class="hero-next-countdown" id="hero-next-countdown">-</span>
+                </span>
+                <span class="hero-next-footer">
+                    <span id="hero-next-date">Checking the latest data</span>
+                    <span class="hero-next-cta">Open card <b aria-hidden="true">→</b></span>
+                </span>
+            </button>
         </div>
     </header>
 
     <!-- Filter Bar -->
     <nav class="filter-bar">
-        <div class="deadline-focus-container" aria-label="Deadline type filter">
-            <span class="sr-only" id="deadline-filter-summary" role="status">3 conferences</span>
-            <div class="deadline-filter-group" id="deadline-filter-group" role="group" aria-label="Choose which dates to show">
-                <div class="deadline-filter-indicator" id="deadline-filter-indicator"></div>
-                <button class="deadline-filter-pill active" type="button" data-deadline-filter="submissions" aria-pressed="true">
-                    Paper + abstract
+        <div class="filter-bar-primary">
+            <div class="deadline-focus-container" aria-label="Deadline type filter">
+                <span class="sr-only" id="deadline-filter-summary" role="status">3 conferences</span>
+                <div class="deadline-filter-group" id="deadline-filter-group" role="group" aria-label="Choose which dates to show">
+                    <div class="deadline-filter-indicator" id="deadline-filter-indicator"></div>
+                    <button class="deadline-filter-pill active" type="button" data-deadline-filter="submissions" aria-pressed="true">Paper + abstract</button>
+                    <button class="deadline-filter-pill" type="button" data-deadline-filter="paper" aria-pressed="false">Paper</button>
+                    <button class="deadline-filter-pill" type="button" data-deadline-filter="abstract" aria-pressed="false">Abstract</button>
+                    <button class="deadline-filter-pill" type="button" data-deadline-filter="conference" aria-pressed="false">Conference</button>
+                    <button class="deadline-filter-pill" type="button" data-deadline-filter="all" aria-pressed="false">All</button>
+                </div>
+            </div>
+            <div class="mobile-filter-tools">
+                <button class="mobile-tool-button" id="filter-drawer-toggle" type="button" aria-controls="filter-drawer" aria-expanded="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"></path></svg>
+                    Refine
                 </button>
-                <button class="deadline-filter-pill" type="button" data-deadline-filter="paper" aria-pressed="false">
-                    Paper
-                </button>
-                <button class="deadline-filter-pill" type="button" data-deadline-filter="abstract" aria-pressed="false">
-                    Abstract
-                </button>
-                <button class="deadline-filter-pill" type="button" data-deadline-filter="conference" aria-pressed="false">
-                    Conference
-                </button>
-                <button class="deadline-filter-pill" type="button" data-deadline-filter="all" aria-pressed="false">
-                    All
+                <button class="mobile-tool-button saved-filter-toggle" type="button" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5h12v16l-6-3.75-6 3.75v-16Z"></path></svg>
+                    My Rush <span class="saved-count">0</span>
                 </button>
             </div>
         </div>
-        <div class="filter-container">
+        <div class="filter-container" id="filter-drawer">
             <div class="filter-group" id="filter-group">
                 <div class="filter-indicator" id="filter-indicator"></div>
                 <button class="filter-pill active" data-category="all">
                     <span class="filter-dot"></span>
                     <span>All</span>
-                    <span class="filter-count" id="count-all">—</span>
+                    <span class="filter-count" id="count-all">-</span>
                 </button>
                 <button class="filter-pill" data-category="ml">
                     <span class="filter-dot" style="--dot-color: #EF4444"></span>
                     <span>ML</span>
-                    <span class="filter-count" id="count-ml">—</span>
+                    <span class="filter-count" id="count-ml">-</span>
                 </button>
                 <button class="filter-pill" data-category="cv">
                     <span class="filter-dot" style="--dot-color: #007AFF"></span>
                     <span>Vision</span>
-                    <span class="filter-count" id="count-cv">—</span>
+                    <span class="filter-count" id="count-cv">-</span>
                 </button>
                 <button class="filter-pill" data-category="nlp">
                     <span class="filter-dot" style="--dot-color: #34C759"></span>
                     <span>NLP</span>
-                    <span class="filter-count" id="count-nlp">—</span>
+                    <span class="filter-count" id="count-nlp">-</span>
                 </button>
                 <button class="filter-pill" data-category="speech">
                     <span class="filter-dot" style="--dot-color: #FF9500"></span>
                     <span>Speech</span>
-                    <span class="filter-count" id="count-speech">—</span>
+                    <span class="filter-count" id="count-speech">-</span>
                 </button>
                 <button class="filter-pill" data-category="robotics">
                     <span class="filter-dot" style="--dot-color: #FF1493"></span>
                     <span>Robotics</span>
-                    <span class="filter-count" id="count-robotics">—</span>
+                    <span class="filter-count" id="count-robotics">-</span>
                 </button>
                 <button class="filter-pill" data-category="other">
                     <span class="filter-dot" style="--dot-color: #8E8E93"></span>
                     <span>Other</span>
-                    <span class="filter-count" id="count-other">—</span>
+                    <span class="filter-count" id="count-other">-</span>
                 </button>
             </div>
             <div class="search-container">
@@ -197,6 +243,11 @@
                     </svg>
                 </button>
             </div>
+            <button class="saved-filter-pill saved-filter-toggle" type="button" aria-pressed="false" title="Show saved conferences">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5h12v16l-6-3.75-6 3.75v-16Z"></path></svg>
+                <span>My Rush</span>
+                <span class="saved-count">0</span>
+            </button>
             <a href="https://github.com/awsaf49/paperrush" target="_blank" rel="noopener" class="github-pill" title="Star on GitHub">
                 <svg class="github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -204,7 +255,7 @@
                 <svg class="star-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
                 </svg>
-                <span class="star-count" id="star-count">—</span>
+                <span class="star-count" id="star-count">-</span>
             </a>
         </div>
     </nav>
@@ -217,6 +268,33 @@
         </svg>
         <span><strong>LLM-assisted, automated data.</strong> Open a card and check the official conference page once before relying on a deadline.</span>
     </aside>
+
+    <section class="rush-radar hidden" id="rush-radar" aria-labelledby="rush-radar-title" aria-live="polite">
+        <div class="rush-radar-main">
+            <div class="rush-radar-mark" aria-hidden="true">
+                <span></span><span></span><i></i>
+            </div>
+            <div class="rush-radar-copy">
+                <span class="rush-radar-kicker" id="rush-radar-kicker">Rush Radar</span>
+                <h2 id="rush-radar-title">Your submission season</h2>
+                <p id="rush-radar-summary"></p>
+                <div class="rush-radar-chips" id="rush-radar-chips" aria-label="Conferences in this Rush"></div>
+                <p class="rush-radar-note">A planning aid, not a prediction. Please confirm every date on the official conference page.</p>
+            </div>
+        </div>
+        <div class="rush-radar-actions">
+            <button class="rush-action rush-action-primary" id="rush-radar-share" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path></svg>
+                Share this Rush
+            </button>
+            <button class="rush-action" id="rush-radar-download" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                Save image
+            </button>
+            <button class="rush-action hidden" id="rush-radar-import" type="button">Add to My Rush</button>
+            <p class="rush-radar-status" id="rush-radar-status" role="status"></p>
+        </div>
+    </section>
 
     <!-- Timeline Container -->
     <main class="timeline-container">
@@ -260,7 +338,7 @@
     <!-- SEO Content: crawlable text so search engines can index the catalog and FAQ -->
     <section class="seo-content" aria-label="About PaperRush">
         <div class="seo-content-inner">
-            <h2>About PaperRush — the AI &amp; ML Conference Deadline Tracker</h2>
+            <h2>About PaperRush - the AI &amp; ML Conference Deadline Tracker</h2>
             <p>
                 <strong>PaperRush</strong> is a free, open-source <strong>conference deadline tracker</strong> for
                 artificial intelligence and machine learning researchers. It shows live countdown timers to every
@@ -311,7 +389,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a><br>Updated <span id="update-date">—</span></p>
+            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a><br>Updated <span id="update-date">-</span></p>
         </div>
     </footer>
 
@@ -350,6 +428,9 @@
         <article class="conference-card" data-conference-id="">
             <div class="card-inner">
                 <div class="card-gradient-zone">
+                    <button class="card-save-button" type="button" aria-label="Save conference" aria-pressed="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5h12v16l-6-3.75-6 3.75v-16Z"></path></svg>
+                    </button>
                     <div class="card-header">
                         <div class="card-title">
                             <h2 class="conf-name"></h2>
@@ -368,9 +449,7 @@
                     <div class="card-deadlines-list">
                         <ul class="deadlines-list"></ul>
                     </div>
-                    <div class="card-tap-hint">
-                        <span>Tap for details</span>
-                    </div>
+                    <button class="card-tap-hint" type="button">View details <span aria-hidden="true">→</span></button>
                 </div>
             </div>
         </article>
@@ -392,6 +471,29 @@
                 </div>
             </div>
             <div class="modal-body">
+                <div class="modal-verification-note">
+                    <span class="modal-verification-dot" aria-hidden="true"></span>
+                    Automated data can be wrong. Verify the official source before submitting.
+                </div>
+                <div class="modal-action-row" aria-label="Conference actions">
+                    <button class="modal-action" id="modal-action-save" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5h12v16l-6-3.75-6 3.75v-16Z"></path></svg>
+                        <span>Save</span>
+                    </button>
+                    <a class="modal-action" id="modal-action-google" href="#" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+                        <span>Google Cal</span>
+                    </a>
+                    <button class="modal-action" id="modal-action-ics" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                        <span>Download .ics</span>
+                    </button>
+                    <button class="modal-action" id="modal-action-share" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path></svg>
+                        <span>Share</span>
+                    </button>
+                </div>
+                <p class="modal-action-status" id="modal-action-status" role="status" aria-live="polite"></p>
                 <div class="modal-section modal-links-section">
                     <h3>📎 Quick Links</h3>
                     <div class="modal-links-grid">
@@ -427,15 +529,15 @@
                     <div class="modal-info-grid">
                         <div class="info-card">
                             <span class="info-card-label">Page Limit</span>
-                            <span class="info-card-value" id="modal-page-limit">—</span>
+                            <span class="info-card-value" id="modal-page-limit">-</span>
                         </div>
                         <div class="info-card">
                             <span class="info-card-label">Review Type</span>
-                            <span class="info-card-value" id="modal-review-type">—</span>
+                            <span class="info-card-value" id="modal-review-type">-</span>
                         </div>
                         <div class="info-card">
                             <span class="info-card-label">Acceptance Rate</span>
-                            <span class="info-card-value" id="modal-acceptance-rate">—</span>
+                            <span class="info-card-value" id="modal-acceptance-rate">-</span>
                         </div>
                     </div>
                 </div>
@@ -453,21 +555,5 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script>
-        window.onerror = function(msg, url, line, col, error) {
-            var loadingState = document.getElementById('loading-state');
-            loadingState.textContent = 'PaperRush could not load. Please refresh or report this issue.';
-            loadingState.style.color = 'red';
-            loadingState.style.padding = '20px';
-            return false;
-        };
-    </script>
-    <script src="js/deadline-utils.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/countdown.js"></script>
-    <script src="js/timeline.js"></script>
-    <script src="js/calendar.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>

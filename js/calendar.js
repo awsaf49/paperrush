@@ -698,6 +698,10 @@ const Calendar = {
     }
 };
 
+if (typeof globalThis !== 'undefined') {
+    globalThis.PaperRushCalendar = Calendar;
+}
+
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = Calendar;
