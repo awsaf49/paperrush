@@ -14,6 +14,7 @@ import re
 import json
 import time
 import requests
+from datetime import datetime, timezone
 from typing import Optional, Dict, List, Set
 from urllib.parse import urljoin, urlparse
 from html.parser import HTMLParser
@@ -1713,7 +1714,11 @@ def main():
         epilog=f"Available conferences:\n  {', '.join(sorted(CONFERENCES.keys()))}"
     )
     parser.add_argument("conference", help="Conference key (cvpr, icml, neurips, etc.)")
-    parser.add_argument("--year", "-y", type=int, default=2026, help="Year (default: 2026)")
+    current_year = datetime.now(timezone.utc).year
+    parser.add_argument(
+        "--year", "-y", type=int, default=current_year,
+        help=f"Year (default: {current_year})"
+    )
     parser.add_argument("--max-steps", "-m", type=int, default=15, help="Max pages to visit (default: 15)")
     parser.add_argument("--output", "-o", type=str, help="Output JSON file")
     parser.add_argument("--quiet", "-q", action="store_true", help="Less verbose output")

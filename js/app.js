@@ -63,23 +63,61 @@ const App = {
      */
     loadData() {
         // Use the data from data.js
-        this.conferences = CONFERENCES_DATA.conferences.map(conf => {
-            // Check if all deadlines have passed
-            const allPassed = this.allDeadlinesPassed(conf.deadlines);
-            
-            if (allPassed) {
-                // Create next year version with estimated deadlines
-                return this.createNextYearConference(conf);
+        const resolvedConferences = CONFERENCES_DATA.conferences.map(conf => {
+            let resolvedConference = conf;
+            let rolloverCount = 0;
+            const currentYear = new Date().getUTCFullYear();
+
+            // A conference edition stops being useful once its main author
+            // submission window closes, even if the conference occurs later.
+            while (rolloverCount < 5) {
+                const hasSubmissionDeadlines = resolvedConference.deadlines.some(deadline =>
+                    this.isSubmissionDeadline(deadline)
+                );
+                const shouldRoll = hasSubmissionDeadlines
+                    ? this.allDeadlinesPassed(resolvedConference.deadlines)
+                    : resolvedConference.year <= currentYear;
+
+                if (!shouldRoll) {
+                    break;
+                }
+
+                const rolledConference = this.createNextYearConference(resolvedConference);
+                resolvedConference = rolledConference;
+                rolloverCount += 1;
+
+                if (!rolledConference.deadlines.some(deadline => this.isSubmissionDeadline(deadline))) {
+                    break;
+                }
             }
             
             // Find the next upcoming deadline
-            const activeDeadline = this.findActiveDeadline(conf.deadlines);
+            const activeDeadline = this.findActiveDeadline(resolvedConference.deadlines);
             return {
-                ...conf,
+                ...resolvedConference,
                 activeDeadline,
                 sortDate: activeDeadline ? new Date(activeDeadline.date) : new Date('2099-12-31')
             };
         });
+
+        // Defensive deduplication: a failed scrape of an older year must not
+        // render beside a newer edition already present in data.js.
+        const latestByName = new Map();
+        resolvedConferences.forEach(conf => {
+            const key = conf.name.toLowerCase();
+            const existing = latestByName.get(key);
+            const shouldReplace = !existing ||
+                conf.year > existing.year ||
+                (conf.year === existing.year && existing.isEstimated && !conf.isEstimated) ||
+                (conf.year === existing.year &&
+                    Boolean(existing.isEstimated) === Boolean(conf.isEstimated) &&
+                    conf.deadlines.length > existing.deadlines.length);
+
+            if (shouldReplace) {
+                latestByName.set(key, conf);
+            }
+        });
+        this.conferences = [...latestByName.values()];
         
         // Sort by next deadline
         this.sortConferences();
@@ -87,66 +125,53 @@ const App = {
     },
     
     /**
-     * Check if all deadlines for a conference have passed
+     * Check whether the main author submission window has closed
      * @param {Array} deadlines - Array of deadline objects
-     * @returns {boolean} True if all deadlines passed
+     * @param {Date} now - Current time, injectable for tests
+     * @returns {boolean} True if no main submission deadline remains
      */
-    allDeadlinesPassed(deadlines) {
-        const now = new Date();
-        return deadlines.every(d => new Date(d.date) <= now);
+    allDeadlinesPassed(deadlines, now = new Date()) {
+        const submissionDeadlines = deadlines.filter(deadline =>
+            this.isSubmissionDeadline(deadline)
+        );
+
+        return submissionDeadlines.length === 0 ||
+            submissionDeadlines.every(deadline => new Date(deadline.date) <= now);
     },
-    
+
     /**
-     * Create next year's conference with estimated deadlines
+     * Identify main-track, author-facing submission deadlines.
+     * Administrative, review, workshop, and conference-event dates must not
+     * keep an obsolete edition on the site.
+     */
+    isSubmissionDeadline(deadline) {
+        const type = (deadline.type || '').toLowerCase();
+        const label = (deadline.label || '').toLowerCase();
+        const excludedLabels = [
+            'workshop', 'tutorial', 'demo', 'dataset', 'benchmark',
+            'position', 'art ', 'education', 'industry', 'doctoral',
+            'student', 'competition', 'affinity', 'show and tell', 'social',
+            'reviewer', 'review', 'bidding', 'camera',
+            'notification', 'decision', 'rebuttal', 'conference'
+        ];
+
+        if (excludedLabels.some(excluded => label.includes(excluded))) {
+            return false;
+        }
+
+        return type === 'abstract' || type === 'paper' || type === 'supplementary';
+    },
+
+    /**
+     * Create the next edition as a dates-TBA placeholder
      * @param {Object} conf - Original conference object
-     * @returns {Object} New conference with bumped year and estimated deadlines
+     * @returns {Object} New conference with the correct year and no guessed dates
      */
     createNextYearConference(conf) {
-        const nextYear = conf.year + 1;
+        const yearOffset = ['ICCV', 'ECCV'].includes(conf.name.toUpperCase()) ? 2 : 1;
+        const nextYear = conf.year + yearOffset;
 
-        // For estimates, only keep key deadlines: abstract, paper submission, main event
-        const keyDeadlines = conf.deadlines.filter(d => {
-            const label = (d.label || '').toLowerCase();
-            const type = (d.type || '').toLowerCase();
-
-            // Keep abstract submission
-            if (type === 'abstract' || label.includes('abstract')) return true;
-
-            // Keep main paper submission (but not workshops, tutorials, etc.)
-            if (type === 'paper' && label.includes('paper') &&
-                !label.includes('workshop') && !label.includes('tutorial') &&
-                !label.includes('demo') && !label.includes('position')) return true;
-
-            // Keep main conference event
-            if (type === 'event' && label.includes('conference')) return true;
-
-            return false;
-        });
-
-        // Bump deadline dates by 1 year and mark as estimated
-        const newDeadlines = keyDeadlines.map(d => {
-            const oldDate = new Date(d.date);
-            const newDate = new Date(oldDate);
-            newDate.setFullYear(newDate.getFullYear() + 1);
-
-            // Also bump end date if exists
-            let newEndDate = null;
-            if (d.endDate) {
-                const oldEndDate = new Date(d.endDate);
-                newEndDate = new Date(oldEndDate);
-                newEndDate.setFullYear(newEndDate.getFullYear() + 1);
-            }
-
-            return {
-                ...d,
-                date: newDate.toISOString(),
-                endDate: newEndDate ? newEndDate.toISOString().split('T')[0] : d.endDate,
-                status: 'upcoming',
-                estimated: true
-            };
-        });
-        
-        const activeDeadline = this.findActiveDeadline(newDeadlines);
+        const newDeadlines = [];
         
         return {
             ...conf,
@@ -160,9 +185,10 @@ const App = {
                 flag: '🌍',
                 venue: 'TBD'
             },
-            activeDeadline,
-            sortDate: activeDeadline ? new Date(activeDeadline.date) : new Date('2099-12-31'),
-            isEstimated: true
+            activeDeadline: null,
+            sortDate: new Date('2099-12-31'),
+            isEstimated: true,
+            datesTBD: true
         };
     },
     
@@ -171,18 +197,15 @@ const App = {
      * @param {Array} deadlines - Array of deadline objects
      * @returns {Object|null} Active deadline or null
      */
-    findActiveDeadline(deadlines) {
-        const now = new Date();
+    findActiveDeadline(deadlines, now = new Date()) {
 
         // Sort all deadlines by date first
         const sortedDeadlines = [...deadlines].sort((a, b) =>
             new Date(a.date) - new Date(b.date)
         );
 
-        // Filter out only notification and camera-ready (keep events for bidding, etc.)
-        const relevantDeadlines = sortedDeadlines.filter(d =>
-            d.type !== 'notification' &&
-            d.type !== 'camera'
+        const relevantDeadlines = sortedDeadlines.filter(deadline =>
+            this.isSubmissionDeadline(deadline)
         );
 
         // Find first non-passed deadline
@@ -193,17 +216,7 @@ const App = {
             }
         }
 
-        // If all relevant deadlines passed, check for conference event
-        const conferenceEvent = sortedDeadlines.find(d =>
-            d.type === 'event' &&
-            d.label.toLowerCase().includes('conference') &&
-            new Date(d.date) > now
-        );
-        if (conferenceEvent) {
-            return conferenceEvent;
-        }
-
-        // All deadlines passed
+        // The next edition should be shown once author submissions close.
         return null;
     },
     
@@ -599,7 +612,9 @@ const App = {
         
         // Title (with estimated badge if needed)
         const confNameEl = card.querySelector('.conf-name');
-        if (conf.isEstimated) {
+        if (conf.datesTBD) {
+            confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge" title="Official dates have not been announced">TBA</span>`;
+        } else if (conf.isEstimated) {
             confNameEl.innerHTML = `${conf.name} ${conf.year} <span class="estimated-badge" title="Dates are approximate based on previous year">Approx</span>`;
         } else {
             confNameEl.textContent = `${conf.name} ${conf.year}`;
@@ -625,6 +640,9 @@ const App = {
                     this.applyFilter();
                 }
             );
+        } else if (conf.datesTBD) {
+            deadlineLabel.textContent = 'Dates to be announced';
+            countdownContainer.innerHTML = '<span class="countdown-value">TBA</span>';
         } else {
             deadlineLabel.textContent = 'All Deadlines Passed';
             deadlineSection.classList.add('passed');
@@ -775,6 +793,9 @@ const App = {
             } else {
                 countdownValue.textContent = `${format.value} ${format.unit}`;
             }
+        } else if (conf.datesTBD) {
+            countdownLabel.textContent = 'Status';
+            countdownValue.textContent = 'Dates to be announced';
         } else {
             countdownLabel.textContent = 'Status';
             countdownValue.textContent = 'All Deadlines Passed';
@@ -1049,11 +1070,12 @@ const App = {
     }
 };
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    App.init();
-    fetchGitHubStars();
-});
+if (typeof document !== 'undefined') {
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        App.init();
+        fetchGitHubStars();
+    });
 
 // Fetch GitHub star count
 async function fetchGitHubStars() {
@@ -1075,25 +1097,28 @@ async function fetchGitHubStars() {
     }
 }
 
-// Handle visibility change (pause/resume timers)
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        CountdownTimer.stopAllTimers();
-    } else {
-        App.render();
-    }
-});
+    // Handle visibility change (pause/resume timers)
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            CountdownTimer.stopAllTimers();
+        } else {
+            App.render();
+        }
+    });
+}
 
 // Handle resize to update snake ordering and filter indicator
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        App.render();
-        TimelineDrawer.redraw();
-        App.updateFilterIndicator();
-    }, 150);
-});
+if (typeof window !== 'undefined') {
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            App.render();
+            TimelineDrawer.redraw();
+            App.updateFilterIndicator();
+        }, 150);
+    });
+}
 
 // Export
 if (typeof module !== 'undefined' && module.exports) {

@@ -32,6 +32,7 @@
 | 📅 **Calendar View** | Day/Week/Month/Year views with deadline chips |
 | ⏱️ **Live Countdown** | Real-time timers with smart formatting |
 | 🔄 **Auto-Updates** | LLM-powered scraper keeps deadlines current |
+| 🛡️ **Safe Rollover** | Closed editions advance with dates marked TBA until officially confirmed |
 | 🔍 **Smart Search** | Filter by category, search with `⌘K` |
 | 📱 **Responsive** | Works on desktop, tablet, and mobile |
 

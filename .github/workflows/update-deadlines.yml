@@ -18,9 +18,9 @@ on:
         required: false
         default: 'all'
       year:
-        description: 'Conference year'
+        description: 'Conference year (blank uses current UTC year)'
         required: false
-        default: '2026'
+        default: ''
 
 env:
   # All conferences supported by the scraper
@@ -54,6 +54,11 @@ jobs:
           pip install requests openai playwright html2text google-genai
           playwright install chromium
 
+      - name: Run rollover regression tests
+        run: |
+          python -m unittest discover -s tests -p 'test_*.py'
+          node --test tests/*.test.js
+
       - name: Determine conferences to scrape
         id: config
         run: |
@@ -64,7 +69,7 @@ jobs:
           fi
 
           if [ -z "${{ github.event.inputs.year }}" ]; then
-            echo "year=2026" >> $GITHUB_OUTPUT
+            echo "year=$(date -u +%Y)" >> $GITHUB_OUTPUT
           else
             echo "year=${{ github.event.inputs.year }}" >> $GITHUB_OUTPUT
           fi
@@ -113,6 +118,9 @@ jobs:
           python scripts/update_from_scraper.py \
             --input $SCRAPED_FILES \
             --output js/data.js
+
+      - name: Validate published conference data
+        run: python scripts/validate_data.py js/data.js
 
       - name: Check for changes
         id: changes

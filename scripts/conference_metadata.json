@@ -70,10 +70,10 @@
     "category": "ml",
     "brandColor": "#00008B",
     "location": {
-      "city": "Washington DC",
-      "country": "USA",
-      "flag": "\ud83c\uddfa\ud83c\uddf8",
-      "venue": "Walter E. Washington Convention Center"
+      "city": "Montr\u00e9al",
+      "country": "Canada",
+      "flag": "\ud83c\udde8\ud83c\udde6",
+      "venue": null
     }
   },
   "acl": {
