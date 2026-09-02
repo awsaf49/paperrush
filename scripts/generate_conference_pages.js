@@ -27,8 +27,18 @@ function safeLink(value) {
 function officialLink(conference, source) {
     return safeLink(
         conference.links?.official || conference.links?.dates || conference.website ||
-        source.links?.official || source.links?.dates || source.website
+        source.links?.official || source.links?.dates || source.website ||
+        conference.links?.previousEdition || source.links?.previousEdition
     );
+}
+
+function isPriorEditionLink(conference, source, sourceURL) {
+    const previousEditionURL = safeLink(
+        conference.links?.previousEdition || source.links?.previousEdition
+    );
+    return Boolean(sourceURL && (
+        sourceURL === previousEditionURL || conference.id !== source.id
+    ));
 }
 
 function formatDate(value, endValue) {
@@ -156,7 +166,7 @@ function renderConferencePage(entry, now) {
     const canonical = `${SITE_URL}/conferences/${conference.id}/`;
     const trackerURL = `${SITE_URL}/?conference=${encodeURIComponent(conference.id)}&focus=submissions`;
     const sourceURL = officialLink(conference, source);
-    const sourceIsPriorEdition = conference.id !== source.id && sourceURL;
+    const sourceIsPriorEdition = isPriorEditionLink(conference, source, sourceURL);
     const active = conference.activeDeadline;
     const category = CATEGORIES[conference.category]?.name || 'AI research';
     const title = `${conference.name} ${conference.year} Deadline: Paper & Abstract Dates | PaperRush`;

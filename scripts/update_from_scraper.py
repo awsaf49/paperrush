@@ -422,6 +422,7 @@ def is_submission_deadline(deadline: Dict) -> bool:
         "reviewer", "review", "bidding", "camera",
         "notification", "decision", "rebuttal", "conference", "journal",
         "presentation request", "one-page", "late breaking", "revision",
+        "poster",
     ]
 
     if any(excluded in label for excluded in excluded_labels):
@@ -566,6 +567,20 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_o
         if parse_date_for_comparison(shifted.get("date")):
             estimated_deadlines.append(shifted)
 
+    # Keep edition-specific URLs only as explicitly labeled prior-edition
+    # evidence. They must never masquerade as the new edition's official page.
+    rolled_website = safe_rollover_website(
+        existing_conf.get("website", ""), existing_year
+    )
+    previous_source = ""
+    if not rolled_website:
+        existing_links = existing_conf.get("links", {})
+        previous_source = (
+            existing_links.get("official")
+            or existing_links.get("dates")
+            or existing_conf.get("website", "")
+        )
+
     # Create new conference entry
     conf_name_lower = conf_name.lower()
     new_conf = {
@@ -574,11 +589,11 @@ def create_estimated_from_existing(existing_conf: Dict, target_year: int, year_o
         "fullName": existing_conf.get("fullName"),
         "year": target_year,
         "category": existing_conf.get("category"),
-        "website": safe_rollover_website(existing_conf.get("website", ""), existing_year),
+        "website": rolled_website,
         "brandColor": existing_conf.get("brandColor"),
         "location": normalize_location(None),
         "deadlines": estimated_deadlines,
-        "links": {},  # Don't copy old links - they'd be wrong
+        "links": ({"previousEdition": previous_source} if previous_source else {}),
         "info": {},  # Author instructions are edition-specific until verified
         "notes": ([f"Approximate dates inferred from the {existing_year} submission cycle."]
                   if estimated_deadlines else []),
@@ -768,6 +783,18 @@ def run_scraper(conference: str, year: int, output_path: str, use_gemini: bool =
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         if result.returncode != 0:
             print(f"  Error scraping {conference}: {result.stderr}")
+            return False
+        if not os.path.isfile(output_path) or os.path.getsize(output_path) == 0:
+            print(f"  Scraper produced no output for {conference} {year}")
+            return False
+        try:
+            with open(output_path, "r") as output_file:
+                output = json.load(output_file)
+        except (OSError, json.JSONDecodeError) as error:
+            print(f"  Invalid scraper output for {conference} {year}: {error}")
+            return False
+        if not isinstance(output, dict):
+            print(f"  Invalid scraper output for {conference} {year}: expected an object")
             return False
         return True
     except subprocess.TimeoutExpired:

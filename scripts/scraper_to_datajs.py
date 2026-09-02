@@ -123,6 +123,8 @@ def infer_deadline_type(event_name: str) -> str:
         return "paper"
     if re.search(r"supplement|video submission", label):
         return "supplementary"
+    if re.search(r"poster submission", label):
+        return "event"
     if "abstract" in label or re.search(r"paper (registration|enrollment)", label):
         return "abstract"
     if re.search(r"paper|submission", label):
@@ -354,7 +356,7 @@ PRIMARY_EXCLUSIONS = (
     "student", "competition", "affinity", "show and tell", "social",
     "reviewer", "review", "bidding", "camera", "notification", "decision",
     "rebuttal", "conference", "journal", "presentation request", "one-page",
-    "late breaking", "revision",
+    "late breaking", "revision", "poster",
 )
 
 

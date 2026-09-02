@@ -16,7 +16,7 @@ const DeadlineRules = {
         'student', 'competition', 'affinity', 'show and tell', 'social',
         'reviewer', 'review', 'bidding', 'camera', 'notification', 'decision',
         'rebuttal', 'conference', 'journal', 'presentation request', 'one-page',
-        'late breaking', 'revision'
+        'late breaking', 'revision', 'poster'
     ],
 
     canonicalType(deadline) {
@@ -31,6 +31,7 @@ const DeadlineRules = {
         if (/tutorial/.test(label) || type === 'tutorial') return 'tutorial';
         if (/paper (and|&) supplement.*submission/.test(label)) return 'paper';
         if (/supplement|video submission/.test(label) || type === 'supplementary') return 'supplementary';
+        if (/poster submission/.test(label)) return 'event';
         if (/abstract/.test(label) || /paper (registration|enrollment)/.test(label)) return 'abstract';
         if (/paper|submission/.test(label) || type === 'paper') return 'paper';
         if (['abstract', 'notification', 'rebuttal', 'camera'].includes(type)) return type;

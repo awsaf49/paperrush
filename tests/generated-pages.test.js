@@ -33,8 +33,40 @@ test('estimated leaf pages are explicit, canonical, and do not claim Event marku
 
     assert.match(html, /<link rel="canonical" href="https:\/\/awsaf49\.github\.io\/paperrush\/conferences\/iclr-2027\/">/);
     assert.match(html, /Estimated from the previous edition/);
-    assert.match(html, /Official conference page/);
+    assert.match(html, /(?:Official conference page|Previous edition source)/);
     assert.match(html, /data-countdown-date="2026-09-19T23:59:00-12:00" data-estimated="true"/);
     assert.match(html, /src="\.\.\/\.\.\/js\/conference-page\.js" defer/);
     assert.doesNotMatch(html, /"@type": "Event"/);
+});
+
+test('rolled estimates label prior-edition evidence without claiming it is current', () => {
+    const conference = {
+        id: 'sample-2027',
+        name: 'SAMPLE',
+        fullName: 'Sample Conference',
+        year: 2027,
+        category: 'ml',
+        location: { city: 'TBD', country: 'TBD' },
+        links: { previousEdition: 'https://example.com/2026' },
+        deadlines: [{
+            type: 'paper',
+            label: 'Paper Submission',
+            date: '2027-05-01',
+            estimated: true
+        }],
+        activeDeadline: {
+            type: 'paper',
+            label: 'Paper Submission',
+            date: '2027-05-01',
+            estimated: true
+        },
+        isEstimated: true
+    };
+    const html = renderConferencePage(
+        { source: conference, conference },
+        new Date('2026-07-26T12:00:00Z')
+    );
+
+    assert.match(html, /href="https:\/\/example\.com\/2026"[^>]*>Previous edition source/);
+    assert.doesNotMatch(html, />Official conference page/);
 });

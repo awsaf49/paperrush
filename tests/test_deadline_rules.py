@@ -154,6 +154,29 @@ class DeadlineRolloverTests(unittest.TestCase):
         self.assertEqual(infer_deadline_type("Camera-Ready Paper Submission"), "camera")
         self.assertEqual(infer_deadline_type("Paper Registration Deadline"), "abstract")
         self.assertEqual(infer_deadline_type("Workshop Paper Submission"), "workshop")
+        self.assertEqual(infer_deadline_type("Poster Submissions Deadline"), "event")
+
+    def test_poster_submission_does_not_keep_main_paper_cycle_open(self):
+        conference = {
+            "deadlines": [
+                {
+                    "type": "paper",
+                    "label": "Paper Submission",
+                    "date": "2026-05-29T23:59:00-12:00",
+                },
+                {
+                    "type": "paper",
+                    "label": "Poster Submissions Deadline",
+                    "date": "2026-10-30T23:59:00-12:00",
+                },
+            ]
+        }
+
+        self.assertTrue(
+            all_deadlines_passed(
+                conference, datetime(2026, 7, 26, 12, tzinfo=timezone.utc)
+            )
+        )
 
     def test_missing_timezone_is_not_silently_changed_to_aoe(self):
         self.assertEqual(convert_date_time("2027-03-07", "23:59", None), "2027-03-07")
@@ -223,7 +246,7 @@ class DeadlineRolloverTests(unittest.TestCase):
         self.assertTrue(any("unsafe website URL" in error for error in errors))
         self.assertTrue(any("expected 'notification'" in error for error in errors))
 
-    def test_estimated_rollover_shifts_dates_but_drops_links_and_instructions(self):
+    def test_estimated_rollover_shifts_dates_and_labels_previous_source(self):
         placeholder = create_estimated_from_existing({
             "id": "sample-2026",
             "name": "SAMPLE",
@@ -238,7 +261,10 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertEqual(placeholder["deadlines"][0]["date"], "2027-01-01")
         self.assertTrue(placeholder["deadlines"][0]["estimated"])
-        self.assertEqual(placeholder["links"], {})
+        self.assertEqual(
+            placeholder["links"],
+            {"previousEdition": "https://example.com/2026"},
+        )
         self.assertEqual(placeholder["info"], {})
         self.assertEqual(placeholder["location"]["city"], "TBD")
 
