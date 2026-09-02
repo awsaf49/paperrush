@@ -78,6 +78,17 @@ def validate_conferences(conferences, now=None):
             **(conference.get("links") or {}),
         }.items():
             linked_years = {int(value) for value in re.findall(r"20\d{2}", link_value or "")}
+            if link_name == "previousEdition":
+                if not conference.get("isEstimated"):
+                    errors.append(
+                        f"{label}: previousEdition is valid only for estimated editions"
+                    )
+                elif linked_years and any(linked_year >= year for linked_year in linked_years):
+                    errors.append(
+                        f"{label}: previousEdition URL must reference an older edition "
+                        f"{sorted(linked_years)!r}"
+                    )
+                continue
             if linked_years and linked_years != {year}:
                 errors.append(
                     f"{label}: {link_name} URL references another edition "

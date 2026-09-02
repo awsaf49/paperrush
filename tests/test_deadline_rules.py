@@ -291,6 +291,48 @@ class DeadlineRolloverTests(unittest.TestCase):
         self.assertTrue(any("website URL references another edition" in error for error in errors))
         self.assertTrue(any("conferenceName references another edition" in error for error in errors))
 
+    def test_validator_accepts_explicit_previous_edition_evidence(self):
+        conference = {
+            "id": "sample-2027",
+            "name": "SAMPLE",
+            "year": 2027,
+            "category": "ml",
+            "website": "",
+            "links": {"previousEdition": "https://example.com/2026"},
+            "info": {},
+            "isEstimated": True,
+            "deadlines": [{
+                "type": "paper",
+                "label": "Paper Submission",
+                "date": "2027-05-01",
+                "estimated": True,
+            }],
+        }
+
+        self.assertEqual(validate_conferences([conference]), [])
+
+    def test_validator_rejects_mislabeled_previous_edition_evidence(self):
+        conference = {
+            "id": "sample-2027",
+            "name": "SAMPLE",
+            "year": 2027,
+            "category": "ml",
+            "website": "",
+            "links": {"previousEdition": "https://example.com/2027"},
+            "info": {},
+            "isEstimated": True,
+            "deadlines": [{
+                "type": "paper",
+                "label": "Paper Submission",
+                "date": "2027-05-01",
+                "estimated": True,
+            }],
+        }
+
+        errors = validate_conferences([conference])
+
+        self.assertTrue(any("must reference an older edition" in error for error in errors))
+
     def test_new_conferences_are_covered_by_scraper_and_weekly_workflow(self):
         required = {"ijcai", "mlsys", "corl", "colt", "miccai", "bmvc", "3dv"}
 
