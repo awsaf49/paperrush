@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-09-02T04:08:24Z
+ * Last updated: 2026-09-02T04:27:52Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-09-02T04:08:24Z",
+	"lastUpdated": "2026-09-02T04:27:52Z",
 	"conferences": [
 			{
 				"id": "3dv-2027",
@@ -546,15 +546,15 @@ const CONFERENCES_DATA = {
 				"website": "https://iclr.cc/Conferences/2027",
 				"brandColor": "#4B0082",
 				"location": {
-					"city": "TBD",
-					"country": "TBD",
-					"flag": "🌍",
+					"city": "Appleton",
+					"country": "USA",
+					"flag": "🇺🇸",
 					"venue": null
 				},
 				"deadlines": [
 					{
 						"type": "abstract",
-						"label": "Abstract Deadline",
+						"label": "Abstract Submission",
 						"date": "2026-09-18T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -562,29 +562,131 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "paper",
-						"label": "Paper Deadline",
+						"label": "Paper Submission",
 						"date": "2026-09-25T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false
 					},
 					{
+						"type": "rebuttal",
+						"label": "Reviews Released",
+						"date": "2026-11-05",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Rebuttal Period Starts",
+						"date": "2026-11-05",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "rebuttal",
+						"label": "Author Rebuttal Period Ends",
+						"date": "2026-11-18",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "Reviewer/AC Discussion Starts",
+						"date": "2026-11-19",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "notification",
+						"label": "Author Notification",
+						"date": "2026-12-16",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "Reviewer/AC Discussion Ends",
+						"date": "2026-12-16",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "camera",
+						"label": "Camera-Ready Instructions",
+						"date": "2027-02-15",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
 						"type": "conference",
 						"label": "Main Conference",
 						"date": "2027-04-26",
-						"endDate": "2027-04-28",
+						"endDate": "2027-04-30",
 						"status": "upcoming",
-						"estimated": false
+						"estimated": false,
+						"timeUnknown": true
 					}
 				],
 				"links": {
 					"official": "https://iclr.cc/Conferences/2027",
+					"submission": "https://openreview.net/group?id=ICLR.cc/2027/Conference",
+					"template": "https://media.iclr.cc/Conferences/ICLR2027/iclr-2027-style-files.zip",
+					"authorGuide": "https://iclr.cc/Conferences/2027/AuthorGuidelines",
+					"reviewerGuide": "https://iclr.cc/Conferences/2027/ReviewerGuide",
+					"author": "https://iclr.cc/Conferences/2027/CallForPapers",
 					"dates": "https://iclr.cc/Conferences/2027/Dates",
-					"author": "https://iclr.cc/Conferences/2027/CallForPapers"
+					"registration": "https://iclr.cc/Register/view-registration",
+					"faq": "https://iclr.cc/FAQ"
 				},
-				"info": {},
-				"notes": [],
-				"isEstimated": false
+				"info": {
+					"pageLimit": "9 pages + unlimited references/bibliography, unlimited appendices (reviewers not required to read), AI use statement, ethics statement (max 1 page), reproducibility statement do not count towards page limit. Page limit increases to 10 for camera ready.",
+					"reviewType": "Double-blind",
+					"submissionFormat": "PDF",
+					"authorQuota": "No author may appear as a co-author on more than 20 papers.",
+					"reciprocalReviewQuota": "Each author may appear as a co-author on at most one paper if no author is an eligible reciprocal reviewer.",
+					"aiDisclosureMandatory": "Authors must disclose AI use in a mandatory section in their paper",
+					"authorsResponsibleForAiContent": "Authors are responsible for contents of submissions, including AI-produced content",
+					"conferenceYear": "2027"
+				},
+				"deskRejectReasons": [
+					"Anonymity violation",
+					"Page limit exceeded",
+					"Placeholder or duplicate abstracts",
+					"Exceeding author submission quota",
+					"Failure to provide required reviews",
+					"Incorrect OpenReview profile information",
+					"No author registered as reviewer",
+					"Dual submission policy violation",
+					"Affiliation with US sanctioned entities",
+					"Placeholder abstract submission",
+					"Anonymous link issues (tracking visitors)",
+					"Revised title/abstract too different",
+					"LLM-produced falsehood",
+					"LLM-produced plagiarism",
+					"LLM-produced misrepresentation",
+					"Code of Ethics violation",
+					"Reviewer: Low quality reviews",
+					"Reviewer: Not responding to warnings",
+					"Plagiarism",
+					"Double submission",
+					"Paper length violation",
+					"Formatting violation"
+				],
+				"notes": []
 			},
 			{
 				"id": "icml-2027",
