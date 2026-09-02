@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-09-02T04:27:52Z
+ * Last updated: 2026-09-02T04:36:24Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-09-02T04:27:52Z",
+	"lastUpdated": "2026-09-02T04:36:24Z",
 	"conferences": [
 			{
 				"id": "3dv-2027",
@@ -551,7 +551,6 @@ const CONFERENCES_DATA = {
 					"flag": "🇺🇸",
 					"venue": null
 				},
-				"locationVerified": true,
 				"deadlines": [
 					{
 						"type": "abstract",
@@ -574,8 +573,35 @@ const CONFERENCES_DATA = {
 						"sourceUrl": "https://iclr.cc/Conferences/2027/Dates"
 					},
 					{
+						"type": "event",
+						"label": "AC: Assignment / Adjustment",
+						"date": "2026-09-30",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "Reviewer: Review Period",
+						"date": "2026-10-21",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "Reviewer: Late Review Chasing / QC",
+						"date": "2026-11-04",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
 						"type": "rebuttal",
-						"label": "Reviews Released",
+						"label": "Initial Reviews Released",
 						"date": "2026-11-05",
 						"endDate": null,
 						"status": "upcoming",
@@ -584,16 +610,7 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "rebuttal",
-						"label": "Author Rebuttal Period Starts",
-						"date": "2026-11-05",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": false,
-						"timeUnknown": true
-					},
-					{
-						"type": "rebuttal",
-						"label": "Author Rebuttal Period Ends",
+						"label": "Author Rebuttal Period",
 						"date": "2026-11-18",
 						"endDate": null,
 						"status": "upcoming",
@@ -602,8 +619,17 @@ const CONFERENCES_DATA = {
 					},
 					{
 						"type": "event",
-						"label": "Reviewer/AC Discussion Starts",
-						"date": "2026-11-19",
+						"label": "AC: Meta-reviewing",
+						"date": "2026-12-02",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": false,
+						"timeUnknown": true
+					},
+					{
+						"type": "event",
+						"label": "AC/SAC: Discussion Period",
+						"date": "2026-12-09",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false,
@@ -619,8 +645,8 @@ const CONFERENCES_DATA = {
 						"timeUnknown": true
 					},
 					{
-						"type": "event",
-						"label": "Reviewer/AC Discussion Ends",
+						"type": "notification",
+						"label": "PC: Calibration / Final Decisions",
 						"date": "2026-12-16",
 						"endDate": null,
 						"status": "upcoming",
@@ -628,9 +654,9 @@ const CONFERENCES_DATA = {
 						"timeUnknown": true
 					},
 					{
-						"type": "camera",
-						"label": "Camera-Ready Instructions",
-						"date": "2027-02-15",
+						"type": "event",
+						"label": "Reviewer/AC: Discussion Period",
+						"date": "2026-12-16",
 						"endDate": null,
 						"status": "upcoming",
 						"estimated": false,
@@ -660,40 +686,81 @@ const CONFERENCES_DATA = {
 					"faq": "https://iclr.cc/FAQ"
 				},
 				"info": {
-					"pageLimit": "9 pages + unlimited references/bibliography, unlimited appendices (reviewers not required to read), AI use statement, ethics statement (max 1 page), reproducibility statement do not count towards page limit. Page limit increases to 10 for camera ready.",
+					"pageLimit": "9 pages + Unlimited references, appendices, AI use statement, optional 1-page ethics statement, optional reproducibility statement",
 					"reviewType": "Double-blind",
 					"submissionFormat": "PDF",
-					"authorQuota": "No author may appear as a co-author on more than 20 papers.",
-					"reciprocalReviewQuota": "Each author may appear as a co-author on at most one paper if no author is an eligible reciprocal reviewer.",
-					"aiDisclosureMandatory": "Authors must disclose AI use in a mandatory section in their paper",
-					"authorsResponsibleForAiContent": "Authors are responsible for contents of submissions, including AI-produced content",
-					"conferenceYear": "2027"
+					"aiDisclosureRequiredTasks": [
+						"Generate synthetic data sets",
+						"help develop theoretical models or conceptual frameworks",
+						"formulate mathematical claims",
+						"provide critical ingredients for proving mathematical claims",
+						"assist in the writing of proofs",
+						"propose or refine hypotheses",
+						"design or provide feedback on research methodology or experiments",
+						"implement methods",
+						"assist with translation",
+						"clean and reformat dataset",
+						"support qualitative and thematic data analysis",
+						"interpret results"
+					],
+					"aiDisclosureRecommendedTasks": [
+						"Formulate questions for surveys or interviews",
+						"create or modify scientific figures or images",
+						"suggest experimental parameters",
+						"create or edit software code",
+						"creation of artifacts",
+						"draft parts of a research paper",
+						"transcribe recordings of research material",
+						"summarize or analyse existing literature",
+						"discover research topics or identify gaps",
+						"brainstorming",
+						"sourcing/searching for information",
+						"edit a research paper to improve readability",
+						"identify relevant literature",
+						"format references",
+						"suggest a structure for a research paper",
+						"propose a title or keywords for a research paper"
+					],
+					"authorQuota": 20,
+					"firstTimeAuthorQuota": 1,
+					"metaReviewWordCountMinimum": 60,
+					"contemporaneousWorkDefinition": "Papers published within the last four months",
+					"newPoliciesThisYear": "co-authorship, reciprocal reviewing, and the use of AI",
+					"arxivPolicy": "allowed per dual submission policy"
 				},
 				"deskRejectReasons": [
+					"Low quality reviews",
+					"Unresponsive to AC warnings",
+					"Code of Ethics violation",
+					"Plagiarism",
+					"Double submission",
+					"Paper length violation",
+					"Formatting violation",
+					"Substantial falsehood by LLM",
+					"Plagiarism by LLM",
+					"Misrepresentation by LLM",
 					"Anonymity violation",
 					"Page limit exceeded",
 					"Placeholder or duplicate abstracts",
 					"Exceeding author submission quota",
-					"Failure to provide required reviews",
-					"Incorrect OpenReview profile information",
+					"Reviewers failing to produce high-quality reviews",
 					"No author registered as reviewer",
+					"Incorrect OpenReview profile information",
+					"Affiliation with sanctioned entities",
 					"Dual submission policy violation",
-					"Affiliation with US sanctioned entities",
+					"Late submission or edits",
+					"Edits after submission deadline",
+					"Failed to submit by abstract deadline",
+					"Missing OpenReview accounts for all authors by full paper deadline",
+					"Adding or removing authors after abstract deadline",
 					"Placeholder abstract submission",
-					"Anonymous link issues (tracking visitors)",
-					"Revised title/abstract too different",
-					"LLM-produced falsehood",
-					"LLM-produced plagiarism",
-					"LLM-produced misrepresentation",
-					"Code of Ethics violation",
-					"Reviewer: Low quality reviews",
-					"Reviewer: Not responding to warnings",
-					"Plagiarism",
-					"Double submission",
-					"Paper length violation",
-					"Formatting violation"
+					"Anonymous link tracks visitors",
+					"Revised title/abstract too different from original",
+					"Egregious LLM usage violations",
+					"Code of Ethics violations"
 				],
-				"notes": []
+				"notes": [],
+				"locationVerified": true
 			},
 			{
 				"id": "icml-2027",
