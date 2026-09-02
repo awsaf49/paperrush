@@ -22,6 +22,7 @@ from scraper_to_datajs import (
     build_location,
     convert_conference_event,
     convert_date_time,
+    convert_deadlines,
     infer_deadline_type,
     normalize_datajs_deadlines,
     timezone_to_offset,
@@ -212,6 +213,67 @@ class DeadlineRolloverTests(unittest.TestCase):
             convert_date_time("2027-03-07", "23:59", "AoE"),
             "2027-03-07T23:59:00-12:00",
         )
+
+    def test_main_deadline_conflicts_prefer_precise_preconference_record(self):
+        deadlines = convert_deadlines(
+            [
+                {
+                    "event": "Abstract Submission",
+                    "date": "2026-09-18",
+                    "time": None,
+                    "timezone": "AoE",
+                },
+                {
+                    "event": "Paper Submission",
+                    "date": "2026-09-25",
+                    "time": None,
+                    "timezone": "AoE",
+                },
+                {
+                    "event": "Paper Submission",
+                    "date": "2026-09-16",
+                    "time": None,
+                    "timezone": None,
+                },
+                {
+                    "event": "Paper Submission",
+                    "date": "2027-09-25",
+                    "time": "23:59",
+                    "timezone": "AoE",
+                },
+            ],
+            conference_start_date="2027-04-26",
+        )
+
+        primary = {
+            deadline["type"]: deadline["date"]
+            for deadline in deadlines
+            if deadline["type"] in {"abstract", "paper"}
+        }
+        self.assertEqual(
+            primary,
+            {
+                "abstract": "2026-09-18T23:59:00-12:00",
+                "paper": "2026-09-25T23:59:00-12:00",
+            },
+        )
+
+    def test_equal_confidence_main_deadline_conflict_is_blocked(self):
+        with self.assertRaisesRegex(ValueError, "Conflicting paper deadlines"):
+            convert_deadlines([
+                {
+                    "event": "Paper Submission",
+                    "date": "2026-09-24",
+                    "time": "23:59",
+                    "timezone": "AoE",
+                },
+                {
+                    "event": "Paper Submission",
+                    "date": "2026-09-25",
+                    "time": "23:59",
+                    "timezone": "AoE",
+                },
+            ])
 
     def test_generic_pacific_time_uses_date_aware_dst_offset(self):
         self.assertEqual(timezone_to_offset("PT", "2026-01-15"), "-08:00")

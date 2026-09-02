@@ -370,6 +370,37 @@ def is_primary_submission_type(deadline: Dict) -> bool:
     return not any(term in label for term in PRIMARY_EXCLUSIONS)
 
 
+def canonical_main_milestone(deadline: Dict) -> Optional[str]:
+    """Return a key only for unqualified main abstract and paper labels."""
+    label = re.sub(r"[^a-z0-9]+", " ", deadline.get("label", "").lower()).strip()
+    exact_labels = {
+        "abstract": {
+            "abstract",
+            "abstract deadline",
+            "abstract submission",
+            "abstract submission deadline",
+            "paper registration",
+            "paper registration deadline",
+        },
+        "paper": {
+            "paper",
+            "paper deadline",
+            "paper submission",
+            "paper submission deadline",
+            "full paper",
+            "full paper deadline",
+            "full paper submission",
+            "full paper submission deadline",
+            "main paper submission",
+            "main paper submission deadline",
+        },
+    }
+    deadline_type = deadline.get("type")
+    if label in exact_labels.get(deadline_type, set()):
+        return deadline_type
+    return None
+
+
 def canonical_instant(date_iso: str) -> str:
     """Normalize equivalent timezone representations for deduplication."""
     if not date_iso or "T" not in date_iso:
@@ -421,7 +452,10 @@ def normalize_datajs_deadlines(deadlines: List[Dict]) -> List[Dict]:
     return sorted(best_by_key.values(), key=lambda item: item.get("date", ""))
 
 
-def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
+def convert_deadlines(
+    scraper_deadlines: List[Dict],
+    conference_start_date: Optional[str] = None,
+) -> List[Dict]:
     """
     Convert scraper deadlines to data.js format with deduplication.
 
@@ -472,21 +506,44 @@ def convert_deadlines(scraper_deadlines: List[Dict]) -> List[Dict]:
         if "T" not in date_iso:
             converted["timeUnknown"] = True
 
+        # A main submission cannot happen after the conference begins. This
+        # rejects repeated-page extraction artifacts from the wrong cycle.
+        if (
+            canonical_main_milestone(converted)
+            and conference_start_date
+            and extract_date_only(date_iso) >= conference_start_date
+        ):
+            continue
+
         converted_list.append(converted)
 
     # Deduplicate equivalent labels and exact primary milestones, including the
     # same instant represented once in local time and once in UTC.
     final_seen = {}
     for deadline in converted_list:
-        semantic = (
-            deadline["type"]
-            if is_primary_submission_type(deadline)
-            else f"{deadline['type']}:{deadline['_normalized']}"
-        )
-        key = (semantic, canonical_instant(deadline["date"]))
+        main_milestone = canonical_main_milestone(deadline)
+        if main_milestone:
+            key = ("main", main_milestone)
+        else:
+            semantic = (
+                deadline["type"]
+                if is_primary_submission_type(deadline)
+                else f"{deadline['type']}:{deadline['_normalized']}"
+            )
+            key = (semantic, canonical_instant(deadline["date"]))
         existing = final_seen.get(key)
         if not existing or deadline_quality(deadline) > deadline_quality(existing):
             final_seen[key] = deadline
+        elif (
+            main_milestone
+            and deadline_quality(deadline) == deadline_quality(existing)
+            and canonical_instant(deadline["date"])
+            != canonical_instant(existing["date"])
+        ):
+            raise ValueError(
+                f"Conflicting {main_milestone} deadlines with equal confidence: "
+                f"{existing['date']} and {deadline['date']}"
+            )
 
     # Clean up internal fields and sort by date
     result = []
@@ -632,8 +689,11 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
                 meta = value
                 break
 
-    deadlines = convert_deadlines(scraper_data.get("deadlines", []))
     conference_event = convert_conference_event(scraper_data)
+    deadlines = convert_deadlines(
+        scraper_data.get("deadlines", []),
+        conference_event.get("date") if conference_event else None,
+    )
     if conference_event and not any(
         deadline.get("type") == "conference" for deadline in deadlines
     ):
