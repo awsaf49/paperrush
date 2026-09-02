@@ -854,8 +854,9 @@ Return a JSON object with these fields:
 
    NOTE: The format "Mon DD 'YY" (e.g., "Feb 15 '26") is VERY COMMON on conference sites!
    The 'YY means 20YY, so '25 = 2025 and '26 = 2026.
-   Use location.start_date and location.end_date for the actual conference event;
-   do not mix conference dates into author deadlines.
+   Use location.start_date and location.end_date for the main conference only;
+   do not mix conference dates into author deadlines. If workshops have separate
+   dates, do not extend the main conference range through the workshop days.
 
 3. **time**: Return in 24-hour format HH:MM (e.g., "23:59"), or null if not specified
    - "11:59 PM" → "23:59"
