@@ -26,7 +26,12 @@ test('published data resolves to safe active primary dates', () => {
 
     const iclr = App.conferences.find(conf => conf.id === 'iclr-2027');
     assert.ok(iclr, 'ICLR 2027 should be visible in Paper + abstract');
-    assert.equal(iclr.activeDeadline.estimated, true);
+    const iclrAbstract = iclr.deadlines.find(deadline => deadline.type === 'abstract');
+    const iclrPaper = iclr.deadlines.find(deadline => deadline.type === 'paper');
+    assert.equal(iclrAbstract.date, '2026-09-18T23:59:00-12:00');
+    assert.equal(iclrPaper.date, '2026-09-25T23:59:00-12:00');
+    assert.equal(iclrAbstract.estimated, false);
+    assert.equal(iclrPaper.estimated, false);
 });
 
 test('conference focus exposes only confirmed upcoming event ranges', () => {

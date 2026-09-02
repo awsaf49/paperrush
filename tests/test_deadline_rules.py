@@ -141,6 +141,29 @@ class DeadlineRolloverTests(unittest.TestCase):
         self.assertEqual(merged[0]["deadlines"][0]["date"], "2026-09-28")
         self.assertFalse(merged[0]["deadlines"][0]["estimated"])
 
+    def test_estimate_cannot_replace_confirmed_same_edition_data(self):
+        existing = [{
+            "id": "iclr-2027", "name": "ICLR", "year": 2027,
+            "deadlines": [{
+                "type": "abstract", "label": "Abstract Submission",
+                "date": "2026-09-18T23:59:00-12:00", "estimated": False,
+            }],
+            "isEstimated": False,
+        }]
+        estimated = [{
+            "id": "iclr-2027", "name": "ICLR", "year": 2027,
+            "deadlines": [{
+                "type": "abstract", "label": "Abstract Submission",
+                "date": "2026-09-19T23:59:00-12:00", "estimated": True,
+            }],
+            "isEstimated": True,
+        }]
+
+        merged = merge_conferences(existing, estimated)
+
+        self.assertEqual(merged[0]["deadlines"][0]["date"], "2026-09-18T23:59:00-12:00")
+        self.assertFalse(merged[0]["deadlines"][0]["estimated"])
+
     def test_two_digit_aaai_url_rolls_forward(self):
         url = "https://aaai.org/conference/aaai/aaai-26/"
 

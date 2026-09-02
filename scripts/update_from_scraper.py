@@ -302,6 +302,26 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
                 # Merge with existing data
                 existing_conf = result[conf_id]
 
+                existing_primary = [
+                    deadline for deadline in existing_conf.get("deadlines", [])
+                    if is_submission_deadline(deadline)
+                ]
+                new_primary = [
+                    deadline for deadline in conf.get("deadlines", [])
+                    if is_submission_deadline(deadline)
+                ]
+                existing_is_confirmed = any(
+                    not deadline.get("estimated", False)
+                    for deadline in existing_primary
+                )
+                new_is_estimated_only = bool(new_primary) and all(
+                    deadline.get("estimated", False)
+                    for deadline in new_primary
+                )
+                if existing_is_confirmed and new_is_estimated_only:
+                    print(f"    Preserved confirmed data: {conf_id}")
+                    continue
+
                 # LOCATION: Prefer scraped location if valid, else use existing
                 new_location = conf.get("location")
                 existing_location = existing_conf.get("location")
@@ -780,7 +800,7 @@ def run_scraper(conference: str, year: int, output_path: str, use_gemini: bool =
         cmd.append("--gemini")
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
         if result.returncode != 0:
             print(f"  Error scraping {conference}: {result.stderr}")
             return False

@@ -104,6 +104,9 @@ jobs:
           ls -la /tmp/scraped/
 
       - name: Convert and update data.js
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           # Find all scraped JSON files
           SCRAPED_FILES=$(find /tmp/scraped -name "*.json" -type f | tr '\n' ' ')

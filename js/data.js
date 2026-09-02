@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-07-26T08:01:54Z
+ * Last updated: 2026-09-02T04:08:24Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-07-26T08:01:54Z",
+	"lastUpdated": "2026-09-02T04:08:24Z",
 	"conferences": [
 			{
 				"id": "3dv-2027",
@@ -554,27 +554,37 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "abstract",
-						"label": "Abstract Submission",
-						"date": "2026-09-19T23:59:00-12:00",
+						"label": "Abstract Deadline",
+						"date": "2026-09-18T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
 					},
 					{
 						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2026-09-24T23:59:00-12:00",
+						"label": "Paper Deadline",
+						"date": "2026-09-25T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": true
+						"estimated": false
+					},
+					{
+						"type": "conference",
+						"label": "Main Conference",
+						"date": "2027-04-26",
+						"endDate": "2027-04-28",
+						"status": "upcoming",
+						"estimated": false
 					}
 				],
-				"links": {},
+				"links": {
+					"official": "https://iclr.cc/Conferences/2027",
+					"dates": "https://iclr.cc/Conferences/2027/Dates",
+					"author": "https://iclr.cc/Conferences/2027/CallForPapers"
+				},
 				"info": {},
-				"notes": [
-					"Approximate dates inferred from the ICLR 2026 submission cycle."
-				],
-				"isEstimated": true
+				"notes": [],
+				"isEstimated": false
 			},
 			{
 				"id": "icml-2027",

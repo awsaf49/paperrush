@@ -26,17 +26,16 @@ test('the generated directory resolves to one active page per conference series'
     assert(entries.every(entry => entry.conference.id.endsWith(`-${entry.conference.year}`)));
 });
 
-test('estimated leaf pages are explicit, canonical, and do not claim Event markup', () => {
+test('confirmed leaf pages use official dates and canonical sources', () => {
     const entry = selectActiveConferences(new Date('2026-07-26T12:00:00Z'))
         .find(candidate => candidate.conference.id === 'iclr-2027');
     const html = renderConferencePage(entry, new Date('2026-07-26T12:00:00Z'));
 
     assert.match(html, /<link rel="canonical" href="https:\/\/awsaf49\.github\.io\/paperrush\/conferences\/iclr-2027\/">/);
-    assert.match(html, /Estimated from the previous edition/);
-    assert.match(html, /(?:Official conference page|Previous edition source)/);
-    assert.match(html, /data-countdown-date="2026-09-19T23:59:00-12:00" data-estimated="true"/);
+    assert.match(html, /Published conference data/);
+    assert.match(html, /Official deadline source/);
+    assert.match(html, /data-countdown-date="2026-09-18T23:59:00-12:00" data-estimated="false"/);
     assert.match(html, /src="\.\.\/\.\.\/js\/conference-page\.js" defer/);
-    assert.doesNotMatch(html, /"@type": "Event"/);
 });
 
 test('rolled estimates label prior-edition evidence without claiming it is current', () => {
