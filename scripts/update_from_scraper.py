@@ -31,10 +31,54 @@ script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 
 from scraper_to_datajs import (
+    canonical_main_milestone,
     convert_scraper_to_datajs,
     load_metadata,
     normalize_datajs_deadlines,
 )
+
+
+def verified_deadline_key(deadline: Dict):
+    """Return the replacement key for a manually verified milestone."""
+    if not deadline.get("verified"):
+        return None
+    main_milestone = canonical_main_milestone(deadline)
+    if main_milestone:
+        return ("main", main_milestone)
+    if deadline.get("type") == "conference":
+        return ("conference",)
+    return (
+        deadline.get("type", "event"),
+        deadline.get("label", "").lower().strip(),
+    )
+
+
+def preserve_verified_deadlines(existing_conf: Dict, new_conf: Dict) -> None:
+    """Keep human-verified facts when an automated scrape disagrees."""
+    verified = [
+        deadline.copy()
+        for deadline in existing_conf.get("deadlines", [])
+        if verified_deadline_key(deadline)
+    ]
+    if not verified:
+        return
+
+    protected_keys = {verified_deadline_key(deadline) for deadline in verified}
+    retained = []
+    for deadline in new_conf.get("deadlines", []):
+        main_milestone = canonical_main_milestone(deadline)
+        if main_milestone:
+            key = ("main", main_milestone)
+        elif deadline.get("type") == "conference":
+            key = ("conference",)
+        else:
+            key = (
+                deadline.get("type", "event"),
+                deadline.get("label", "").lower().strip(),
+            )
+        if key not in protected_keys:
+            retained.append(deadline)
+    new_conf["deadlines"] = retained + verified
 
 
 # =============================================================================
@@ -322,11 +366,16 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
                     print(f"    Preserved confirmed data: {conf_id}")
                     continue
 
+                preserve_verified_deadlines(existing_conf, conf)
+
                 # LOCATION: Prefer scraped location if valid, else use existing
                 new_location = conf.get("location")
                 existing_location = existing_conf.get("location")
 
-                if is_valid_location(new_location):
+                if existing_conf.get("locationVerified"):
+                    conf["location"] = normalize_location(existing_location)
+                    conf["locationVerified"] = True
+                elif is_valid_location(new_location):
                     # Use freshly scraped location (normalize to ensure flag is set)
                     conf["location"] = normalize_location(new_location)
                 elif is_valid_location(existing_location):

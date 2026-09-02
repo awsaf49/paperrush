@@ -17,6 +17,7 @@ from update_from_scraper import (
     parse_date_for_comparison,
     shift_iso_year,
 )
+from scraper import extract_page_content
 from validate_data import find_stale_warnings, validate_conferences
 from scraper_to_datajs import (
     build_location,
@@ -164,6 +165,78 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertEqual(merged[0]["deadlines"][0]["date"], "2026-09-18T23:59:00-12:00")
         self.assertFalse(merged[0]["deadlines"][0]["estimated"])
+
+    def test_automated_scrape_cannot_replace_verified_facts(self):
+        source = "https://example.test/2027/dates"
+        existing = [{
+            "id": "sample-2027",
+            "name": "SAMPLE",
+            "year": 2027,
+            "location": {"city": "California", "country": "USA"},
+            "locationVerified": True,
+            "deadlines": [
+                {
+                    "type": "abstract",
+                    "label": "Abstract Deadline",
+                    "date": "2026-09-18T23:59:00-12:00",
+                    "estimated": False,
+                    "verified": True,
+                    "sourceUrl": source,
+                },
+                {
+                    "type": "conference",
+                    "label": "Main Conference",
+                    "date": "2027-04-26",
+                    "endDate": "2027-04-28",
+                    "estimated": False,
+                    "verified": True,
+                    "sourceUrl": source,
+                },
+            ],
+        }]
+        scraped = [{
+            "id": "sample-2027",
+            "name": "SAMPLE",
+            "year": 2027,
+            "location": {"city": "Footer City", "country": "USA"},
+            "deadlines": [
+                {
+                    "type": "abstract",
+                    "label": "Abstract Submission",
+                    "date": "2026-09-19T23:59:00-12:00",
+                    "estimated": False,
+                },
+                {
+                    "type": "conference",
+                    "label": "Main Conference",
+                    "date": "2027-04-26",
+                    "endDate": "2027-04-30",
+                    "estimated": False,
+                },
+            ],
+        }]
+
+        merged = merge_conferences(existing, scraped)[0]
+
+        self.assertEqual(merged["location"]["city"], "California")
+        self.assertEqual(
+            next(d for d in merged["deadlines"] if d["type"] == "abstract")["date"],
+            "2026-09-18T23:59:00-12:00",
+        )
+        self.assertEqual(
+            next(d for d in merged["deadlines"] if d["type"] == "conference")["endDate"],
+            "2027-04-28",
+        )
+
+    def test_page_extraction_drops_footer_contact_addresses(self):
+        content = extract_page_content(
+            "<main>Conference in California</main>"
+            "<footer>Contact: 2710 E Corridor Dr, Appleton WI</footer>",
+            "https://example.test/2027",
+        )
+
+        self.assertIn("California", content["text"])
+        self.assertNotIn("Appleton", content["text"])
 
     def test_two_digit_aaai_url_rolls_forward(self):
         url = "https://aaai.org/conference/aaai/aaai-26/"

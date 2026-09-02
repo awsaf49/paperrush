@@ -481,8 +481,16 @@ def extract_page_content(html: str, base_url: str) -> Dict:
     Extract content from HTML as Markdown (preserves tables, headings, lists).
     Also extracts links separately for the LLM prompt.
     """
+    # Contact addresses in a shared site footer are not conference venues.
+    content_html = re.sub(
+        r"<footer\b[^>]*>.*?</footer\s*>",
+        "",
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
     # Convert to Markdown (preserves structure!)
-    markdown_text = html_to_markdown(html)
+    markdown_text = html_to_markdown(content_html)
 
     # Clean up excessive whitespace but keep structure
     markdown_text = re.sub(r'\n{3,}', '\n\n', markdown_text)
@@ -899,6 +907,8 @@ Return a JSON object with these fields:
    - If a field is not mentioned on this page, return null - DO NOT guess or use prior knowledge
    - Dates must be explicitly shown - don't guess based on historical patterns
 2. **LOCATION EXTRACTION**: Look for location in headers, banners, hero sections, venue info, etc.
+   - Ignore organization contact addresses, mailing addresses, and footer content
+   - Only return a location when the page explicitly ties it to this conference edition
    - Common formats: "PITTSBURGH, PA, USA", "Vancouver, Canada", "Tampere, Finland"
    - "City, STATE, COUNTRY" format: city is first part, country is last (e.g., "PA, USA" → country is "USA")
    - If you see "September 27 - October 1, 2026 | Pittsburgh, PA" → extract both dates AND location
@@ -1437,6 +1447,7 @@ class ConferenceScraper:
                 "pages_visited": [],
             },
         }
+        location_priorities = {}
 
         # Main loop
         while queue and steps < max_steps:
@@ -1521,10 +1532,22 @@ class ConferenceScraper:
                 elif value is not None and result["info"].get(key) is None:
                     result["info"][key] = value
 
-            # Merge location (take first non-null for each field)
+            # Dates pages are authoritative for event ranges. Landing pages are
+            # generally the strongest source for the venue itself.
+            normalized_url = url.lower().rstrip("/")
+            normalized_base = base_url.lower().rstrip("/")
+            is_dates_page = bool(re.search(r"/(dates?|important-dates?)$", normalized_url))
+            is_landing_page = normalized_url == normalized_base
             for key, value in extracted.get("location", {}).items():
-                if value and not result["location"].get(key):
+                if not value:
+                    continue
+                if key in {"start_date", "end_date"}:
+                    priority = 3 if is_dates_page else 2 if is_landing_page else 1
+                else:
+                    priority = 3 if is_landing_page else 2 if is_dates_page else 1
+                if priority > location_priorities.get(key, 0):
                     result["location"][key] = value
+                    location_priorities[key] = priority
 
             # Merge lists (deduplicate)
             for reason in extracted.get("desk_reject_reasons", []):

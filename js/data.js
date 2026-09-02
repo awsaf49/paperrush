@@ -546,11 +546,12 @@ const CONFERENCES_DATA = {
 				"website": "https://iclr.cc/Conferences/2027",
 				"brandColor": "#4B0082",
 				"location": {
-					"city": "Appleton",
+					"city": "California",
 					"country": "USA",
 					"flag": "🇺🇸",
 					"venue": null
 				},
+				"locationVerified": true,
 				"deadlines": [
 					{
 						"type": "abstract",
@@ -558,7 +559,9 @@ const CONFERENCES_DATA = {
 						"date": "2026-09-18T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": false
+						"estimated": false,
+						"verified": true,
+						"sourceUrl": "https://iclr.cc/Conferences/2027/Dates"
 					},
 					{
 						"type": "paper",
@@ -566,7 +569,9 @@ const CONFERENCES_DATA = {
 						"date": "2026-09-25T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": false
+						"estimated": false,
+						"verified": true,
+						"sourceUrl": "https://iclr.cc/Conferences/2027/Dates"
 					},
 					{
 						"type": "rebuttal",
@@ -635,10 +640,12 @@ const CONFERENCES_DATA = {
 						"type": "conference",
 						"label": "Main Conference",
 						"date": "2027-04-26",
-						"endDate": "2027-04-30",
+						"endDate": "2027-04-28",
 						"status": "upcoming",
 						"estimated": false,
-						"timeUnknown": true
+						"timeUnknown": true,
+						"verified": true,
+						"sourceUrl": "https://iclr.cc/Conferences/2027/Dates"
 					}
 				],
 				"links": {
