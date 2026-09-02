@@ -147,18 +147,20 @@ def convert_date_time(date_str: Optional[str], time_str: Optional[str],
     Output: "2025-11-13T23:59:00-12:00"
 
     Input:  date="2025-11-13", time=None, timezone="AoE"
-    Output: "2025-11-13T23:59:00-12:00" (default to end of day)
+    Output: "2025-11-13T23:59:00-12:00" (AoE means end of the listed day)
 
     Input:  date="2025-11-13", time=None, timezone=None
-    Output: "2025-11-13T23:59:00-12:00" (default to AoE for deadlines)
+    Output: "2025-11-13" (do not invent unpublished precision)
     """
     if not date_str:
         return None
 
-    # A date without a published time or timezone remains date-only. Guessing
-    # AoE creates a false twelve-hour precision window.
     if not time_str:
-        return date_str
+        normalized_timezone = (timezone_str or "").strip().lower()
+        if normalized_timezone in {"aoe", "anywhere on earth"}:
+            time_str = "23:59:00"
+        else:
+            return date_str
     if len(time_str) == 5:  # HH:MM
         time_str = f"{time_str}:00"
 

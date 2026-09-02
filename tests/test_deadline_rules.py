@@ -201,9 +201,13 @@ class DeadlineRolloverTests(unittest.TestCase):
             )
         )
 
-    def test_missing_timezone_is_not_silently_changed_to_aoe(self):
+    def test_aoe_without_an_extracted_time_uses_end_of_day(self):
         self.assertEqual(convert_date_time("2027-03-07", "23:59", None), "2027-03-07")
-        self.assertEqual(convert_date_time("2027-03-07", None, "AoE"), "2027-03-07")
+        self.assertEqual(
+            convert_date_time("2027-03-07", None, "AoE"),
+            "2027-03-07T23:59:00-12:00",
+        )
+        self.assertEqual(convert_date_time("2027-03-07", None, None), "2027-03-07")
         self.assertEqual(
             convert_date_time("2027-03-07", "23:59", "AoE"),
             "2027-03-07T23:59:00-12:00",
