@@ -12,6 +12,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONVERTER = SCRIPT_DIR / "update_from_scraper.py"
 DEFAULT_VALIDATOR = SCRIPT_DIR / "validate_data.py"
+DEFAULT_BROWSER_TEST = SCRIPT_DIR.parent / "tests" / "data-integrity.test.js"
 
 
 def command_succeeded(command, run_command):
@@ -20,10 +21,17 @@ def command_succeeded(command, run_command):
 
 
 def validate_output(output_path, validator_path, run_command):
-    return command_succeeded(
+    if not command_succeeded(
         [sys.executable, str(validator_path), str(output_path)],
         run_command,
-    )
+    ):
+        return False
+    # Browser-level facts must be checked while rollback is still per conference.
+    return run_command(
+        ["node", "--test", str(DEFAULT_BROWSER_TEST)],
+        check=False,
+        env={**os.environ, "PAPERRUSH_DATA_FILE": str(Path(output_path).resolve())},
+    ).returncode == 0
 
 
 def apply_candidate_updates(

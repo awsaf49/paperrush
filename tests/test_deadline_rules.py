@@ -191,6 +191,32 @@ class DeadlineRolloverTests(unittest.TestCase):
         self.assertEqual(merged[0]["deadlines"][0]["date"], "2026-09-18T23:59:00-12:00")
         self.assertFalse(merged[0]["deadlines"][0]["estimated"])
 
+    def test_fallback_preserves_confirmed_event_with_estimated_submissions(self):
+        for dates_tbd in (False, True):
+            with self.subTest(dates_tbd=dates_tbd):
+                existing = [{
+                    "id": "miccai-2027", "name": "MICCAI", "year": 2027,
+                    "deadlines": [
+                        {"type": "paper", "label": "Paper Submission",
+                         "date": "2027-02-26", "estimated": True},
+                        {"type": "conference", "label": "Main Conference",
+                         "date": "2027-09-26", "endDate": "2027-10-01", "estimated": False},
+                    ],
+                }]
+                fallback = [{
+                    "id": "miccai-2027", "name": "MICCAI", "year": 2027,
+                    "isEstimated": True, "datesTBD": dates_tbd,
+                    "deadlines": [] if dates_tbd else [{
+                        "type": "paper", "label": "Paper Submission",
+                        "date": "2027-02-25", "estimated": True,
+                    }],
+                }]
+
+                merged = merge_conferences(existing, fallback)
+
+                self.assertEqual(merged[0]["deadlines"], existing[0]["deadlines"])
+                self.assertTrue(any(d["type"] == "conference" for d in merged[0]["deadlines"]))
+
     def test_automated_scrape_cannot_replace_verified_facts(self):
         source = "https://example.test/2027/dates"
         existing = [{

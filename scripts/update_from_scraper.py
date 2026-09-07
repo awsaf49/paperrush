@@ -346,23 +346,19 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
                 # Merge with existing data
                 existing_conf = result[conf_id]
 
-                existing_primary = [
-                    deadline for deadline in existing_conf.get("deadlines", [])
-                    if is_submission_deadline(deadline)
-                ]
                 new_primary = [
                     deadline for deadline in conf.get("deadlines", [])
                     if is_submission_deadline(deadline)
                 ]
                 existing_is_confirmed = any(
                     not deadline.get("estimated", False)
-                    for deadline in existing_primary
+                    for deadline in existing_conf.get("deadlines", [])
                 )
                 new_is_estimated_only = bool(new_primary) and all(
                     deadline.get("estimated", False)
                     for deadline in new_primary
                 )
-                if existing_is_confirmed and new_is_estimated_only:
+                if existing_is_confirmed and (new_is_estimated_only or conf.get("datesTBD")):
                     print(f"    Preserved confirmed data: {conf_id}")
                     continue
 

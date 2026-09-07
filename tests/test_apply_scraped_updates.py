@@ -20,8 +20,12 @@ class CandidateUpdateTests(unittest.TestCase):
         self.converter = self.root / "converter.py"
         self.validator = self.root / "validator.py"
 
-    def runner(self, command, check=False):
+    def runner(self, command, check=False, **kwargs):
         self.assertFalse(check)
+        if command[0] == "node":
+            self.assertEqual(kwargs["env"]["PAPERRUSH_DATA_FILE"], str(self.output.resolve()))
+            valid = "browser-error" not in self.output.read_text(encoding="utf-8")
+            return subprocess.CompletedProcess(command, 0 if valid else 1)
         script = Path(command[1])
 
         if script == self.validator:
@@ -72,6 +76,22 @@ class CandidateUpdateTests(unittest.TestCase):
         self.assertEqual(
             report["rejected"],
             [{"conference": "conversion-error", "stage": "conversion"}],
+        )
+
+    def test_browser_regression_is_rejected_before_next_candidate(self):
+        report = apply_candidate_updates(
+            [self.candidate("browser-error"), self.candidate("good")],
+            self.output,
+            self.converter,
+            self.validator,
+            self.runner,
+        )
+
+        self.assertEqual(self.output.read_text(encoding="utf-8"), "valid: good")
+        self.assertEqual(report["accepted"], ["good"])
+        self.assertEqual(
+            report["rejected"],
+            [{"conference": "browser-error", "stage": "validation"}],
         )
 
     def test_missing_scrape_is_reported_without_changing_published_data(self):
