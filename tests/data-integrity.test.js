@@ -73,8 +73,22 @@ test('agreed conference expansion has verified or clearly estimated milestones',
             byName.get(name),
             new Date('2026-07-26T12:00:00Z')
         );
+        const primaryDeadlines = rolled.deadlines.filter(deadline =>
+            global.DeadlineRules.isPrimarySubmissionDeadline(deadline)
+        );
+        const estimationStates = new Set(
+            primaryDeadlines.map(deadline => Boolean(deadline.estimated))
+        );
+
         assert.equal(rolled.year, 2027, `${name} did not roll to its next submission cycle`);
-        assert.ok(rolled.deadlines.every(deadline => deadline.estimated));
+        if (rolled.datesTBD) {
+            assert.equal(primaryDeadlines.length, 0, `${name} marks TBA but publishes dates`);
+            assert.equal(rolled.isEstimated, true);
+            return;
+        }
+        assert.ok(primaryDeadlines.length > 0, `${name} has no main submission deadline`);
+        assert.equal(estimationStates.size, 1, `${name} mixes confirmed and estimated main dates`);
+        assert.equal(Boolean(rolled.isEstimated), estimationStates.has(true));
     });
 
     const miccai = byName.get('MICCAI');

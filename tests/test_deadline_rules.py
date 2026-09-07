@@ -5,6 +5,7 @@ import sys
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -17,7 +18,7 @@ from update_from_scraper import (
     parse_date_for_comparison,
     shift_iso_year,
 )
-from scraper import extract_page_content
+from scraper import ConferenceScraper, extract_page_content
 from validate_data import find_stale_warnings, validate_conferences
 from scraper_to_datajs import (
     build_location,
@@ -32,6 +33,29 @@ from scraper_to_datajs import (
 
 
 class DeadlineRolloverTests(unittest.TestCase):
+    def test_chunk_extraction_treats_null_collections_as_empty(self):
+        scraper = ConferenceScraper.__new__(ConferenceScraper)
+        scraper.verbose = False
+        scraper.call_llm = lambda prompt: "ignored"
+        scraper.parse_llm_response = lambda response: {
+            "links": None,
+            "info": None,
+            "location": None,
+            "desk_reject_reasons": None,
+            "deadlines": None,
+            "next_urls_to_visit": None,
+        }
+
+        with patch("scraper.time.sleep", return_value=None):
+            result = scraper.extract_from_page("https://example.com", "page text", [])
+
+        self.assertEqual(result["links"], {})
+        self.assertEqual(result["info"], {})
+        self.assertEqual(result["location"], {})
+        self.assertEqual(result["desk_reject_reasons"], [])
+        self.assertEqual(result["deadlines"], [])
+        self.assertEqual(result["next_urls_to_visit"], [])
+
     def test_future_conference_date_does_not_block_rollover(self):
         conference = {
             "deadlines": [

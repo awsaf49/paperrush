@@ -155,6 +155,9 @@ jobs:
           path: |
             /tmp/scraped
             /tmp/update-report.json
+            js/data.js
+            conferences
+            sitemap.xml
           if-no-files-found: ignore
           retention-days: 14
 

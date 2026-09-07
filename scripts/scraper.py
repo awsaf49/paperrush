@@ -707,38 +707,41 @@ def post_process_extraction(extracted: Dict) -> Dict:
     """
     result = extracted.copy()
 
+    for field in ("links", "info", "location"):
+        if not isinstance(result.get(field), dict):
+            result[field] = {}
+    for field in ("deadlines", "desk_reject_reasons", "next_urls_to_visit"):
+        if not isinstance(result.get(field), list):
+            result[field] = []
+
     # Clean page_limit
-    if "info" in result:
-        page_limit = result["info"].get("page_limit")
-        if page_limit is not None:
-            limit_int, limit_extra = parse_page_limit(page_limit)
-            result["info"]["page_limit"] = limit_int
-            if limit_extra and not result["info"].get("page_limit_extra"):
-                result["info"]["page_limit_extra"] = limit_extra
+    page_limit = result["info"].get("page_limit")
+    if page_limit is not None:
+        limit_int, limit_extra = parse_page_limit(page_limit)
+        result["info"]["page_limit"] = limit_int
+        if limit_extra and not result["info"].get("page_limit_extra"):
+            result["info"]["page_limit_extra"] = limit_extra
 
     # Clean deadlines
-    if "deadlines" in result:
-        cleaned_deadlines = []
-        for d in result["deadlines"]:
-            cleaned = clean_deadline(d)
-            if cleaned and cleaned.get("event"):
-                cleaned_deadlines.append(cleaned)
-        result["deadlines"] = cleaned_deadlines
+    cleaned_deadlines = []
+    for d in result["deadlines"]:
+        cleaned = clean_deadline(d)
+        if cleaned and cleaned.get("event"):
+            cleaned_deadlines.append(cleaned)
+    result["deadlines"] = cleaned_deadlines
 
     # Ensure links.other is a dict
-    if "links" in result:
-        other = result["links"].get("other")
-        if isinstance(other, list):
-            # Convert list to dict
-            result["links"]["other"] = {f"link_{i}": url for i, url in enumerate(other) if url}
-        elif not isinstance(other, dict):
-            result["links"]["other"] = {}
+    other = result["links"].get("other")
+    if isinstance(other, list):
+        # Convert list to dict
+        result["links"]["other"] = {f"link_{i}": url for i, url in enumerate(other) if url}
+    elif not isinstance(other, dict):
+        result["links"]["other"] = {}
 
     # Ensure info.other is a dict
-    if "info" in result:
-        other = result["info"].get("other")
-        if not isinstance(other, dict):
-            result["info"]["other"] = {}
+    other = result["info"].get("other")
+    if not isinstance(other, dict):
+        result["info"]["other"] = {}
 
     return result
 
@@ -1213,6 +1216,8 @@ class ConferenceScraper:
             if not result:
                 self.log("❌ parse failed")
                 continue
+
+            result = post_process_extraction(result)
 
             # Merge links (take first non-null)
             for key, value in result.get("links", {}).items():
