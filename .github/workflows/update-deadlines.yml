@@ -30,9 +30,14 @@ env:
 permissions:
   contents: write
 
+concurrency:
+  group: update-conference-deadlines
+  cancel-in-progress: false
+
 jobs:
   update-deadlines:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     # Skip if push event and commit message doesn't contain [scrape]
     if: |
       github.event_name != 'push' ||
@@ -103,24 +108,32 @@ jobs:
           echo "Scraped files:"
           ls -la /tmp/scraped/
 
-      - name: Convert and update data.js
+      - name: Convert and quarantine invalid updates
+        id: convert
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
-          # Find all scraped JSON files
-          SCRAPED_FILES=$(find /tmp/scraped -name "*.json" -type f | tr '\n' ' ')
+          IFS=',' read -ra CONFS <<< "${{ steps.config.outputs.conferences }}"
+          SCRAPED_FILES=()
+          for conf in "${CONFS[@]}"; do
+            conf=$(echo "$conf" | xargs)
+            if [ -n "$conf" ]; then
+              SCRAPED_FILES+=("/tmp/scraped/${conf}.json")
+            fi
+          done
 
-          if [ -z "$SCRAPED_FILES" ]; then
-            echo "No conferences were scraped successfully. Exiting."
+          if [ "${#SCRAPED_FILES[@]}" -eq 0 ]; then
+            echo "No conferences were configured. Exiting."
             exit 1
           fi
 
-          echo "Converting: $SCRAPED_FILES"
+          printf 'Converting: %s\n' "${SCRAPED_FILES[@]}"
 
-          python scripts/update_from_scraper.py \
-            --input $SCRAPED_FILES \
-            --output js/data.js
+          python scripts/apply_scraped_updates.py \
+            --input "${SCRAPED_FILES[@]}" \
+            --output js/data.js \
+            --report /tmp/update-report.json
 
       - name: Validate published conference data
         run: python scripts/validate_data.py js/data.js
@@ -132,6 +145,18 @@ jobs:
       # not only the pre-scrape checkout.
       - name: Test generated browser data
         run: node --test tests/*.test.js
+
+      - name: Upload scrape diagnostics
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: conference-scrape-${{ github.run_id }}
+          path: |
+            /tmp/scraped
+            /tmp/update-report.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Check for changes
         id: changes
@@ -159,19 +184,25 @@ jobs:
 
           Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
 
-          git push
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
 
       - name: Summary
+        if: always()
         run: |
           echo "## Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Conferences scraped:** ${{ steps.config.outputs.conferences }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Year:** ${{ steps.config.outputs.year }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Accepted updates:** ${{ steps.convert.outputs.accepted }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Unchanged updates:** ${{ steps.convert.outputs.unchanged }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rejected updates:** ${{ steps.convert.outputs.rejected }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Changes detected:** ${{ steps.changes.outputs.has_changes }}" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.changes.outputs.has_changes }}" = "true" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ data.js was updated and pushed to main branch." >> $GITHUB_STEP_SUMMARY
+            echo "data.js was updated and pushed to main branch." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "GitHub Pages will automatically deploy the changes." >> $GITHUB_STEP_SUMMARY
           fi
