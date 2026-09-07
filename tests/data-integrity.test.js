@@ -5,6 +5,15 @@ global.DeadlineRules = require('../js/deadline-utils.js');
 global.CONFERENCES_DATA = require('../js/data.js').CONFERENCES_DATA;
 const App = require('../js/app.js');
 
+test('data freshness exposes healthy, overdue, and stale weekly updates', () => {
+    const now = new Date('2026-09-16T12:00:00Z');
+
+    assert.equal(App.getDataFreshness('2026-09-08T12:00:00Z', now).level, 'fresh');
+    assert.equal(App.getDataFreshness('2026-09-07T12:00:00Z', now).level, 'late');
+    assert.equal(App.getDataFreshness('2026-09-01T12:00:00Z', now).level, 'stale');
+    assert.equal(App.getDataFreshness('not-a-date', now).relativeLabel, 'Unknown');
+});
+
 test('published data resolves to safe active primary dates', () => {
     App.activeDeadlineFilter = 'submissions';
     App.loadData();

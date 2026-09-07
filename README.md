@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/status-active-success.svg" alt="Status">
+  <a href="https://github.com/awsaf49/paperrush/actions/workflows/update-deadlines.yml"><img src="https://github.com/awsaf49/paperrush/actions/workflows/update-deadlines.yml/badge.svg" alt="Conference updater status"></a>
   <img src="https://img.shields.io/github/license/awsaf49/paperrush" alt="License">
   <img src="https://img.shields.io/github/stars/awsaf49/paperrush?style=social" alt="Stars">
 </p>

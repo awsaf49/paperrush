@@ -2376,14 +2376,69 @@ const App = {
      */
     updateLastUpdated() {
         const dateEl = document.getElementById('update-date');
-        if (CONFERENCES_DATA.lastUpdated) {
-            const date = new Date(CONFERENCES_DATA.lastUpdated);
-            dateEl.textContent = date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+        const ageEl = document.getElementById('hero-update-age');
+        const freshnessEl = document.getElementById('data-freshness');
+        const freshness = this.getDataFreshness(CONFERENCES_DATA.lastUpdated);
+
+        if (dateEl) {
+            dateEl.textContent = freshness.fullLabel;
+            dateEl.title = freshness.timestamp || '';
         }
+        if (ageEl) {
+            ageEl.textContent = freshness.relativeLabel === 'Unknown'
+                ? 'Update unknown'
+                : `Updated ${freshness.relativeLabel.toLowerCase()}`;
+        }
+        if (freshnessEl) {
+            freshnessEl.classList.remove('freshness-fresh', 'freshness-late', 'freshness-stale');
+            freshnessEl.classList.add(`freshness-${freshness.level}`);
+            freshnessEl.title = freshness.statusLabel;
+        }
+    },
+
+    /**
+     * Describe update age with a one-day grace period after the weekly run.
+     */
+    getDataFreshness(lastUpdated, now = new Date()) {
+        const date = new Date(lastUpdated);
+        const nowDate = new Date(now);
+        if (!lastUpdated || Number.isNaN(date.getTime()) || Number.isNaN(nowDate.getTime())) {
+            return {
+                level: 'stale',
+                relativeLabel: 'Unknown',
+                fullLabel: 'unavailable',
+                statusLabel: 'The data update time is unavailable',
+                timestamp: ''
+            };
+        }
+
+        const ageMs = Math.max(0, nowDate.getTime() - date.getTime());
+        const ageDays = Math.floor(ageMs / (24 * 60 * 60 * 1000));
+        const relativeLabel = ageDays === 0
+            ? 'Today'
+            : ageDays === 1
+                ? '1 day ago'
+                : `${ageDays} days ago`;
+        const level = ageDays > 14 ? 'stale' : ageDays > 8 ? 'late' : 'fresh';
+        const statusLabel = level === 'fresh'
+            ? `Data refreshed ${relativeLabel.toLowerCase()}`
+            : `Data refresh overdue: last updated ${relativeLabel.toLowerCase()}`;
+        const fullDate = date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZoneName: 'short'
+        });
+
+        return {
+            level,
+            relativeLabel,
+            fullLabel: `${fullDate} (${relativeLabel.toLowerCase()})`,
+            statusLabel,
+            timestamp: date.toISOString()
+        };
     }
 };
 

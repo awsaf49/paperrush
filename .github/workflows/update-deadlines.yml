@@ -29,6 +29,7 @@ env:
 # Grant write permissions to push commits
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: update-conference-deadlines
@@ -205,4 +206,47 @@ jobs:
             echo "data.js was updated and pushed to main branch." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "GitHub Pages will automatically deploy the changes." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify updater health
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JOB_STATUS: ${{ job.status }}
+          REJECTED: ${{ steps.convert.outputs.rejected }}
+          REJECTED_COUNT: ${{ steps.convert.outputs.rejected_count }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+        run: |
+          title="[automation] PaperRush updater needs attention"
+          issue_number=$(
+            gh issue list --state open --limit 100 --json number,title \
+              --jq '.[] | select(.title == "[automation] PaperRush updater needs attention") | .number' \
+              | head -n 1
+          )
+
+          if [ "$JOB_STATUS" != "success" ] || \
+             { [ -n "$REJECTED_COUNT" ] && [ "$REJECTED_COUNT" != "0" ]; }; then
+            cat > /tmp/paperrush-updater-alert.md <<EOF
+          The automated conference refresh needs attention.
+
+          - Run: $RUN_URL
+          - Job status: $JOB_STATUS
+          - Rejected updates: ${REJECTED:-not available}
+
+          Invalid candidates were not published. Valid conference updates remain isolated from rejected ones, and the last known-good data stays live.
+          EOF
+
+            if [ -n "$issue_number" ]; then
+              gh issue comment "$issue_number" --body-file /tmp/paperrush-updater-alert.md
+            else
+              gh issue create \
+                --title "$title" \
+                --body-file /tmp/paperrush-updater-alert.md \
+                --assignee "$REPOSITORY_OWNER"
+            fi
+          elif [ -n "$issue_number" ]; then
+            gh issue comment "$issue_number" \
+              --body "Recovered in $RUN_URL. The updater completed with no rejected conference updates."
+            gh issue close "$issue_number" --reason completed
           fi

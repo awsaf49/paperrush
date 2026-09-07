@@ -130,7 +130,11 @@
                 <p class="hero-description">Paper, abstract, and conference dates-kept current, clearly estimated, and linked back to official sources.</p>
                 <div class="hero-facts" aria-label="PaperRush coverage">
                     <span><strong id="hero-series-count">27</strong> conference series</span>
-                    <span><strong>Weekly</strong> source refresh</span>
+                    <span class="freshness-fact" id="data-freshness">
+                        <a href="https://github.com/awsaf49/paperrush/actions/workflows/update-deadlines.yml" target="_blank" rel="noopener" aria-label="View updater workflow status">
+                            <strong id="hero-update-age">Checking freshness</strong>
+                        </a>
+                    </span>
                     <span><strong>Free</strong> and open source</span>
                 </div>
             </div>
@@ -389,7 +393,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a><br>Updated <span id="update-date">-</span></p>
+            <p>Built by <a href="https://awsaf49.github.io" target="_blank" rel="noopener">Awsaf Rahman</a><br>Data updated <span id="update-date" aria-live="polite">checking...</span> &middot; <a href="https://github.com/awsaf49/paperrush/actions/workflows/update-deadlines.yml" target="_blank" rel="noopener">updater status</a></p>
         </div>
     </footer>
 

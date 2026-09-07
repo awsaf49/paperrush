@@ -360,6 +360,37 @@ body::before {
     font-weight: 680;
 }
 
+.hero-facts a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.freshness-fact a::before {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    background: #8f9099;
+    border-radius: 50%;
+    content: '';
+    vertical-align: 1px;
+}
+
+.freshness-fact.freshness-fresh a::before {
+    background: #34a853;
+    box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.12);
+}
+
+.freshness-fact.freshness-late a::before {
+    background: #d78313;
+    box-shadow: 0 0 0 3px rgba(215, 131, 19, 0.12);
+}
+
+.freshness-fact.freshness-stale a::before {
+    background: #c33f36;
+    box-shadow: 0 0 0 3px rgba(195, 63, 54, 0.12);
+}
+
 .hero-next {
     position: relative;
     display: grid;
@@ -562,6 +593,15 @@ body::before {
     }
 
     .hero-facts {
+        display: flex;
+        margin-top: 13px;
+    }
+
+    .hero-facts > span:not(.freshness-fact) {
+        display: none;
+    }
+
+    .hero-facts .freshness-fact::after {
         display: none;
     }
 
