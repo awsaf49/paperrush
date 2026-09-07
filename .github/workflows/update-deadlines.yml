@@ -31,14 +31,13 @@ permissions:
   contents: write
   issues: write
 
-concurrency:
-  group: update-conference-deadlines
-  cancel-in-progress: false
-
 jobs:
   update-deadlines:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    concurrency:
+      group: update-conference-deadlines
+      cancel-in-progress: false
     # Skip if push event and commit message doesn't contain [scrape]
     if: |
       github.event_name != 'push' ||
