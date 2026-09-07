@@ -24,6 +24,7 @@ from scraper_to_datajs import (
     convert_conference_event,
     convert_date_time,
     convert_deadlines,
+    flatten_links,
     infer_deadline_type,
     normalize_datajs_deadlines,
     timezone_to_offset,
@@ -237,6 +238,48 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertIn("California", content["text"])
         self.assertNotIn("Appleton", content["text"])
+
+    def test_relative_scraper_links_resolve_against_official_site(self):
+        links = flatten_links(
+            {
+                "primary": {
+                    "official": "https://iclr.cc/Conferences/2027",
+                    "submission_portal": "https://openreview.net/group?id=ICLR.cc/2027/Conference",
+                },
+                "guidelines": {
+                    "author_guidelines": "/Conferences/2027/AuthorGuidelines",
+                },
+                "calls": {
+                    "call_for_papers": "/Conferences/2027/CallForPapers",
+                },
+                "misc": {
+                    "important_dates": "/Conferences/2027/Dates",
+                    "registration": "/Register/view-registration",
+                    "faq": "/FAQ",
+                },
+            },
+            "https://iclr.cc/Conferences/2027",
+        )
+
+        self.assertEqual(
+            links["authorGuide"],
+            "https://iclr.cc/Conferences/2027/AuthorGuidelines",
+        )
+        self.assertEqual(
+            links["author"],
+            "https://iclr.cc/Conferences/2027/CallForPapers",
+        )
+        self.assertEqual(links["dates"], "https://iclr.cc/Conferences/2027/Dates")
+        self.assertEqual(links["registration"], "https://iclr.cc/Register/view-registration")
+        self.assertEqual(links["faq"], "https://iclr.cc/FAQ")
+
+    def test_unsafe_scraper_scheme_is_not_normalized_away(self):
+        links = flatten_links(
+            {"official": "https://example.test/2027", "faq": "javascript:alert(1)"},
+            "https://example.test/2027",
+        )
+
+        self.assertEqual(links["faq"], "javascript:alert(1)")
 
     def test_two_digit_aaai_url_rolls_forward(self):
         url = "https://aaai.org/conference/aaai/aaai-26/"

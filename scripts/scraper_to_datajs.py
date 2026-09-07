@@ -16,6 +16,7 @@ import os
 from datetime import datetime
 from typing import Dict, List, Optional
 from pathlib import Path
+from urllib.parse import urljoin, urlparse
 from zoneinfo import ZoneInfo
 
 
@@ -175,7 +176,24 @@ def convert_date_time(date_str: Optional[str], time_str: Optional[str],
 # LINK FLATTENING
 # =============================================================================
 
-def flatten_links(organized_links: Dict) -> Dict:
+def resolve_web_link(value: str, base_url: str) -> str:
+    """Resolve a scraped relative link without hiding unsafe URL schemes."""
+    if not isinstance(value, str) or not value.strip():
+        return value
+
+    value = value.strip()
+    parsed = urlparse(value)
+    if parsed.scheme or parsed.netloc:
+        return value
+
+    base = urlparse(base_url or "")
+    if base.scheme not in {"http", "https"} or not base.netloc:
+        return value
+
+    return urljoin(f"{base_url.rstrip('/')}/", value)
+
+
+def flatten_links(organized_links: Dict, base_url: str = "") -> Dict:
     """
     Convert organized scraper links to flat data.js format.
 
@@ -250,7 +268,10 @@ def flatten_links(organized_links: Dict) -> Dict:
             if organized_links.get(scraper_key):
                 result[datajs_key] = organized_links[scraper_key]
 
-    return result
+    return {
+        key: resolve_web_link(value, base_url)
+        for key, value in result.items()
+    }
 
 
 # =============================================================================
@@ -700,6 +721,8 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
         deadlines.append(conference_event)
         deadlines.sort(key=lambda item: item.get("date", ""))
 
+    website = extract_website(scraper_data)
+
     # Build result
     result = {
         "id": conf_id,
@@ -707,11 +730,11 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
         "fullName": meta.get("fullName", conference_name),
         "year": year,
         "category": meta.get("category", "other"),
-        "website": extract_website(scraper_data),
+        "website": website,
         "brandColor": meta.get("brandColor", "#808080"),
         "location": build_location(scraper_data, meta),
         "deadlines": deadlines,
-        "links": flatten_links(scraper_data.get("links", {})),
+        "links": flatten_links(scraper_data.get("links", {}), website),
         "info": convert_info(scraper_data.get("info", {})),
     }
 
@@ -729,18 +752,19 @@ def convert_scraper_to_datajs(scraper_data: Dict, metadata: Dict = None) -> Dict
 def extract_website(scraper_data: Dict) -> str:
     """Extract website URL from scraper data."""
     links = scraper_data.get("links", {})
+    base_url = (scraper_data.get("_meta") or {}).get("base_url", "")
 
     # Try organized format first
     if "primary" in links:
         official = links.get("primary", {}).get("official")
         if official:
-            return official
+            return resolve_web_link(official, base_url)
 
     # Try flat format
     if links.get("official"):
-        return links["official"]
+        return resolve_web_link(links["official"], base_url)
 
-    return ""
+    return base_url
 
 
 # =============================================================================
