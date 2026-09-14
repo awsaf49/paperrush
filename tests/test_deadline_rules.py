@@ -116,7 +116,7 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertEqual([conference["id"] for conference in merged], ["aaai-2027"])
 
-    def test_merge_retains_an_older_edition_with_an_upcoming_event(self):
+    def test_merge_retires_older_edition_only_after_event_ends(self):
         existing = [{
             "id": "sample-2026",
             "name": "SAMPLE",
@@ -138,12 +138,22 @@ class DeadlineRolloverTests(unittest.TestCase):
             "isEstimated": True,
         }]
 
-        merged = merge_conferences(existing, future_placeholder)
-
-        self.assertEqual(
-            sorted(conference["id"] for conference in merged),
-            ["sample-2026", "sample-2027"],
-        )
+        for reference_time, retained in (
+            ("2026-09-07T12:00:00+00:00", True),
+            ("2026-09-11T12:00:00+00:00", True),
+            ("2026-09-12T23:59:58+00:00", True),
+            ("2026-09-13T00:00:00+00:00", False),
+            ("2026-09-14T12:00:00+00:00", False),
+            ("2030-01-01T00:00:00+00:00", False),
+        ):
+            with self.subTest(now=reference_time):
+                merged = merge_conferences(
+                    existing, future_placeholder, datetime.fromisoformat(reference_time)
+                )
+                self.assertEqual(
+                    sorted(conference["id"] for conference in merged),
+                    ["sample-2026", "sample-2027"] if retained else ["sample-2027"],
+                )
 
     def test_confirmed_scrape_replaces_same_edition_estimate(self):
         existing = [{

@@ -322,7 +322,9 @@ def load_existing_datajs(datajs_path: str) -> List[Dict]:
         return []
 
 
-def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
+def merge_conferences(
+    existing: List[Dict], new: List[Dict], now: Optional[datetime] = None
+) -> List[Dict]:
     """
     Merge new conference data with existing data.
     New data takes precedence for matching conferences.
@@ -331,10 +333,13 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
     Args:
         existing: Existing conferences from data.js
         new: New/updated conferences from scraper
+        now: Reference time for retiring completed editions (defaults to UTC now)
 
     Returns:
         Merged list of conferences
     """
+    now = now or datetime.now(timezone.utc)
+
     # Build lookup by ID
     result = {c["id"]: c for c in existing}
 
@@ -418,7 +423,7 @@ def merge_conferences(existing: List[Dict], new: List[Dict]) -> List[Dict]:
         name = conf.get("name", "").lower()
         year = conf.get("year", 0)
         if (name in latest_years and year < latest_years[name] and
-                not has_upcoming_conference_event(conf)):
+                not has_upcoming_conference_event(conf, now)):
             stale_ids.append(conf_id)
 
     for stale_id in stale_ids:

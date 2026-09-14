@@ -59,11 +59,6 @@ jobs:
           pip install requests openai playwright html2text google-genai
           playwright install chromium
 
-      - name: Run rollover regression tests
-        run: |
-          python -m unittest discover -s tests -p 'test_*.py'
-          node --test tests/*.test.js
-
       - name: Determine conferences to scrape
         id: config
         run: |
@@ -141,10 +136,10 @@ jobs:
       - name: Generate crawlable conference pages
         run: node scripts/generate_conference_pages.js
 
-      # Re-run browser/data contract tests against the newly generated file,
-      # not only the pre-scrape checkout.
-      - name: Test generated browser data
-        run: node --test tests/*.test.js
+      # General regression tests run independently in tests.yml. Only the same
+      # data contract already checked per candidate gates publication here.
+      - name: Validate final browser data contract
+        run: node --test tests/data-integrity.test.js
 
       - name: Upload scrape diagnostics
         if: always()

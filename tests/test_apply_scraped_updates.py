@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import tempfile
@@ -107,6 +108,56 @@ class CandidateUpdateTests(unittest.TestCase):
         self.assertEqual(
             report["rejected"],
             [{"conference": "missing", "stage": "missing input"}],
+        )
+
+    def test_exception_keeps_prior_success_and_allows_later_update(self):
+        def crashing_runner(command, **kwargs):
+            if "--input" in command and Path(command[command.index("--input") + 1]).stem == "crash":
+                self.output.write_text("invalid: interrupted write", encoding="utf-8")
+                raise OSError("simulated tool failure")
+            return self.runner(command, **kwargs)
+
+        report = apply_candidate_updates(
+            [self.candidate("first"), self.candidate("crash"), self.candidate("last")],
+            self.output, self.converter, self.validator, crashing_runner,
+        )
+
+        self.assertEqual(report["accepted"], ["first", "last"])
+        self.assertEqual(report["rejected"], [{"conference": "crash", "stage": "exception: OSError"}])
+        self.assertEqual(self.output.read_text(encoding="utf-8"), "valid: last")
+
+    def test_real_validators_reject_bad_input_without_losing_good_updates(self):
+        baseline = (ROOT / "js" / "data.js").read_text(encoding="utf-8")
+        self.output.write_text(baseline, encoding="utf-8")
+        self.converter.write_text(
+            "import argparse, json\n"
+            "from pathlib import Path\n"
+            "parser = argparse.ArgumentParser()\n"
+            "parser.add_argument('--input')\n"
+            "parser.add_argument('--output')\n"
+            "args = parser.parse_args()\n"
+            "change = json.loads(Path(args.input).read_text())\n"
+            "output = Path(args.output)\n"
+            "output.write_text(change.get('replace', output.read_text()) + change.get('append', ''))\n",
+            encoding="utf-8",
+        )
+        inputs = []
+        for name, change in (
+            ("first", {"append": "\n// accepted first\n"}),
+            ("bad", {"replace": "invalid JavaScript"}),
+            ("last", {"append": "\n// accepted last\n"}),
+        ):
+            path = self.root / f"{name}.json"
+            path.write_text(json.dumps(change), encoding="utf-8")
+            inputs.append(path)
+
+        report = apply_candidate_updates(inputs, self.output, self.converter)
+
+        self.assertEqual(report["accepted"], ["first", "last"])
+        self.assertEqual(report["rejected"], [{"conference": "bad", "stage": "validation"}])
+        self.assertEqual(
+            self.output.read_text(encoding="utf-8"),
+            baseline + "\n// accepted first\n\n// accepted last\n",
         )
 
     def test_refuses_to_update_invalid_published_data(self):

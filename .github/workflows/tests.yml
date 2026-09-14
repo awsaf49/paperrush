@@ -1,0 +1,33 @@
+name: Regression Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test dependencies
+        run: pip install requests openai playwright html2text google-genai
+      - name: Python regression tests
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - name: Browser regression tests
+        if: '!cancelled()'
+        run: node --test tests/*.test.js
+      - name: Validate conference data
+        if: '!cancelled()'
+        run: python scripts/validate_data.py js/data.js
