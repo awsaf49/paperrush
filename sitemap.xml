@@ -26,7 +26,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/neurips-2026/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/coling-2027/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/naacl-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -41,12 +51,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/naacl-2027/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/acl-2027/</loc>
+    <loc>https://awsaf49.github.io/paperrush/conferences/icml-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -56,12 +61,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/icml-2027/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/icip-2027/</loc>
+    <loc>https://awsaf49.github.io/paperrush/conferences/iros-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -71,12 +71,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/miccai-2027/</loc>
+    <loc>https://awsaf49.github.io/paperrush/conferences/icip-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/iros-2027/</loc>
+    <loc>https://awsaf49.github.io/paperrush/conferences/miccai-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -86,17 +86,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/neurips-2027/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/bmvc-2027/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/corl-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -111,17 +101,22 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/kdd-2028/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/aaai-2028/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/kdd-2028/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/eacl-2028/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/acl-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -132,6 +127,11 @@
   </url>
   <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/eccv-2028/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/corl-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
