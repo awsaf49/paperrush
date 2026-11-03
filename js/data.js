@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-09-28T15:25:42Z
+ * Last updated: 2026-11-03T19:18:52Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-09-28T15:25:42Z",
+	"lastUpdated": "2026-11-03T19:18:52Z",
 	"conferences": [
 			{
 				"id": "eccv-2028",
@@ -890,6 +890,14 @@ const CONFERENCES_DATA = {
 					"endDate": null,
 					"status": "upcoming",
 					"estimated": true
+				},
+				{
+					"type": "paper",
+					"label": "Open Problem Submission",
+					"date": "2027-05-25T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true
 				}
 			],
 			"links": {
@@ -1009,14 +1017,26 @@ const CONFERENCES_DATA = {
 				"flag": "🌍",
 				"venue": null
 			},
-			"deadlines": [],
+			"deadlines": [
+				{
+					"type": "paper",
+					"label": "Paper Submission",
+					"date": "2027-05-28",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true,
+					"timeUnknown": true
+				}
+			],
 			"links": {
 				"previousEdition": "https://2026.corl.org"
 			},
 			"info": {},
-			"notes": [],
+			"notes": [
+				"Approximate dates inferred from the 2026 submission cycle."
+			],
 			"isEstimated": true,
-			"datesTBD": true
+			"datesTBD": false
 		},
 		{
 			"id": "eacl-2027",
@@ -1594,7 +1614,16 @@ const CONFERENCES_DATA = {
 			"deadlines": [
 				{
 					"type": "paper",
-					"label": "Paper Submission Opens",
+					"label": "Submission Site Opens",
+					"date": "2027-01-08",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true,
+					"timeUnknown": true
+				},
+				{
+					"type": "paper",
+					"label": "Paper Submission System Opens",
 					"date": "2027-01-08T00:00:00+00:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1602,7 +1631,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "abstract",
-					"label": "Abstract Submission",
+					"label": "Abstract Submission Deadline",
 					"date": "2027-01-23T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1610,7 +1639,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "paper",
-					"label": "Paper Submission",
+					"label": "Paper Submission Deadline",
 					"date": "2027-01-28T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
@@ -1820,30 +1849,27 @@ const CONFERENCES_DATA = {
 			"deadlines": [
 				{
 					"type": "paper",
-					"label": "Special Session Proposal Submission",
-					"date": "2027-01-31",
+					"label": "Paper Submission",
+					"date": "2027-03-02T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true,
-					"timeUnknown": true
+					"estimated": true
 				},
 				{
 					"type": "paper",
-					"label": "Paper Submission",
-					"date": "2027-03-02",
+					"label": "Final Paper Submission",
+					"date": "2027-07-16T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true,
-					"timeUnknown": true
+					"estimated": true
 				},
 				{
 					"type": "paper",
 					"label": "Award Nominations Submission",
-					"date": "2027-07-31",
+					"date": "2027-07-31T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true,
-					"timeUnknown": true
+					"estimated": true
 				}
 			],
 			"links": {
@@ -2057,6 +2083,56 @@ const CONFERENCES_DATA = {
 				"openreviewProfileRequirement": "All authors must have complete and active OpenReview profiles, including information such as affiliations, conflicts of interest, and publication history. Create profile at least two weeks in advance."
 			},
 			"notes": []
+		},
+		{
+			"id": "neurips-2027",
+			"name": "NeurIPS",
+			"fullName": "Neural Information Processing Systems",
+			"year": 2027,
+			"category": "ml",
+			"website": "",
+			"brandColor": "#8B0000",
+			"location": {
+				"city": "TBD",
+				"country": "TBD",
+				"flag": "🌍",
+				"venue": null
+			},
+			"deadlines": [
+				{
+					"type": "abstract",
+					"label": "Abstract Submission",
+					"date": "2027-05-04T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true
+				},
+				{
+					"type": "paper",
+					"label": "Paper Submission",
+					"date": "2027-05-06T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true
+				},
+				{
+					"type": "paper",
+					"label": "Paper Presentation Site Preference Form Deadline",
+					"date": "2027-09-30T23:59:00-12:00",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": true
+				}
+			],
+			"links": {
+				"previousEdition": "https://neurips.cc/Conferences/2026"
+			},
+			"info": {},
+			"notes": [
+				"Approximate dates inferred from the 2026 submission cycle."
+			],
+			"isEstimated": true,
+			"datesTBD": false
 		},
 		{
 			"id": "wacv-2027",
@@ -2447,106 +2523,6 @@ const CONFERENCES_DATA = {
 			"notes": []
 		},
 		{
-			"id": "emnlp-2026",
-			"name": "EMNLP",
-			"fullName": "Empirical Methods in Natural Language Processing",
-			"year": 2026,
-			"category": "nlp",
-			"website": "https://2026.emnlp.org",
-			"brandColor": "#006400",
-			"location": {
-				"city": "Budapest",
-				"country": "Hungary",
-				"flag": "🌍",
-				"venue": "Miami Beach Convention Center"
-			},
-			"deadlines": [
-				{
-					"type": "paper",
-					"label": "Paper Submission",
-					"date": "2026-05-25T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Reviewer Registration Deadline",
-					"date": "2026-05-27T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "rebuttal",
-					"label": "Author Rebuttal Period Start",
-					"date": "2026-07-07T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "rebuttal",
-					"label": "Author Rebuttal Period End",
-					"date": "2026-07-13T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Meta Review Release",
-					"date": "2026-07-30T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "EMNLP Commitment Deadline",
-					"date": "2026-08-02T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Author Notification",
-					"date": "2026-08-20T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "camera",
-					"label": "Camera-Ready Deadline",
-					"date": "2026-08-30T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "conference",
-					"label": "Main Conference",
-					"date": "2026-10-24",
-					"endDate": "2026-10-29",
-					"status": "upcoming",
-					"estimated": false,
-					"timeUnknown": true
-				}
-			],
-			"links": {
-				"official": "https://2026.emnlp.org",
-				"submission": "https://openreview.net/group?id=aclweb.org/ACL/ARR/2026/May",
-				"author": "https://2026.emnlp.org/calls/main_conference_papers/",
-				"registration": "https://2026.emnlp.org/registration",
-				"faq": "https://2026.emnlp.org/faq",
-				"dates": "https://2026.emnlp.org/"
-			},
-			"info": {},
-			"notes": []
-		},
-		{
 			"id": "interspeech-2026",
 			"name": "INTERSPEECH",
 			"fullName": "Annual Conference of the International Speech Communication Association",
@@ -2627,178 +2603,6 @@ const CONFERENCES_DATA = {
 			"info": {},
 			"notes": [],
 			"isEstimated": true
-		},
-		{
-			"id": "iros-2026",
-			"name": "IROS",
-			"fullName": "IEEE/RSJ International Conference on Intelligent Robots and Systems",
-			"year": 2026,
-			"category": "robotics",
-			"website": "https://2026.ieee-iros.org",
-			"brandColor": "#FF1493",
-			"location": {
-				"city": "Pittsburgh",
-				"country": "USA",
-				"flag": "🇺🇸",
-				"venue": "David Lawrence Convention Center"
-			},
-			"deadlines": [
-				{
-					"type": "event",
-					"label": "Special Session Proposal Deadline",
-					"date": "2026-01-31T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Special Session Proposal Notification",
-					"date": "2026-02-09T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Paper Submission",
-					"date": "2026-03-02T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "supplementary",
-					"label": "Video Supplement Submission",
-					"date": "2026-03-07T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Competition and Forum Proposal Deadline",
-					"date": "2026-03-16T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "workshop",
-					"label": "Workshop/Tutorial Proposal Deadline",
-					"date": "2026-03-16T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Competition and Forum Proposal Notification",
-					"date": "2026-04-13T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Special Session, Competition, and Forum Proposal Notification",
-					"date": "2026-04-13T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Paper Acceptance Notification",
-					"date": "2026-06-16T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Workshop/Tutorial Proposal Notification",
-					"date": "2026-06-16T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "event",
-					"label": "Oral Session Format Preference Deadline",
-					"date": "2026-06-30T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "camera",
-					"label": "Camera-Ready Submission",
-					"date": "2026-07-16T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Late Breaking Results Submission",
-					"date": "2026-07-31T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "notification",
-					"label": "Late Breaking Results Notification",
-					"date": "2026-08-07T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "paper",
-					"label": "Final Late Breaking Results Submission",
-					"date": "2026-08-21T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
-					"type": "conference",
-					"label": "Main Conference",
-					"date": "2026-09-28",
-					"endDate": "2026-09-30",
-					"status": "upcoming",
-					"estimated": false,
-					"timeUnknown": true
-				}
-			],
-			"links": {
-				"official": "https://2026.ieee-iros.org",
-				"submission": "https://2026.ieee-iros.org/iros2026-submit/",
-				"template": "https://ras.papercept.net/conferences/support/tex.php",
-				"authorGuide": "https://www.ieee-ras.org/publications/rules-for-the-double-anonymous-review-process",
-				"reviewerGuide": "https://www.ieee-ras.org/publications/rules-for-the-double-anonymous-review-process",
-				"author": "https://2026.ieee-iros.org/contribute/call-for-papers/",
-				"dates": "https://iros-pittsburgh.org/",
-				"registration": "https://2026.ieee-iros.org/attend/registration/"
-			},
-			"info": {
-				"pageLimit": "8 pages + Includes references and appendices; no option for additional pages.",
-				"reviewType": "Double-blind",
-				"submissionFormat": "PDF",
-				"videoSupplement": "1-minute video (up to 10 MB), not mandatory"
-			},
-			"deskRejectReasons": [
-				"Page limit exceeded",
-				"Anonymity violation",
-				"Formatting non-compliance",
-				"Anonymity violation (authors/affiliations)",
-				"Anonymity violation (response file)",
-				"AI listed as author",
-				"Processing manuscript through AI system"
-			],
-			"notes": []
 		},
 		{
 			"id": "naacl-2026",
