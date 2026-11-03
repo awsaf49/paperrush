@@ -21,6 +21,10 @@ on:
         description: 'Conference year (blank uses current UTC year)'
         required: false
         default: ''
+      replay_run_id:
+        description: 'Recover saved scrape inputs from a previous run (optional)'
+        required: false
+        default: ''
 
 env:
   # All conferences supported by the scraper
@@ -28,6 +32,7 @@ env:
 
 # Grant write permissions to push commits
 permissions:
+  actions: read
   contents: write
   issues: write
 
@@ -74,7 +79,21 @@ jobs:
             echo "year=${{ github.event.inputs.year }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Recover saved scrape inputs
+        if: github.event_name == 'workflow_dispatch' && inputs.replay_run_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPLAY_RUN_ID: ${{ inputs.replay_run_id }}
+        run: |
+          [[ "$REPLAY_RUN_ID" =~ ^[0-9]+$ ]]
+          gh run download "$REPLAY_RUN_ID" \
+            --name "conference-scrape-$REPLAY_RUN_ID" \
+            --dir /tmp/replayed-scrape
+          mkdir -p /tmp/scraped
+          cp /tmp/replayed-scrape/tmp/scraped/*.json /tmp/scraped/
+
       - name: Run scraper for each conference
+        if: inputs.replay_run_id == ''
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -193,6 +212,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Conferences scraped:** ${{ steps.config.outputs.conferences }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Year:** ${{ steps.config.outputs.year }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Recovered scrape run:** ${{ inputs.replay_run_id || 'none (fresh scrape)' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Accepted updates:** ${{ steps.convert.outputs.accepted }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Unchanged updates:** ${{ steps.convert.outputs.unchanged }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Rejected updates:** ${{ steps.convert.outputs.rejected }}" >> $GITHUB_STEP_SUMMARY

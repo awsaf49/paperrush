@@ -39,7 +39,6 @@ def validate_conferences(conferences, now=None):
     """Return human-readable validation errors for generated conferences."""
     now = now or datetime.now(timezone.utc)
     errors = []
-    editions_by_name = {}
 
     for conference in conferences:
         name = conference.get("name", "").strip()
@@ -50,9 +49,6 @@ def validate_conferences(conferences, now=None):
         if not name or not isinstance(year, int):
             errors.append(f"{label}: missing name or numeric year")
             continue
-
-        name_key = name.lower()
-        editions_by_name.setdefault(name_key, []).append(conference)
 
         expected_suffix = f"-{year}"
         if not conf_id.endswith(expected_suffix):
@@ -172,19 +168,6 @@ def validate_conferences(conferences, now=None):
             if is_submission_deadline(deadline):
                 submission_deadlines.append(parsed)
 
-    for editions in editions_by_name.values():
-        if len(editions) < 2:
-            continue
-        newest_year = max(conference["year"] for conference in editions)
-        for conference in editions:
-            if conference["year"] == newest_year:
-                continue
-            if not has_upcoming_conference_event(conference, now):
-                label = conference.get("id") or conference.get("name")
-                errors.append(
-                    f"{label}: older editions may remain only for an upcoming conference event"
-                )
-
     return errors
 
 
@@ -192,9 +175,22 @@ def find_stale_warnings(conferences, now=None):
     """Report source entries that the browser's rollover failsafe will replace."""
     now = now or datetime.now(timezone.utc)
     warnings = []
+    newest_years = {}
+    for conference in conferences:
+        name = conference.get("name", "").lower()
+        year = conference.get("year")
+        if name and isinstance(year, int):
+            newest_years[name] = max(newest_years.get(name, year), year)
 
     for conference in conferences:
         label = conference.get("id") or conference.get("name") or "<unknown>"
+        name = conference.get("name", "").lower()
+        year = conference.get("year")
+        # Time passing must not invalidate the baseline before a refresh can
+        # retire completed editions through merge_conferences().
+        if (isinstance(year, int) and year < newest_years.get(name, year)
+                and not has_upcoming_conference_event(conference, now)):
+            warnings.append(f"{label}: completed older edition will be retired on refresh")
         submission_deadlines = []
         for deadline in conference.get("deadlines", []):
             if not is_submission_deadline(deadline):

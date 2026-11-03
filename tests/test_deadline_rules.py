@@ -116,6 +116,39 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertEqual([conference["id"] for conference in merged], ["aaai-2027"])
 
+    def test_expired_older_editions_do_not_invalidate_refresh_baseline(self):
+        older = {
+            "id": "sample-2026", "name": "SAMPLE", "year": 2026, "category": "ml",
+            "deadlines": [{
+                "type": "conference", "label": "Main Conference",
+                "date": "2026-09-10", "endDate": "2026-09-12", "estimated": False,
+            }],
+        }
+        newer = {
+            "id": "sample-2027", "name": "SAMPLE", "year": 2027, "category": "ml",
+            "deadlines": [{
+                "type": "paper", "label": "Paper Submission", "date": "2026-11-10",
+            }],
+        }
+        for reference_time, expired in (
+            ("2026-09-07T12:00:00+00:00", False),
+            ("2026-10-05T12:00:00+00:00", True),
+            ("2026-11-03T12:00:00+00:00", True),
+            ("2030-01-01T12:00:00+00:00", True),
+        ):
+            with self.subTest(now=reference_time):
+                now = datetime.fromisoformat(reference_time)
+                baseline = [older, newer]
+                self.assertEqual(validate_conferences(baseline, now), [])
+                warnings = find_stale_warnings(baseline, now)
+                self.assertEqual(any("completed older edition" in warning for warning in warnings), expired)
+                merged = merge_conferences(baseline, [], now)
+                self.assertEqual(len(merged), 1 if expired else 2)
+
+        older["website"] = "javascript:alert(1)"
+        errors = validate_conferences([older, newer], datetime(2030, 1, 1, tzinfo=timezone.utc))
+        self.assertTrue(any("unsafe website" in error for error in errors))
+
     def test_merge_retires_older_edition_only_after_event_ends(self):
         existing = [{
             "id": "sample-2026",
