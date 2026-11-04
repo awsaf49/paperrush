@@ -6,30 +6,37 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+
+from run_with_timeout import run_with_timeout
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONVERTER = SCRIPT_DIR / "update_from_scraper.py"
 DEFAULT_VALIDATOR = SCRIPT_DIR / "validate_data.py"
 DEFAULT_BROWSER_TEST = SCRIPT_DIR.parent / "tests" / "data-integrity.test.js"
+CONVERSION_TIMEOUT = 900
+VALIDATION_TIMEOUT = 60
 
 
-def command_succeeded(command, run_command):
+def command_succeeded(command, run_command, timeout):
     """Run a command with visible logs and return whether it succeeded."""
-    return run_command(command, check=False).returncode == 0
+    return run_command(command, check=False, timeout=timeout).returncode == 0
 
 
 def validate_output(output_path, validator_path, run_command):
     if not command_succeeded(
         [sys.executable, str(validator_path), str(output_path)],
         run_command,
+        VALIDATION_TIMEOUT,
     ):
         return False
     # Browser-level facts must be checked while rollback is still per conference.
     return run_command(
         ["node", "--test", str(DEFAULT_BROWSER_TEST)],
         check=False,
+        timeout=VALIDATION_TIMEOUT,
         env={**os.environ, "PAPERRUSH_DATA_FILE": str(Path(output_path).resolve())},
     ).returncode == 0
 
@@ -39,9 +46,9 @@ def apply_candidate_updates(
     output_path,
     converter_path=DEFAULT_CONVERTER,
     validator_path=DEFAULT_VALIDATOR,
-    run_command=subprocess.run,
+    run_command=run_with_timeout,
 ):
-    """Apply and validate each input independently, restoring rejected changes."""
+    """Validate each candidate in isolation before atomically accepting it."""
     output_path = Path(output_path)
     converter_path = Path(converter_path)
     validator_path = Path(validator_path)
@@ -68,27 +75,36 @@ def apply_candidate_updates(
             stage = "missing input"
         else:
             try:
-                converted = command_succeeded(
-                    [
-                        sys.executable,
-                        str(converter_path),
-                        "--input",
-                        str(input_path),
-                        "--output",
-                        str(output_path),
-                    ],
-                    run_command,
-                )
-                if not converted:
-                    stage = "conversion"
-                elif not validate_output(output_path, validator_path, run_command):
-                    stage = "validation"
+                with tempfile.TemporaryDirectory(dir=output_path.parent) as work_dir:
+                    candidate_path = Path(work_dir) / "data.js"
+                    candidate_path.write_bytes(before_content)
+                    converted = command_succeeded(
+                        [
+                            sys.executable,
+                            str(converter_path),
+                            "--input",
+                            str(input_path),
+                            "--output",
+                            str(candidate_path),
+                            "--merge-source",
+                            str(output_path),
+                        ],
+                        run_command,
+                        CONVERSION_TIMEOUT,
+                    )
+                    if not converted:
+                        stage = "conversion"
+                    elif not validate_output(candidate_path, validator_path, run_command):
+                        stage = "validation"
+                    else:
+                        os.replace(candidate_path, output_path)
+            except subprocess.TimeoutExpired:
+                stage = "timeout"
             except Exception as error:  # Keep one tool failure from poisoning later inputs.
                 stage = f"exception: {type(error).__name__}"
                 print(f"Candidate {conference} raised: {error}", file=sys.stderr)
 
         if stage:
-            output_path.write_bytes(before_content)
             report["rejected"].append(
                 {"conference": conference, "stage": stage}
             )
@@ -138,7 +154,7 @@ def main():
 
     try:
         report = apply_candidate_updates(args.input, args.output)
-    except RuntimeError as error:
+    except (RuntimeError, subprocess.TimeoutExpired) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
 

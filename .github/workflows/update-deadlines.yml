@@ -109,10 +109,14 @@ jobs:
             echo "Scraping: $conf (year: ${{ steps.config.outputs.year }})"
             echo "=================================================="
 
-            python scripts/scraper.py "$conf" \
+            if ! python scripts/run_with_timeout.py --seconds 600 -- \
+              python scripts/scraper.py "$conf" \
               --year ${{ steps.config.outputs.year }} \
               --output "/tmp/scraped/${conf}.json" \
-              --gemini || echo "Warning: Failed to scrape $conf"
+              --gemini; then
+              rm -f "/tmp/scraped/${conf}.json"
+              echo "::warning::Failed or timed out scraping $conf; continuing"
+            fi
 
             # Small delay between conferences to avoid rate limiting
             sleep 2

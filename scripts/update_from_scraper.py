@@ -916,6 +916,8 @@ Examples:
                         help="Print output without writing to file")
     parser.add_argument("--no-merge", action="store_true",
                         help="Don't merge with existing data.js (replace entirely)")
+    parser.add_argument("--merge-source",
+                        help="Explicit baseline data.js for isolated candidate output")
 
     args = parser.parse_args()
 
@@ -962,7 +964,9 @@ Examples:
     # Load existing data for fallback
     default_datajs = os.path.join(os.path.dirname(script_dir), "js", "data.js")
     existing_conferences = []
-    if os.path.exists(default_datajs):
+    if args.merge_source:
+        existing_conferences = load_existing_datajs(args.merge_source)
+    elif os.path.exists(default_datajs):
         existing_conferences = load_existing_datajs(default_datajs)
     elif os.path.exists(args.output):
         existing_conferences = load_existing_datajs(args.output)
@@ -1040,7 +1044,9 @@ Examples:
     default_datajs = os.path.join(os.path.dirname(script_dir), "js", "data.js")
 
     # Determine merge source: prefer default location, then output path
-    if os.path.exists(default_datajs):
+    if args.merge_source:
+        merge_source = args.merge_source
+    elif os.path.exists(default_datajs):
         merge_source = default_datajs
     elif os.path.exists(args.output):
         merge_source = args.output
