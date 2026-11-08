@@ -681,22 +681,28 @@ const App = {
                 summary: 'PaperRush could not find an upcoming paper or abstract date in this selection.'
             };
         }
-        if (milestones.length === 1) {
-            return {
-                state: 'single',
-                title: 'One target on your radar',
-                summary: 'Save another conference and PaperRush will compare the deadline spacing.',
-                pair: [milestones[0].conference],
-                estimated: Boolean(milestones[0].conference.activeDeadline?.estimated)
-            };
+        const confirmed = milestones.filter(item => !item.conference.activeDeadline.estimated);
+        let closest = null;
+        for (let index = 1; index < confirmed.length; index += 1) {
+            const gap = confirmed[index].target - confirmed[index - 1].target;
+            if (!closest || gap < closest.gap) {
+                closest = { gap, pair: [confirmed[index - 1], confirmed[index]] };
+            }
         }
 
-        let closest = null;
-        for (let index = 1; index < milestones.length; index += 1) {
-            const gap = milestones[index].target - milestones[index - 1].target;
-            if (!closest || gap < closest.gap) {
-                closest = { gap, pair: [milestones[index - 1], milestones[index]] };
-            }
+        // Spacing is useful for nearby confirmed dates. Otherwise show the
+        // next milestone without inferring workload from distant estimates.
+        if (!closest || closest.gap > 21 * 86400000) {
+            const next = milestones[0].conference;
+            const deadline = next.activeDeadline;
+            const timing = deadline.estimated ? 'is estimated for' : 'is due';
+            return {
+                state: milestones.length === 1 ? 'single' : 'schedule',
+                title: deadline.estimated ? 'Next estimated deadline' : 'Next saved deadline',
+                summary: `${next.name} ${next.year} ${deadline.label} ${timing} ${this.formatApproximateDate(deadline.date)}.`,
+                pair: [next],
+                estimated: Boolean(deadline.estimated)
+            };
         }
 
         const gapDays = Math.max(0, Math.round(closest.gap / 86400000));
@@ -704,19 +710,13 @@ const App = {
         const spacing = gapDays === 0
             ? 'fall on the same day'
             : `are ${gapDays} day${gapDays === 1 ? '' : 's'} apart`;
-        const estimated = Boolean(first.activeDeadline?.estimated || second.activeDeadline?.estimated);
-        const estimateNote = estimated ? ' At least one of these dates is estimated.' : '';
-        const title = gapDays <= 7
-            ? 'A tight handoff'
-            : gapDays <= 21 ? 'A busy stretch' : 'Some breathing room';
-
         return {
-            state: gapDays <= 7 ? 'tight' : gapDays <= 21 ? 'busy' : 'clear',
-            title,
-            summary: `${first.name} ${first.year} and ${second.name} ${second.year} ${spacing}.${estimateNote}`,
+            state: gapDays <= 7 ? 'tight' : 'busy',
+            title: gapDays === 0 ? 'Same-day deadlines' : `${gapDays} days between deadlines`,
+            summary: `${first.name} ${first.year} and ${second.name} ${second.year} ${spacing}.`,
             pair: [first, second],
             gapDays,
-            estimated
+            estimated: false
         };
     },
 
@@ -762,9 +762,7 @@ const App = {
         if (kicker) kicker.textContent = shared ? 'A shared Rush' : 'Rush Radar';
         if (title) title.textContent = analysis.title;
         if (summary) {
-            summary.textContent = shared && analysis.state === 'single'
-                ? 'This shared list has one upcoming submission milestone.'
-                : analysis.summary;
+            summary.textContent = analysis.summary;
         }
         importButton?.classList.toggle('hidden', !shared);
 
@@ -778,7 +776,7 @@ const App = {
                 chip.className = 'rush-radar-chip';
                 chip.style.setProperty('--chip-color', this.categoryColor(conference.category));
                 name.textContent = `${conference.name} ${conference.year}`;
-                date.textContent = `${conference.activeDeadline.estimated ? '~ ' : ''}${this.formatApproximateDate(conference.activeDeadline.date)}`;
+                date.textContent = `${conference.activeDeadline.estimated ? 'Estimated ' : ''}${this.formatApproximateDate(conference.activeDeadline.date)}`;
                 chip.append(dot, name, date);
                 chips.appendChild(chip);
             });

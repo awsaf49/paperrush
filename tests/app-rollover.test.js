@@ -284,7 +284,7 @@ test('conference share URLs preserve the selected deadline focus', () => {
     assert.equal(url.searchParams.get('utm_source'), 'test');
 });
 
-test('Rush Radar finds the closest pair without overstating estimated dates', () => {
+test('Rush Radar keeps estimated dates out of deadline-spacing comparisons', () => {
     const now = new Date('2026-07-26T12:00:00Z');
     const conferences = [
         {
@@ -303,10 +303,52 @@ test('Rush Radar finds the closest pair without overstating estimated dates', ()
 
     const analysis = App.analyzeRush(conferences, now);
 
+    assert.equal(analysis.state, 'schedule');
+    assert.equal(analysis.title, 'Next estimated deadline');
+    assert.deepEqual(analysis.pair.map(conference => conference.name), ['ICLR']);
+    assert.match(analysis.summary, /is estimated for Sep 19 '26\./);
+    assert.equal(analysis.gapDays, undefined);
+});
+
+test('Rush Radar shows the next saved deadline for the CVPR and ICLR next-cycle selection', () => {
+    const now = new Date('2026-11-08T12:00:00Z');
+    const conferences = [
+        { id: 'cvpr-2027', name: 'CVPR', year: 2027,
+          activeDeadline: { type: 'abstract', label: 'Paper Registration Deadline', date: '2026-11-10T23:59:00-12:00' } },
+        { id: 'iclr-2028', name: 'ICLR', year: 2028,
+          activeDeadline: { type: 'abstract', label: 'Abstract Submission', date: '2027-09-18T23:59:00-12:00', estimated: true } }
+    ];
+
+    const analysis = App.analyzeRush(conferences, now);
+
+    assert.equal(analysis.state, 'schedule');
+    assert.equal(analysis.title, 'Next saved deadline');
+    assert.equal(analysis.summary, "CVPR 2027 Paper Registration Deadline is due Nov 10 '26.");
+    assert.equal(analysis.gapDays, undefined);
+    assert.doesNotMatch(analysis.summary, /312|breathing room/);
+
+    conferences[1].activeDeadline.estimated = false;
+    assert.equal(App.analyzeRush(conferences, now).state, 'schedule');
+});
+
+test('Rush Radar compares nearby confirmed deadlines even with a closer estimated date', () => {
+    const now = new Date('2026-11-08T12:00:00Z');
+    const conferences = [
+        { id: 'first-2027', name: 'First', year: 2027,
+          activeDeadline: { type: 'paper', label: 'Paper Submission', date: '2026-11-10T23:59:00-12:00' } },
+        { id: 'estimated-2027', name: 'Estimated', year: 2027,
+          activeDeadline: { type: 'paper', label: 'Paper Submission', date: '2026-11-11T23:59:00-12:00', estimated: true } },
+        { id: 'second-2027', name: 'Second', year: 2027,
+          activeDeadline: { type: 'paper', label: 'Paper Submission', date: '2026-11-16T23:59:00-12:00' } }
+    ];
+
+    const analysis = App.analyzeRush(conferences, now);
+
     assert.equal(analysis.state, 'tight');
+    assert.equal(analysis.title, '6 days between deadlines');
     assert.equal(analysis.gapDays, 6);
-    assert.deepEqual(analysis.pair.map(conference => conference.name), ['ICLR', 'AISTATS']);
-    assert.match(analysis.summary, /At least one of these dates is estimated\./);
+    assert.equal(analysis.estimated, false);
+    assert.deepEqual(analysis.pair.map(conference => conference.name), ['First', 'Second']);
 });
 
 test('My Rush share links are stable, focused, and do not retain an open card', () => {
