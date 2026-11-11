@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-11-11T22:50:21Z
+ * Last updated: 2026-11-03T19:18:52Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-11-11T22:50:21Z",
+	"lastUpdated": "2026-11-03T19:18:52Z",
 	"conferences": [
 			{
 				"id": "eccv-2028",

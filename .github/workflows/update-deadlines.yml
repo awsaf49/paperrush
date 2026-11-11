@@ -64,6 +64,12 @@ jobs:
           pip install requests openai playwright html2text google-genai
           playwright install chromium
 
+      - name: Check extraction API availability
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: python scripts/run_with_timeout.py --seconds 90 -- python scripts/check_scraper_api.py
+
       - name: Determine conferences to scrape
         id: config
         run: |

@@ -256,6 +256,30 @@ class CandidateUpdateTests(unittest.TestCase):
         self.assertTrue({"isolationa-2099", "isolationb-2099"}.issubset(ids))
         self.assertEqual(published.read_bytes(), original)
 
+    def test_failed_extraction_cannot_advance_published_freshness(self):
+        original = (ROOT / "js" / "data.js").read_bytes()
+        self.output.write_bytes(original)
+        failed = self.root / "failed.json"
+        failed.write_text(json.dumps({
+            "conference": "CVPR", "year": 2026, "deadlines": [],
+            "_meta": {"successful_extractions": 0},
+        }), encoding="utf-8")
+        report_path = self.root / "report.json"
+
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "apply_scraped_updates.py"),
+             "--input", str(failed), "--output", str(self.output),
+             "--report", str(report_path)],
+            capture_output=True, text=True, timeout=30,
+        )
+
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertEqual(self.output.read_bytes(), original)
+        report = json.loads(report_path.read_text())
+        self.assertEqual(report["accepted"], [])
+        self.assertEqual(report["unchanged"], [])
+        self.assertEqual(report["rejected"], [{"conference": "failed", "stage": "conversion"}])
+
 
 if __name__ == "__main__":
     unittest.main()

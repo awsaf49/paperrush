@@ -959,7 +959,7 @@ Examples:
 
     if not json_files:
         print("No conferences to process. Exiting.")
-        return
+        return 1
 
     # Load existing data for fallback
     default_datajs = os.path.join(os.path.dirname(script_dir), "js", "data.js")
@@ -989,6 +989,10 @@ Examples:
         deadlines = scraper_data.get("deadlines", [])
         conf_name = scraper_data.get("conference", "Unknown")
         year = scraper_data.get("year", args.year)
+        if scraper_data.get("_meta", {}).get("successful_extractions") == 0:
+            print(f"  Rejected {conf_name} {year}: no successful source extraction")
+            skipped.append(f"{conf_name}-{year}")
+            continue
 
         if not deadlines:
             print(f"  ⚠️  No deadlines found for {conf_name} {year}")
@@ -1037,7 +1041,7 @@ Examples:
         if skipped:
             print(f"  Skipped (no deadlines): {', '.join(skipped)}")
         print("  Existing data.js will NOT be modified.")
-        return
+        return 1
 
     # Merge with existing data.js
     # Prefer merging from js/data.js (production), fall back to output path if same
@@ -1102,4 +1106,4 @@ Examples:
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

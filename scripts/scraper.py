@@ -998,12 +998,17 @@ Return ONLY the JSON array, no explanation.'''
 # SCRAPER CLASS
 # =============================================================================
 
+class ScraperAPIError(RuntimeError):
+    """The extraction provider failed, rather than returning an empty page."""
+
+
 class ConferenceScraper:
     """Hybrid agentic conference scraper"""
 
     def __init__(self, verbose: bool = True, use_gemini: bool = False):
         self.verbose = verbose
         self.use_gemini = use_gemini
+        self.successful_extractions = 0
 
         if use_gemini:
             # Use Gemini API with google-genai SDK
@@ -1022,7 +1027,7 @@ class ConferenceScraper:
                 base_url="https://openrouter.ai/api/v1",
                 api_key=api_key
             )
-            self.model = "meta-llama/llama-3.3-70b-instruct:free"
+            self.model = "openrouter/free"
             self.gemini_client = None
 
     def log(self, msg: str, end="\n"):
@@ -1092,16 +1097,22 @@ class ConferenceScraper:
                         model=self.model,
                         messages=[{"role": "user", "content": prompt}],
                         temperature=0.1,
-                        max_tokens=8192
+                        max_tokens=8192,
+                        response_format={"type": "json_object"} if json_mode else None,
                     )
                     content = response.choices[0].message.content
                     if content:
                         return content
             except Exception as e:
+                status = getattr(e, "status_code", None) or getattr(e, "code", None)
+                if status in {400, 401, 402, 403, 404}:
+                    raise ScraperAPIError(f"Extraction provider rejected the request: {e}") from e
+                if attempt == max_retries - 1:
+                    raise ScraperAPIError(f"Extraction provider retries exhausted: {e}") from e
                 wait_time = 2 ** attempt  # Exponential backoff: 1, 2, 4, 8, 16 seconds
                 self.log(f"⚠️ retry {attempt+1}/{max_retries} in {wait_time}s: {e}")
                 time.sleep(wait_time)
-        return None
+        raise ScraperAPIError("Extraction provider returned no content")
 
     def parse_llm_response(self, response: str) -> Optional[Dict]:
         """Parse JSON from LLM response"""
@@ -1218,6 +1229,7 @@ class ConferenceScraper:
                 continue
 
             result = post_process_extraction(result)
+            self.successful_extractions = getattr(self, "successful_extractions", 0) + 1
 
             # Merge links (take first non-null)
             for key, value in result.get("links", {}).items():
@@ -1305,6 +1317,7 @@ class ConferenceScraper:
             year: Conference year
             max_steps: Maximum pages to visit
         """
+        self.successful_extractions = 0
         conf_key = conf_key.lower()
         if conf_key not in CONFERENCES:
             print(f"❌ Unknown conference: {conf_key}")
@@ -1638,6 +1651,7 @@ class ConferenceScraper:
                 result['year']
             )
 
+        result["_meta"]["successful_extractions"] = self.successful_extractions
         return result
 
 
@@ -1796,6 +1810,8 @@ def clean_output_for_export(result: Dict) -> Dict:
         "deadlines": result.get("deadlines", []),
         "desk_reject_reasons": result.get("desk_reject_reasons", []),
     }
+    if "successful_extractions" in result.get("_meta", {}):
+        output["_meta"] = {"successful_extractions": result["_meta"]["successful_extractions"]}
 
     # Copy info, removing None values
     info = result.get("info", {})
@@ -1835,24 +1851,30 @@ def main():
     parser.add_argument("--quiet", "-q", action="store_true", help="Less verbose output")
     parser.add_argument("--gemini", "-g", action="store_true", help="Use Gemini API directly (faster)")
     args = parser.parse_args()
+    from update_from_scraper import get_valid_target_year
+    args.year = get_valid_target_year(args.conference, args.year)
+    provider = os.environ.get("PAPERRUSH_SCRAPER_PROVIDER")
+    if provider in {"gemini", "openrouter"}:
+        args.gemini = provider == "gemini"
 
     # Check for required API key
     if args.gemini:
         if not os.environ.get("GEMINI_API_KEY"):
             print("❌ GEMINI_API_KEY not set")
             print("   Run: export $(grep -v '^#' .env | xargs)")
-            return
+            return 1
     else:
         if not os.environ.get("OPENROUTER_API_KEY"):
             print("❌ OPENROUTER_API_KEY not set")
             print("   Run: export $(grep -v '^#' .env | xargs)")
-            return
+            return 1
 
     scraper = ConferenceScraper(verbose=not args.quiet, use_gemini=args.gemini)
     result = scraper.scrape_conference(args.conference, args.year, args.max_steps)
 
-    if not result:
-        return
+    if not result or not result.get("_meta", {}).get("successful_extractions"):
+        print("ERROR: No successful source extraction; no scrape output will be published")
+        return 1
 
     print_results(result)
 
@@ -1872,4 +1894,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
