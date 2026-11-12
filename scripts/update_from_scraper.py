@@ -391,6 +391,11 @@ def merge_conferences(
                 for field in preserved_fields:
                     if field in existing_conf and existing_conf[field]:
                         conf[field] = existing_conf[field]
+                if new_primary and all(not deadline.get("estimated") for deadline in new_primary):
+                    conf["notes"] = [
+                        note for note in conf.get("notes", [])
+                        if not str(note).startswith("Approximate dates inferred from the ")
+                    ]
 
                 # Preserve existing acceptance rate if not in new data
                 existing_info = existing_conf.get("info", {})

@@ -196,6 +196,7 @@ class DeadlineRolloverTests(unittest.TestCase):
                 "date": "2026-09-24", "estimated": True,
             }],
             "isEstimated": True,
+            "notes": ["Approximate dates inferred from the 2026 submission cycle.", "Manual note"],
         }]
         scraped = [{
             "id": "sample-2027", "name": "SAMPLE", "year": 2027,
@@ -210,6 +211,7 @@ class DeadlineRolloverTests(unittest.TestCase):
 
         self.assertEqual(merged[0]["deadlines"][0]["date"], "2026-09-28")
         self.assertFalse(merged[0]["deadlines"][0]["estimated"])
+        self.assertEqual(merged[0]["notes"], ["Manual note"])
 
     def test_estimate_cannot_replace_confirmed_same_edition_data(self):
         existing = [{

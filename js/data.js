@@ -918,14 +918,6 @@ const CONFERENCES_DATA = {
 			},
 			"deadlines": [
 				{
-					"type": "abstract",
-					"label": "Abstract Submission",
-					"date": "2027-01-29T23:59:00-12:00",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false
-				},
-				{
 					"type": "paper",
 					"label": "Paper Submission",
 					"date": "2027-01-29T23:59:00-12:00",
@@ -934,8 +926,8 @@ const CONFERENCES_DATA = {
 					"estimated": false
 				},
 				{
-					"type": "event",
-					"label": "Reviewer: Reviews Due",
+					"type": "rebuttal",
+					"label": "Author Rebuttal Period Start",
 					"date": "2027-03-29",
 					"endDate": null,
 					"status": "upcoming",
@@ -944,16 +936,7 @@ const CONFERENCES_DATA = {
 				},
 				{
 					"type": "rebuttal",
-					"label": "Paper Rebuttal Period",
-					"date": "2027-03-29",
-					"endDate": null,
-					"status": "upcoming",
-					"estimated": false,
-					"timeUnknown": true
-				},
-				{
-					"type": "rebuttal",
-					"label": "Author Rebuttal Period",
+					"label": "Author Response Due",
 					"date": "2027-04-02",
 					"endDate": null,
 					"status": "upcoming",
@@ -982,8 +965,8 @@ const CONFERENCES_DATA = {
 			"links": {
 				"official": "https://learningtheory.org/colt2027",
 				"authorGuide": "https://learningtheory.org/colt2027/cfp.html",
-				"author": "https://learningtheory.org/cfp.html#cfp",
-				"dates": "https://learningtheory.org/index.html#important-dates",
+				"author": "https://learningtheory.org/colt2027/cfp.html",
+				"dates": "https://learningtheory.org/colt2027/index.html#important-dates",
 				"registration": "https://learningtheory.org/colt2027/registration.html"
 			},
 			"info": {
@@ -991,9 +974,7 @@ const CONFERENCES_DATA = {
 				"reviewType": "Double-blind",
 				"submissionFormat": "PDF"
 			},
-			"notes": [
-				"Approximate dates inferred from the 2026 submission cycle."
-			]
+			"notes": []
 		},
 		{
 			"id": "cvpr-2027",
@@ -1778,9 +1759,7 @@ const CONFERENCES_DATA = {
 				"Failure to disclose substantive AI use",
 				"Material misrepresentation of AI use"
 			],
-			"notes": [
-				"Approximate dates inferred from the 2026 submission cycle."
-			]
+			"notes": []
 		},
 		{
 			"id": "icra-2027",
