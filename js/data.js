@@ -2,12 +2,46 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-11-03T19:18:52Z
+ * Last updated: 2026-11-12T01:10:17Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-11-03T19:18:52Z",
+	"lastUpdated": "2026-11-12T01:10:17Z",
 	"conferences": [
+			{
+				"id": "eacl-2028",
+				"name": "EACL",
+				"fullName": "Conference of the European Chapter of the Association for Computational Linguistics",
+				"year": 2028,
+				"category": "nlp",
+				"website": "",
+				"brandColor": "#0F766E",
+				"location": {
+					"city": "TBD",
+					"country": "TBD",
+					"flag": "🌍",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "ARR Submission Deadline (long & short papers)",
+						"date": "2027-08-03T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
+					}
+				],
+				"links": {
+					"previousEdition": "https://2027.eacl.org"
+				},
+				"info": {},
+				"notes": [
+					"Approximate dates inferred from the 2027 submission cycle."
+				],
+				"isEstimated": true,
+				"datesTBD": false
+			},
 			{
 				"id": "eccv-2028",
 				"name": "ECCV",
@@ -874,41 +908,92 @@ const CONFERENCES_DATA = {
 			"fullName": "Conference on Learning Theory",
 			"year": 2027,
 			"category": "ml",
-			"website": "",
+			"website": "https://learningtheory.org/colt2027",
 			"brandColor": "#2563EB",
 			"location": {
-				"city": "TBD",
-				"country": "TBD",
-				"flag": "🌍",
+				"city": "Tokyo",
+				"country": "JAPAN",
+				"flag": "🇯🇵",
 				"venue": null
 			},
 			"deadlines": [
 				{
-					"type": "paper",
-					"label": "Paper Submission",
-					"date": "2027-02-04T23:59:00-12:00",
+					"type": "abstract",
+					"label": "Abstract Submission",
+					"date": "2027-01-29T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
 				},
 				{
 					"type": "paper",
-					"label": "Open Problem Submission",
-					"date": "2027-05-25T23:59:00-12:00",
+					"label": "Paper Submission",
+					"date": "2027-01-29T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
+				},
+				{
+					"type": "event",
+					"label": "Reviewer: Reviews Due",
+					"date": "2027-03-29",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "rebuttal",
+					"label": "Paper Rebuttal Period",
+					"date": "2027-03-29",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "rebuttal",
+					"label": "Author Rebuttal Period",
+					"date": "2027-04-02",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "notification",
+					"label": "Author Notification",
+					"date": "2027-05-03",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "conference",
+					"label": "Main Conference",
+					"date": "2027-06-28",
+					"endDate": "2027-07-02",
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
 				}
 			],
 			"links": {
-				"previousEdition": "https://learningtheory.org/colt2026"
+				"official": "https://learningtheory.org/colt2027",
+				"authorGuide": "https://learningtheory.org/colt2027/cfp.html",
+				"author": "https://learningtheory.org/cfp.html#cfp",
+				"dates": "https://learningtheory.org/index.html#important-dates",
+				"registration": "https://learningtheory.org/colt2027/registration.html"
 			},
-			"info": {},
+			"info": {
+				"pageLimit": "12 pages + unlimited references",
+				"reviewType": "Double-blind",
+				"submissionFormat": "PDF"
+			},
 			"notes": [
 				"Approximate dates inferred from the 2026 submission cycle."
-			],
-			"isEstimated": true,
-			"datesTBD": false
+			]
 		},
 		{
 			"id": "cvpr-2027",
@@ -1603,58 +1688,99 @@ const CONFERENCES_DATA = {
 			"fullName": "International Conference on Machine Learning",
 			"year": 2027,
 			"category": "ml",
-			"website": "",
+			"website": "https://icml.cc/Conferences/2027",
 			"brandColor": "#1E3A5F",
 			"location": {
-				"city": "TBD",
-				"country": "TBD",
-				"flag": "🌍",
-				"venue": null
+				"city": "Rio de Janeiro",
+				"country": "Brazil",
+				"flag": "🇧🇷",
+				"venue": "Riocentro"
 			},
 			"deadlines": [
 				{
 					"type": "paper",
-					"label": "Submission Site Opens",
+					"label": "Paper Submission Opens",
 					"date": "2027-01-08",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true,
+					"estimated": false,
 					"timeUnknown": true
 				},
 				{
-					"type": "paper",
-					"label": "Paper Submission System Opens",
-					"date": "2027-01-08T00:00:00+00:00",
+					"type": "event",
+					"label": "OpenReview Account Creation Deadline",
+					"date": "2027-01-08",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false,
+					"timeUnknown": true
 				},
 				{
 					"type": "abstract",
-					"label": "Abstract Submission Deadline",
-					"date": "2027-01-23T23:59:00-12:00",
+					"label": "Abstract Submission",
+					"date": "2027-01-14T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
 				},
 				{
 					"type": "paper",
-					"label": "Paper Submission Deadline",
-					"date": "2027-01-28T23:59:00-12:00",
+					"label": "Full Paper Submission",
+					"date": "2027-01-22T23:59:00-12:00",
 					"endDate": null,
 					"status": "upcoming",
-					"estimated": true
+					"estimated": false
+				},
+				{
+					"type": "notification",
+					"label": "First-Stage Rejection Notification",
+					"date": "2027-02-23",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "notification",
+					"label": "Author Notification",
+					"date": "2027-05-03",
+					"endDate": null,
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
+				},
+				{
+					"type": "conference",
+					"label": "Main Conference",
+					"date": "2027-08-02",
+					"endDate": "2027-08-04",
+					"status": "upcoming",
+					"estimated": false,
+					"timeUnknown": true
 				}
 			],
 			"links": {
-				"previousEdition": "https://icml.cc/Conferences/2026"
+				"official": "https://icml.cc/Conferences/2027",
+				"authorGuide": "https://icml.cc/Conferences/2027/AuthorInstructions",
+				"reviewerGuide": "https://icml.cc/Conferences/2027/ReviewerInstructions",
+				"author": "https://icml.cc/Conferences/2027/CallForPapers",
+				"dates": "https://icml.cc/Conferences/2027/Dates",
+				"registration": "https://icml.cc/Register2",
+				"faq": "https://icml.cc/Conferences/2027/PeerReviewFAQ"
 			},
-			"info": {},
+			"info": {
+				"conferenceFullDates": "July 31 - August 6, 2027",
+				"dayBreakdown": "July 31: Expo Day; August 1: Tutorials; August 2-4: Main Conference; August 5-6: Workshops",
+				"callForPapersStatus": "To be posted soon",
+				"note": "The ICML 2027 senior area chair instructions will be published before the review period."
+			},
+			"deskRejectReasons": [
+				"Failure to disclose substantive AI use",
+				"Material misrepresentation of AI use"
+			],
 			"notes": [
 				"Approximate dates inferred from the 2026 submission cycle."
-			],
-			"isEstimated": true,
-			"datesTBD": false
+			]
 		},
 		{
 			"id": "icra-2027",
