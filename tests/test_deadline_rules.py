@@ -15,6 +15,7 @@ from update_from_scraper import (
     bump_year_in_url,
     create_estimated_from_existing,
     merge_conferences,
+    is_submission_deadline,
     parse_date_for_comparison,
     shift_iso_year,
 )
@@ -33,6 +34,11 @@ from scraper_to_datajs import (
 
 
 class DeadlineRolloverTests(unittest.TestCase):
+    def test_opening_dates_are_events_instead_of_submission_deadlines(self):
+        for label in ("Paper Submission Opens", "Submission Site Opens", "Submissions Open"):
+            self.assertEqual(infer_deadline_type(label), "event")
+            self.assertFalse(is_submission_deadline({"type": "paper", "label": label}))
+
     def test_chunk_extraction_treats_null_collections_as_empty(self):
         scraper = ConferenceScraper.__new__(ConferenceScraper)
         scraper.verbose = False

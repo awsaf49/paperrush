@@ -98,6 +98,13 @@ def timezone_to_offset(tz: Optional[str], date_str: Optional[str] = None) -> Opt
 # DEADLINE TYPE INFERENCE
 # =============================================================================
 
+def is_submission_opening(label: str) -> bool:
+    return bool(re.search(
+        r"\bopens\b|\bopening\b|\b(submissions?|registration)( (site|system|portal))? open\b",
+        str(label).lower(),
+    ))
+
+
 def infer_deadline_type(event_name: str) -> str:
     """
     Infer deadline type from event name.
@@ -107,6 +114,8 @@ def infer_deadline_type(event_name: str) -> str:
         return "event"
 
     label = event_name.lower().strip()
+    if is_submission_opening(label):
+        return "event"
 
     # Specific lifecycle stages must win over generic words such as "paper"
     # and "submission" (for example, "Paper Acceptance Notification").
@@ -388,7 +397,7 @@ def is_primary_submission_type(deadline: Dict) -> bool:
     if deadline.get("type") not in {"paper", "abstract"}:
         return False
     label = deadline.get("label", "").lower()
-    return not any(term in label for term in PRIMARY_EXCLUSIONS)
+    return not is_submission_opening(label) and not any(term in label for term in PRIMARY_EXCLUSIONS)
 
 
 def canonical_main_milestone(deadline: Dict) -> Optional[str]:

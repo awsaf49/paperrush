@@ -17,6 +17,15 @@ const aaai2026Deadlines = [
     }
 ];
 
+test('submission opening dates never become author deadline countdowns', () => {
+    const now = new Date('2026-11-11T12:00:00Z');
+    const opening = { type: 'paper', label: 'Paper Submission Opens', date: '2027-01-08' };
+    const abstract = { type: 'abstract', label: 'Abstract Submission', date: '2027-01-14' };
+    assert.equal(Rules.canonicalType(opening), 'event');
+    assert.equal(Rules.isPrimarySubmissionDeadline(opening), false);
+    assert.equal(App.findActiveDeadline([opening, abstract], now), abstract);
+});
+
 test('future conference date does not keep a closed edition current', () => {
     const now = new Date('2025-08-02T12:00:00Z');
 

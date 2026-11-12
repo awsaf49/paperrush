@@ -34,6 +34,7 @@ from scraper_to_datajs import (
     canonical_main_milestone,
     convert_scraper_to_datajs,
     load_metadata,
+    is_submission_opening,
     normalize_datajs_deadlines,
 )
 
@@ -500,7 +501,7 @@ def is_submission_deadline(deadline: Dict) -> bool:
         "poster",
     ]
 
-    if any(excluded in label for excluded in excluded_labels):
+    if is_submission_opening(label) or any(excluded in label for excluded in excluded_labels):
         return False
 
     return dtype in {"abstract", "paper"}

@@ -169,7 +169,7 @@ const CONFERENCES_DATA = {
 						"timeUnknown": true
 					},
 					{
-						"type": "paper",
+						"type": "event",
 						"label": "Paper Submission Site Opens",
 						"date": "2026-06-30",
 						"endDate": null,
@@ -1679,7 +1679,7 @@ const CONFERENCES_DATA = {
 			},
 			"deadlines": [
 				{
-					"type": "paper",
+					"type": "event",
 					"label": "Paper Submission Opens",
 					"date": "2027-01-08",
 					"endDate": null,
