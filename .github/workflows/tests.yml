@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install test dependencies
-        run: pip install requests openai playwright html2text google-genai
+        run: pip install requests openai playwright html2text google-genai beautifulsoup4
       - name: Python regression tests
         run: python -m unittest discover -s tests -p 'test_*.py'
       - name: Browser regression tests

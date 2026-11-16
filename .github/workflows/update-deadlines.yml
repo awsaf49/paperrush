@@ -1,9 +1,9 @@
 name: Update Conference Deadlines
 
 on:
-  # Run weekly on Mondays at 6 AM UTC
+  # Avoid the busy top of the hour; retry six hours later if scheduling is delayed.
   schedule:
-    - cron: '0 6 * * 1'
+    - cron: '17 6,12 * * 1'
 
   # Trigger on push if commit message contains [scrape]
   push:
@@ -18,7 +18,7 @@ on:
         required: false
         default: 'all'
       year:
-        description: 'Conference year (blank uses current UTC year)'
+        description: 'Conference year (blank refreshes each currently tracked edition)'
         required: false
         default: ''
       replay_run_id:
@@ -39,7 +39,7 @@ permissions:
 jobs:
   update-deadlines:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 35
     concurrency:
       group: update-conference-deadlines
       cancel-in-progress: false
@@ -61,29 +61,33 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests openai playwright html2text google-genai
+          pip install requests openai playwright html2text google-genai beautifulsoup4
           playwright install chromium
 
-      - name: Check extraction API availability
+      - name: Check optional model fallback availability
+        if: inputs.replay_run_id == ''
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python scripts/run_with_timeout.py --seconds 90 -- python scripts/check_scraper_api.py
+        run: |
+          if ! python scripts/run_with_timeout.py --seconds 90 -- python scripts/check_scraper_api.py; then
+            echo "::warning::Model providers unavailable; official HTML extraction remains enabled"
+            echo "PAPERRUSH_SCRAPER_PROVIDER=none" >> "$GITHUB_ENV"
+          fi
 
       - name: Determine conferences to scrape
         id: config
+        env:
+          REQUESTED_CONFERENCES: ${{ inputs.conferences }}
+          REQUESTED_YEAR: ${{ inputs.year }}
         run: |
-          if [ "${{ github.event.inputs.conferences }}" = "all" ] || [ -z "${{ github.event.inputs.conferences }}" ]; then
+          if [ "$REQUESTED_CONFERENCES" = "all" ] || [ -z "$REQUESTED_CONFERENCES" ]; then
             echo "conferences=${{ env.ALL_CONFERENCES }}" >> $GITHUB_OUTPUT
           else
-            echo "conferences=${{ github.event.inputs.conferences }}" >> $GITHUB_OUTPUT
+            echo "conferences=$REQUESTED_CONFERENCES" >> $GITHUB_OUTPUT
           fi
-
-          if [ -z "${{ github.event.inputs.year }}" ]; then
-            echo "year=$(date -u +%Y)" >> $GITHUB_OUTPUT
-          else
-            echo "year=${{ github.event.inputs.year }}" >> $GITHUB_OUTPUT
-          fi
+          [[ -z "$REQUESTED_YEAR" || "$REQUESTED_YEAR" =~ ^20[0-9]{2}$ ]]
+          echo "year=$REQUESTED_YEAR" >> "$GITHUB_OUTPUT"
 
       - name: Recover saved scrape inputs
         if: github.event_name == 'workflow_dispatch' && inputs.replay_run_id != ''
@@ -103,34 +107,12 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          CONFERENCES: ${{ steps.config.outputs.conferences }}
+          YEAR: ${{ steps.config.outputs.year }}
         run: |
-          mkdir -p /tmp/scraped
-
-          # Split conferences by comma
-          IFS=',' read -ra CONFS <<< "${{ steps.config.outputs.conferences }}"
-
-          for conf in "${CONFS[@]}"; do
-            conf=$(echo "$conf" | xargs)  # Trim whitespace
-            echo "=================================================="
-            echo "Scraping: $conf (year: ${{ steps.config.outputs.year }})"
-            echo "=================================================="
-
-            if ! python scripts/run_with_timeout.py --seconds 600 -- \
-              python scripts/scraper.py "$conf" \
-              --year ${{ steps.config.outputs.year }} \
-              --output "/tmp/scraped/${conf}.json" \
-              --gemini; then
-              rm -f "/tmp/scraped/${conf}.json"
-              echo "::warning::Failed or timed out scraping $conf; continuing"
-            fi
-
-            # Small delay between conferences to avoid rate limiting
-            sleep 2
-          done
-
-          echo ""
-          echo "Scraped files:"
-          ls -la /tmp/scraped/
+          ARGS=(--conferences "$CONFERENCES" --output-dir /tmp/scraped)
+          if [ -n "$YEAR" ]; then ARGS+=(--year "$YEAR"); fi
+          python scripts/refresh_conferences.py "${ARGS[@]}"
 
       - name: Convert and quarantine invalid updates
         id: convert
@@ -179,6 +161,7 @@ jobs:
           path: |
             /tmp/scraped
             /tmp/update-report.json
+            /tmp/fetch-report.json
             js/data.js
             conferences
             sitemap.xml
@@ -221,7 +204,7 @@ jobs:
           echo "## Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Conferences scraped:** ${{ steps.config.outputs.conferences }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Year:** ${{ steps.config.outputs.year }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Year:** ${{ steps.config.outputs.year || 'currently tracked editions' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Recovered scrape run:** ${{ inputs.replay_run_id || 'none (fresh scrape)' }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Accepted updates:** ${{ steps.convert.outputs.accepted }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Unchanged updates:** ${{ steps.convert.outputs.unchanged }}" >> $GITHUB_STEP_SUMMARY
@@ -246,6 +229,9 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: |
           title="[automation] PaperRush updater needs attention"
+          if [ "$JOB_STATUS" = "success" ] && [ -n "$REJECTED_COUNT" ] && [ "$REJECTED_COUNT" != "0" ]; then
+            JOB_STATUS=partial
+          fi
           issue_number=$(
             gh issue list --state open --limit 100 --json number,title \
               --jq '.[] | select(.title == "[automation] PaperRush updater needs attention") | .number' \
@@ -277,3 +263,9 @@ jobs:
               --body "Recovered in $RUN_URL. The updater completed with no rejected conference updates."
             gh issue close "$issue_number" --reason completed
           fi
+
+      - name: Mark incomplete refresh as needing attention
+        if: always() && steps.convert.outputs.rejected_count != '' && steps.convert.outputs.rejected_count != '0'
+        run: |
+          echo "::error::Some conferences could not be refreshed. Valid updates were published independently; see the report and updater-health issue."
+          exit 1

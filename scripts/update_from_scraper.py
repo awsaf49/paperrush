@@ -18,6 +18,7 @@ Usage:
 
 import json
 import calendar
+import copy
 import os
 import shutil
 import sys
@@ -437,6 +438,34 @@ def merge_conferences(
         print(f"    🗑️  Removed stale entry: {stale_id}")
 
     return list(result.values())
+
+
+def merge_date_only_update(existing, incoming):
+    """A table-only scrape must not delete policies or unrelated milestones."""
+    result = copy.deepcopy(existing)
+    incoming = copy.deepcopy(incoming)
+    for deadline in incoming["deadlines"]:
+        for previous in existing.get("deadlines", []):
+            if (is_submission_deadline(previous) and previous["type"] == deadline["type"]
+                    and previous.get("date", "")[:10] == deadline.get("date", "")
+                    and "T" in previous.get("date", "")):
+                # A date-only table confirms the day, not a less precise replacement.
+                deadline.clear()
+                deadline.update(previous)
+                break
+    replaced_types = {d["type"] for d in incoming["deadlines"] if is_submission_deadline(d)}
+    result["deadlines"] = [
+        d for d in result.get("deadlines", [])
+        if not (is_submission_deadline(d) and d["type"] in replaced_types)
+    ] + incoming["deadlines"]
+    result["website"] = incoming["website"]
+    result.setdefault("links", {}).update(incoming.get("links", {}))
+    primary = [d for d in result["deadlines"] if is_submission_deadline(d)]
+    if primary and all(not d.get("estimated") for d in primary):
+        result.pop("isEstimated", None)
+        result.pop("datesTBD", None)
+        result["links"].pop("previousEdition", None)
+    return result
 
 
 # =============================================================================
@@ -924,8 +953,11 @@ Examples:
                         help="Don't merge with existing data.js (replace entirely)")
     parser.add_argument("--merge-source",
                         help="Explicit baseline data.js for isolated candidate output")
+    parser.add_argument("--offline", action="store_true",
+                        help="Never perform nested network/model scraping during conversion")
 
     args = parser.parse_args()
+    scrape_fallback = (lambda *args: False) if args.offline else run_scraper
 
     # Validate arguments
     if not args.conferences and not args.input:
@@ -1009,7 +1041,7 @@ Examples:
                 conf_name,
                 year,
                 existing_conferences,
-                run_scraper
+                scrape_fallback
             )
 
             if fallback:
@@ -1023,10 +1055,17 @@ Examples:
 
         conf = convert_scraper_to_datajs(scraper_data, metadata)
 
+        if scraper_data.get("_meta", {}).get("dates_only"):
+            existing = next((c for c in existing_conferences if c["id"] == conf["id"]), None)
+            if existing:
+                conf = merge_date_only_update(existing, conf)
+            converted.append(conf)
+            continue
+
         # Check if all deadlines have passed → roll forward to next year
         if all_deadlines_passed(conf):
             print(f"  ⏰ All deadlines passed for {conf_name} {year}")
-            rolled = try_roll_forward(conf, run_scraper)
+            rolled = try_roll_forward(conf, scrape_fallback)
             if rolled:
                 converted.append(rolled)
                 if rolled.get("isEstimated"):
@@ -1072,6 +1111,16 @@ Examples:
         conferences = converted
 
     # Generate output
+    if merge_source and sorted(conferences, key=lambda c: c["id"]) == sorted(
+        load_existing_datajs(merge_source), key=lambda c: c["id"]
+    ):
+        if not args.dry_run:
+            if Path(args.output).resolve() != Path(merge_source).resolve():
+                shutil.copyfile(merge_source, args.output)
+        print("No conference facts changed; preserving the published freshness timestamp.")
+        if tmpdir:
+            shutil.rmtree(tmpdir)
+        return 0
     js_content = generate_datajs_content(conferences)
 
     if args.dry_run:

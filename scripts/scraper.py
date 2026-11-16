@@ -1015,7 +1015,7 @@ class ConferenceScraper:
             api_key = os.environ.get("GEMINI_API_KEY")
             if not api_key:
                 raise ValueError("GEMINI_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
-            self.gemini_client = genai.Client(api_key=api_key)
+            self.gemini_client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=30000))
             self.model = "gemini-2.5-flash"  # Latest Gemini Flash with JSON mode
             self.client = None
         else:
@@ -1025,7 +1025,9 @@ class ConferenceScraper:
                 raise ValueError("OPENROUTER_API_KEY not set. Run: export $(grep -v '^#' .env | xargs)")
             self.client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
-                api_key=api_key
+                api_key=api_key,
+                timeout=30,
+                max_retries=0,
             )
             self.model = "openrouter/free"
             self.gemini_client = None
@@ -1153,7 +1155,11 @@ class ConferenceScraper:
             deadlines_json=json.dumps(deadlines, indent=2)
         )
 
-        response = self.call_llm(prompt)
+        try:
+            response = self.call_llm(prompt, json_mode=False)
+        except ScraperAPIError as error:
+            self.log(f"   Sanity check unavailable; retaining extracted deadlines: {error}")
+            return deadlines
         if not response:
             self.log("   ⚠️ Sanity check failed, using original deadlines")
             return deadlines

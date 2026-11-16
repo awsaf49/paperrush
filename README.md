@@ -81,27 +81,28 @@ open index.html
 
 ## 🤖 Auto-Update System
 
-PaperRush uses an LLM-powered scraper to automatically update conference deadlines.
+PaperRush reads explicit deadlines from official date tables first. This path needs no API key or credits. An optional, time-bounded model fallback handles pages that the table parser cannot read.
+
+Each conference is fetched independently and validated in isolation. A failed conference retains its last known-good data while valid updates can still publish. Partial refreshes are marked as needing attention, with diagnostics in the workflow artifacts and updater-health issue. Unchanged facts do not advance the data timestamp.
 
 ### Setup (Optional)
 
 To enable auto-updates on your fork:
 
-1. Get a [Gemini API key](https://aistudio.google.com/apikey) (free tier available)
-2. Add it as a GitHub Secret: `Settings → Secrets → Actions → GEMINI_API_KEY`
+Official-table updates work without model secrets. To enable the optional fallback, add `GEMINI_API_KEY` and/or `OPENROUTER_API_KEY` under `Settings → Secrets → Actions`. The OpenRouter fallback uses `openrouter/free`; model availability and free-tier limits still apply. A failed provider preflight does not disable official-table updates.
 
 ### Trigger Methods
 
 | Method | How |
 |--------|-----|
-| **Weekly** | Automatic every Monday 6 AM UTC |
+| **Weekly** | Monday 06:17 UTC, with a second attempt at 12:17 UTC |
 | **On Push** | Include `[scrape]` in commit message |
-| **Manual** | Actions → "Update Conference Deadlines" → Run |
+| **Manual** | Actions → "Update Conference Deadlines" → Run. A blank year refreshes the editions already tracked. |
 
 ### System Architecture
 
 ```
-🌐 Conference Websites → 🤖 Gemini LLM → 📄 JSON → 📦 data.js → 🔎 Conference Pages + Sitemap → 🌍 GitHub Pages
+Official Websites -> HTML date tables / optional model fallback -> JSON -> offline conversion + per-conference validation -> data.js + conference pages -> GitHub Pages
 ```
 
 📊 **See full interactive workflow diagrams**: [`docs/workflow.html`](docs/workflow.html)

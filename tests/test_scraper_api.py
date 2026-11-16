@@ -57,6 +57,13 @@ class ScraperAPITests(unittest.TestCase):
         with self.assertRaises(ScraperAPIError):
             scraper.call_llm("test")
 
+    def test_optional_sanity_check_failure_retains_successful_extraction(self):
+        scraper = self.scraper([])
+        scraper.call_llm = Mock(side_effect=ScraperAPIError("rate limited"))
+        deadlines = [{"event": "Paper Submission", "date": "2027-01-22"}] * 4
+        self.assertEqual(scraper.sanity_check_deadlines(deadlines, "ICML", 2027), deadlines)
+        self.assertFalse(scraper.call_llm.call_args.kwargs["json_mode"])
+
     def test_export_preserves_extraction_health(self):
         exported = clean_output_for_export({"conference": "TEST", "year": 2027,
                                            "_meta": {"successful_extractions": 0}})

@@ -535,6 +535,8 @@ def convert_deadlines(
         }
         if "T" not in date_iso:
             converted["timeUnknown"] = True
+        if deadline.get("sourceUrl"):
+            converted["sourceUrl"] = deadline["sourceUrl"]
 
         # A main submission cannot happen after the conference begins. This
         # rejects repeated-page extraction artifacts from the wrong cycle.

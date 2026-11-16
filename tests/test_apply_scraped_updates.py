@@ -184,6 +184,7 @@ class CandidateUpdateTests(unittest.TestCase):
             "parser.add_argument('--input')\n"
             "parser.add_argument('--output')\n"
             "parser.add_argument('--merge-source')\n"
+            "parser.add_argument('--offline', action='store_true')\n"
             "args = parser.parse_args()\n"
             "change = json.loads(Path(args.input).read_text())\n"
             "output = Path(args.output)\n"

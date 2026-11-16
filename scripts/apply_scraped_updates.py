@@ -16,7 +16,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONVERTER = SCRIPT_DIR / "update_from_scraper.py"
 DEFAULT_VALIDATOR = SCRIPT_DIR / "validate_data.py"
 DEFAULT_BROWSER_TEST = SCRIPT_DIR.parent / "tests" / "data-integrity.test.js"
-CONVERSION_TIMEOUT = 900
+CONVERSION_TIMEOUT = 60
 VALIDATION_TIMEOUT = 60
 
 
@@ -88,6 +88,7 @@ def apply_candidate_updates(
                             str(candidate_path),
                             "--merge-source",
                             str(output_path),
+                            "--offline",
                         ],
                         run_command,
                         CONVERSION_TIMEOUT,
