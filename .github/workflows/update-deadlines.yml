@@ -227,6 +227,7 @@ jobs:
           REJECTED_COUNT: ${{ steps.convert.outputs.rejected_count }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
+          REFRESH_CONFERENCES: ${{ steps.config.outputs.conferences }}
         run: |
           title="[automation] PaperRush updater needs attention"
           if [ "$JOB_STATUS" = "success" ] && [ -n "$REJECTED_COUNT" ] && [ "$REJECTED_COUNT" != "0" ]; then
@@ -258,7 +259,7 @@ jobs:
                 --body-file /tmp/paperrush-updater-alert.md \
                 --assignee "$REPOSITORY_OWNER"
             fi
-          elif [ -n "$issue_number" ]; then
+          elif [ -n "$issue_number" ] && [ "$REFRESH_CONFERENCES" = "$ALL_CONFERENCES" ]; then
             gh issue comment "$issue_number" \
               --body "Recovered in $RUN_URL. The updater completed with no rejected conference updates."
             gh issue close "$issue_number" --reason completed

@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from official_dates import extract_official_deadlines, parse_explicit_date
 import refresh_conferences
-from refresh_conferences import refresh_one, target_year
+from refresh_conferences import refresh_one, source_urls, target_year
 from update_from_scraper import merge_date_only_update
 
 
@@ -66,6 +66,18 @@ class OfficialDateTests(unittest.TestCase):
     def test_list_deadlines_are_supported(self):
         html = '<h2>Important Dates</h2><ul><li>Abstract submission deadline: September 18, 2026 (AoE)</li></ul>'
         self.assertEqual(extract_official_deadlines(html, URL, 2027)[0]["date"], "2026-09-18")
+
+    def test_explicit_shared_year_is_used_but_never_inferred_from_edition(self):
+        dates = '<ul><li>Submission deadline: January 29, Anywhere on Earth</li></ul>'
+        self.assertEqual(extract_official_deadlines(dates, URL, 2027), [])
+        html = '<p>(All dates are in 2027.)</p>' + dates
+        self.assertEqual(extract_official_deadlines(html, URL, 2027)[0]["date"], "2027-01-29")
+        self.assertEqual(extract_official_deadlines(html.replace('in 2027', 'in 2026'), URL, 2027), [])
+
+    def test_seed_paths_expand_the_requested_edition(self):
+        urls = source_urls("ijcai", 2027, [])
+        self.assertTrue(any("ijcai-ecai-2027" in url for url in urls))
+        self.assertFalse(any("{" in url for url in urls))
 
     def test_currently_tracked_edition_wins_over_utc_year(self):
         now = datetime(2026, 11, 16, tzinfo=timezone.utc)

@@ -47,7 +47,7 @@ def source_urls(conference, year, existing):
                 if value and str(year) in value:
                     urls.append(value)
     seeds = sorted(config["seeds"], key=lambda s: ("date" not in s.lower(), bool(s)))
-    urls.extend(f"{base}/{seed}".rstrip("/") for seed in seeds if "guideline" not in seed.lower() and "author" not in seed.lower())
+    urls.extend(f"{base}/{seed.format(year=year, short_year=str(year)[-2:])}".rstrip("/") for seed in seeds if "guideline" not in seed.lower() and "author" not in seed.lower())
     return list(dict.fromkeys(urls))[:4]
 
 

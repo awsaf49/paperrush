@@ -249,7 +249,7 @@ def generate_datajs_content(conferences: List[Dict], last_updated: Optional[str]
     js_content = f'''/**
  * Conference Data
  * This file contains all conference information.
- * Auto-updated by GitHub Actions + Gemini
+ * Auto-updated from official conference sources
  * Last updated: {last_updated}
  */
 
@@ -527,7 +527,7 @@ def is_submission_deadline(deadline: Dict) -> bool:
         "reviewer", "review", "bidding", "camera",
         "notification", "decision", "rebuttal", "conference", "journal",
         "presentation request", "one-page", "late breaking", "revision",
-        "poster",
+        "poster", "paper update",
     ]
 
     if is_submission_opening(label) or any(excluded in label for excluded in excluded_labels):

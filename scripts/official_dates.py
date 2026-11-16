@@ -76,10 +76,15 @@ def extract_official_deadlines(html, url, year):
     title_years = set(re.findall(r"\b20\d{2}\b", title))
     if title_years and str(year) not in title_years:
         return []
+    explicit_year = re.search(r"\ball dates are in (20\d{2})\b", soup.get_text(" ", strip=True), re.I)
     found = {}
 
     def add(label, date_text):
         event = main_label(label)
+        if explicit_year and int(explicit_year[1]) == year and not DATE.search(date_text):
+            # COLT explicitly states a shared year for the whole deadline list.
+            if not re.search(r"\b20\d{2}\b|\d\s*[-\u2013\u2014]\s*\d", date_text):
+                date_text = re.sub(rf"\b({MONTH}\.?\s+\d{{1,2}})\b", rf"\1 {year}", date_text, count=1, flags=re.I)
         parsed = parse_explicit_date(date_text, year)
         if event and parsed:
             deadline = {"event": event, **parsed, "sourceUrl": url}

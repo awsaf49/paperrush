@@ -35,7 +35,7 @@ from scraper_to_datajs import (
 
 class DeadlineRolloverTests(unittest.TestCase):
     def test_opening_dates_are_events_instead_of_submission_deadlines(self):
-        for label in ("Paper Submission Opens", "Submission Site Opens", "Submissions Open"):
+        for label in ("Paper Submission Opens", "Submission Site Opens", "Submissions Open", "Paper Update", "Paper Update Deadline"):
             self.assertEqual(infer_deadline_type(label), "event")
             self.assertFalse(is_submission_deadline({"type": "paper", "label": label}))
 

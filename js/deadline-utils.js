@@ -25,6 +25,7 @@ const DeadlineRules = {
 
         if (this.isConferenceEvent(deadline)) return 'conference';
         if (/\bopens\b|\bopening\b|\b(submissions?|registration)( (site|system|portal))? open\b/.test(label)) return 'event';
+        if (/\bpaper update\b/.test(label)) return 'event';
         if (/camera[ -]?ready|final (version|manuscript)/.test(label)) return 'camera';
         if (/notification|decision|acceptance|accepted|rejection|results? released/.test(label)) return 'notification';
         if (/rebuttal|author response|author feedback|reviews released/.test(label)) return 'rebuttal';

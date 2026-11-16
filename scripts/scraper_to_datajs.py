@@ -116,6 +116,8 @@ def infer_deadline_type(event_name: str) -> str:
     label = event_name.lower().strip()
     if is_submission_opening(label):
         return "event"
+    if re.search(r"\bpaper update\b", label):
+        return "event"
 
     # Specific lifecycle stages must win over generic words such as "paper"
     # and "submission" (for example, "Paper Acceptance Notification").

@@ -26,6 +26,14 @@ test('submission opening dates never become author deadline countdowns', () => {
     assert.equal(App.findActiveDeadline([opening, abstract], now), abstract);
 });
 
+test('paper updates do not extend the new-paper submission window', () => {
+    const paper = { type: 'paper', label: 'Paper Submission', date: '2027-02-09' };
+    const update = { type: 'paper', label: 'Paper Update', date: '2027-02-16' };
+    assert.equal(Rules.canonicalType(update), 'event');
+    assert.equal(Rules.isPrimarySubmissionDeadline(update), false);
+    assert.equal(App.findActiveDeadline([paper, update], new Date('2027-02-10T12:00:00Z')), null);
+});
+
 test('future conference date does not keep a closed edition current', () => {
     const now = new Date('2025-08-02T12:00:00Z');
 

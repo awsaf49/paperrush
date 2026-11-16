@@ -1,12 +1,12 @@
 /**
  * Conference Data
  * This file contains all conference information.
- * Auto-updated by GitHub Actions + Gemini
- * Last updated: 2026-11-16T10:58:33Z
+ * Auto-updated from official conference sources
+ * Last updated: 2026-11-16T11:01:51Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-11-16T10:58:33Z",
+	"lastUpdated": "2026-11-16T11:01:51Z",
 	"conferences": [
 			{
 				"id": "eacl-2028",
@@ -931,7 +931,8 @@ const CONFERENCES_DATA = {
 						"date": "2027-01-29T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
-						"estimated": false
+						"estimated": false,
+						"sourceUrl": "https://learningtheory.org/colt2027/index.html#important-dates"
 					},
 					{
 						"type": "rebuttal",
@@ -2020,7 +2021,7 @@ const CONFERENCES_DATA = {
 						"timeUnknown": true
 					},
 					{
-						"type": "paper",
+						"type": "event",
 						"label": "Paper Update",
 						"date": "2027-02-16",
 						"endDate": null,
@@ -2192,11 +2193,11 @@ const CONFERENCES_DATA = {
 				],
 				"links": {
 					"official": "https://kdd2027.kdd.org",
-					"submission": "https://openreview.net/group?id=KDD.org/2027/AI4Sciences_Track_Cycle_1#tab-your-consoles",
+					"submission": "https://openreview.net/group?id=KDD.org/2027/Research_Track_Cycle_1",
 					"template": "https://www.acm.org/publications/proceedings-template",
 					"authorGuide": "https://www.acm.org/publications/policies/new-acm-policy-on-authorship",
 					"reviewerGuide": "https://www.acm.org/special-interest-groups/volunteer-resources/acm-conflict-of-interest-policy",
-					"author": "https://kdd2027.kdd.org/ai4sciences-track-call-for-papers",
+					"author": "https://kdd2027.kdd.org/research-track-call-for-papers/",
 					"faq": "https://kdd2027.kdd.org/frequently-asked-questions/",
 					"dates": "https://kdd2027.kdd.org/research-track-call-for-papers/"
 				},
