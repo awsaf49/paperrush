@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated from official conference sources
- * Last updated: 2026-11-16T11:01:51Z
+ * Last updated: 2026-11-16T22:17:29Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-11-16T11:01:51Z",
+	"lastUpdated": "2026-11-16T22:17:29Z",
 	"conferences": [
 			{
 				"id": "eacl-2028",
@@ -80,6 +80,40 @@ const CONFERENCES_DATA = {
 				"info": {},
 				"notes": [
 					"Approximate dates inferred from the 2026 submission cycle."
+				],
+				"isEstimated": true,
+				"datesTBD": false
+			},
+			{
+				"id": "naacl-2028",
+				"name": "NAACL",
+				"fullName": "North American Chapter of the Association for Computational Linguistics",
+				"year": 2028,
+				"category": "nlp",
+				"website": "",
+				"brandColor": "#2E8B57",
+				"location": {
+					"city": "TBD",
+					"country": "TBD",
+					"flag": "🌍",
+					"venue": null
+				},
+				"deadlines": [
+					{
+						"type": "paper",
+						"label": "Paper Submission",
+						"date": "2027-10-12T23:59:00-12:00",
+						"endDate": null,
+						"status": "upcoming",
+						"estimated": true
+					}
+				],
+				"links": {
+					"previousEdition": "https://2027.naacl.org"
+				},
+				"info": {},
+				"notes": [
+					"Approximate dates inferred from the 2027 submission cycle."
 				],
 				"isEstimated": true,
 				"datesTBD": false
@@ -322,7 +356,7 @@ const CONFERENCES_DATA = {
 				"deadlines": [
 					{
 						"type": "paper",
-						"label": "ARR Submission Deadline",
+						"label": "Paper Submission",
 						"date": "2027-01-04T23:59:00-12:00",
 						"endDate": null,
 						"status": "upcoming",
@@ -331,7 +365,7 @@ const CONFERENCES_DATA = {
 					{
 						"type": "conference",
 						"label": "Main Conference",
-						"date": "2027-08-20",
+						"date": "2027-08-17",
 						"endDate": "2027-08-22",
 						"status": "upcoming",
 						"estimated": false,
@@ -345,6 +379,13 @@ const CONFERENCES_DATA = {
 					"faq": "https://2027.aclweb.org/faq"
 				},
 				"info": {},
+				"deskRejectReasons": [
+					"Page limit exceeded",
+					"Anonymity violation",
+					"Wrong template",
+					"Incomplete submission",
+					"Missing required sections"
+				],
 				"notes": []
 			},
 			{
@@ -2699,40 +2740,6 @@ const CONFERENCES_DATA = {
 				"info": {},
 				"deskRejectReasons": [],
 				"notes": []
-			},
-			{
-				"id": "naacl-2026",
-				"name": "NAACL",
-				"fullName": "North American Chapter of the Association for Computational Linguistics",
-				"year": 2026,
-				"category": "nlp",
-				"website": "",
-				"brandColor": "#2E8B57",
-				"location": {
-					"city": "Seattle",
-					"country": "USA",
-					"flag": "🇺🇸",
-					"venue": "Seattle Convention Center"
-				},
-				"deadlines": [
-					{
-						"type": "paper",
-						"label": "Paper Submission",
-						"date": "2025-10-15T23:59:00-12:00",
-						"endDate": null,
-						"status": "upcoming",
-						"estimated": true
-					}
-				],
-				"links": {
-					"previousEdition": "https://2025.naacl.org"
-				},
-				"info": {},
-				"notes": [
-					"Approximate dates inferred from the 2025 submission cycle."
-				],
-				"isEstimated": true,
-				"datesTBD": false
 			},
 			{
 				"id": "neurips-2026",

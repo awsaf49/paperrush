@@ -131,17 +131,17 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://awsaf49.github.io/paperrush/conferences/naacl-2028/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/mlsys-2028/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://awsaf49.github.io/paperrush/conferences/eccv-2028/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://awsaf49.github.io/paperrush/conferences/naacl-2027/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
