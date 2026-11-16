@@ -265,8 +265,11 @@ jobs:
             gh issue close "$issue_number" --reason completed
           fi
 
-      - name: Mark incomplete refresh as needing attention
-        if: always() && steps.convert.outputs.rejected_count != '' && steps.convert.outputs.rejected_count != '0'
-        run: |
-          echo "::error::Some conferences could not be refreshed. Valid updates were published independently; see the report and updater-health issue."
-          exit 1
+      - name: Report refresh outcome
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+          ACCEPTED_COUNT: ${{ steps.convert.outputs.accepted_count }}
+          UNCHANGED_COUNT: ${{ steps.convert.outputs.unchanged_count }}
+          REJECTED_COUNT: ${{ steps.convert.outputs.rejected_count }}
+        run: python scripts/report_refresh_outcome.py

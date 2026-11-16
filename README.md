@@ -85,6 +85,8 @@ PaperRush reads explicit deadlines from official date tables first. This path ne
 
 Each conference is fetched independently and validated in isolation. A failed conference retains its last known-good data while valid updates can still publish. Partial refreshes are marked as needing attention, with diagnostics in the workflow artifacts and updater-health issue. Unchanged facts do not advance the data timestamp.
 
+Partial coverage produces a warning and an explicit `PARTIAL` summary while leaving the updater-health issue open. It does not mark an otherwise completed publication pipeline as failed. Pipeline errors and runs with no usable conference results still fail the workflow.
+
 ### Setup (Optional)
 
 To enable auto-updates on your fork:
