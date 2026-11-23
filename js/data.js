@@ -2,11 +2,11 @@
  * Conference Data
  * This file contains all conference information.
  * Auto-updated from official conference sources
- * Last updated: 2026-11-16T22:17:29Z
+ * Last updated: 2026-11-23T18:24:32Z
  */
 
 const CONFERENCES_DATA = {
-	"lastUpdated": "2026-11-16T22:17:29Z",
+	"lastUpdated": "2026-11-23T18:24:32Z",
 	"conferences": [
 			{
 				"id": "eacl-2028",
@@ -378,14 +378,11 @@ const CONFERENCES_DATA = {
 					"author": "https://2027.aclweb.org/calls/main/",
 					"faq": "https://2027.aclweb.org/faq"
 				},
-				"info": {},
-				"deskRejectReasons": [
-					"Page limit exceeded",
-					"Anonymity violation",
-					"Wrong template",
-					"Incomplete submission",
-					"Missing required sections"
-				],
+				"info": {
+					"pageLimit": "8 pages + unlimited references",
+					"reviewType": "Double-blind",
+					"submissionFormat": "PDF"
+				},
 				"notes": []
 			},
 			{
